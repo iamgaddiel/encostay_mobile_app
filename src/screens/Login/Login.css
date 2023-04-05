@@ -36,7 +36,7 @@
 .input_icon {
     color: var(--text-color);
     position: absolute;
-    right: 10px;
-    top: 45px;
+    right: 15px;
+    top: 47px;
     z-index: 3;
 }

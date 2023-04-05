@@ -43,9 +43,12 @@ ion-button {
     --color-hover: var(--primary)
 }
 
-ion-button.fill,
+ion-button.brown_fill,
+ion-button.yellow_fill,
+ion-button,
 ion-button.outline {
     text-transform: capitalize;
+    box-shadow: none !important;
 }
 
 ion-button.brown_fill {
