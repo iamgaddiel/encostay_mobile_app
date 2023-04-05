@@ -1,0 +1,120 @@
+:root {
+    --primary: #FAFAFA;
+    --t-primary: #F2F2F2;
+    --secondary: #412525;
+    --tertiary: #FEA401;
+    --t-tertiary: #1e8e3e9c;
+    --text-color: #3E3E3E;
+    --text-color2: #A9A9A9;
+
+
+    /* --ion-text-color: var(--tertiary); */
+    --ion-placeholder-color: var(--tertiary);
+    --ion-background-color: var(--primary);
+    --ion-toolbar-background: var(--primary);
+    --ion-toolbar-color: var(--secondary);
+    --ion-tab-bar-background: var(--primary);
+    --ion-tab-bar-color-selected: var(--tertiary);
+    --ion-tab-bar-color: var(--t-tertiary);
+    --ion-tab-bar-border-color: transparent;
+    --ion-border-color: var(--secondary);
+    --ion-toolbar-border-color: var(--secondary);
+
+    @font-face {
+        font-family: 'Montserrat', sans-serif;
+        src: url('./assets/fonts/Montserrat-Light.ttf');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+* {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+
+ion-toolbar,
+ion-title,
+ion-label ion-item {
+    --color: var(--tertiary)
+}
+
+ion-button {
+    --color-hover: var(--primary)
+}
+
+ion-button.fill,
+ion-button.outline {
+    text-transform: capitalize;
+}
+
+ion-button.brown_fill {
+    --background: var(--secondary);
+    --color: var(--primary);
+}
+ion-button.yellow_fill {
+    --background: var(--tertiary);
+    --color: var(--primary);
+}
+
+
+
+ion-button.fill-outline {
+    --color: var(--tertiary);
+    --background: var(--primary);
+    --border-color: var(--tertiary);
+    text-transform: capitalize;
+}
+
+ion-button.fill-outline:hover {
+    --color: var(--primary);
+    --background: var(--tertiary);
+    --border-color: var(--tertiary);
+}
+
+
+
+/*
+-------------------------------------------------
+Text Colors
+-------------------------------------------------
+*/
+
+.main_color {
+    color: var(--tertiary) !important
+}
+
+.bg-transparent {
+    background-color: var(--t-tertiary);
+}
+
+.bg-main {
+    background: var(--tertiary)
+}
+
+
+
+/*
+-------------------------------------------------
+Buttons
+-------------------------------------------------
+*/
+
+.sm_btn{
+    width: 99px;
+    height: 41px;
+    font-size: 14px;
+}
+
+
+.nm_btn{
+    width: 174px;
+    height: 58px;
+    font-size: 14px;
+}
+
+.lg_btn{
+    width: 174px;
+    height: 58px;
+    font-size: 14px;
+}
