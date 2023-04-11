@@ -21,6 +21,7 @@
     --ion-toolbar-border-color: var(--secondary);
 
     @font-face {
+        --ion-font-family: 'Montserrat', sans-serif;
         font-family: 'Montserrat', sans-serif;
         src: url('./assets/fonts/Montserrat-Light.ttf');
         font-weight: normal;
@@ -36,7 +37,7 @@
 ion-toolbar,
 ion-title,
 ion-label ion-item {
-    --color: var(--tertiary)
+    --color: var(--secondary)
 }
 
 ion-button {
@@ -58,6 +59,8 @@ ion-button.brown_fill {
 ion-button.yellow_fill {
     --background: var(--tertiary);
     --color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
 }
 
 

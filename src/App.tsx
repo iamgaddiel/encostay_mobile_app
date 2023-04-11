@@ -52,6 +52,7 @@ import Me from './screens/Me';
 //signals
 import { showTabs } from "./signals/settingsSignals"
 import OnBoardidng from './screens/OnBoardidng/OnBoardidng';
+import Passwords from './screens/Passwords/Passwords';
 
 
 
@@ -86,6 +87,9 @@ const App: React.FC = () => {
         <Route exact path="/onboarding">
           <OnBoardidng />
         </Route>
+        <Route exact path="/passwords">
+          <Passwords />
+        </Route>
 
 
 
@@ -110,6 +114,9 @@ const App: React.FC = () => {
                 </Route>
                 <Route exact path="/onboarding">
                   <OnBoardidng />
+                </Route>
+                <Route exact path="/passwords">
+                  <Passwords />
                 </Route>
               </IonRouterOutlet>
 

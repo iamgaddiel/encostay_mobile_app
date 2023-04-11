@@ -8,23 +8,31 @@
     height: auto;
 }
 
-.login_nav_btns ion-router-link {
+.login_nav_btns ion-router-link, .login_nav_btns small {
     color: var(--text-color2) !important;
+    display: block;
+    margin-top: 2px;
 }
 
 
 .form_inputs {
     position: relative;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    /* background:  red; */
 }
 
 
-.form_inputs label {
+.form_inputs ion-label {
     color: var(--text-color);
     font-weight: 500;
     size: 15px;
+    display: block;
+    margin-bottom: 2px;
 }
 
-.form_inputs ion-input {
+.form_inputs ion-input,
+.form_inputs ion-select{
     background-color: #ffffff !important;
     padding: 30px;
     border-radius: 27.5px;
@@ -33,10 +41,27 @@
     /* height: 43px; */
 }
 
+.form_inputs ion-select{
+    padding: 20px;
+}
+
+/* .form_inputs ion-modal{
+    color: var(--tertiary);
+} */
+
 .input_icon {
     color: var(--text-color);
     position: absolute;
     right: 15px;
     top: 47px;
     z-index: 3;
+}
+
+ion-button.social_btns{
+    width: 107px;
+    height: 36px;
+}
+
+ion-button.fb_btn{
+    --background-color: #486ab1;
 }

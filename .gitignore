@@ -259,3 +259,5 @@ sketch
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,ionic3,react,node,yarn
+pb_data/data.db
+pb_data/logs.db

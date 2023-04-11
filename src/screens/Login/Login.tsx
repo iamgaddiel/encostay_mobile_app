@@ -1,5 +1,10 @@
-import { IonButton, IonButtons, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonPage, IonRouterLink } from '@ionic/react'
+import { IonButton, IonButtons, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonTitle, IonToolbar } from '@ionic/react'
 import React, { useRef, useState } from 'react'
+import OrSeperator from '../../components/OrSeperator/OrSeperator'
+import { effect, useSignal } from '@preact/signals-react'
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { eyeOffOutline, eyeOutline, logoFacebook, logoGoogle } from 'ionicons/icons'
+
 
 
 // styles
@@ -8,17 +13,43 @@ import "./Login.css"
 
 // images
 import Logo from "../../assets/images/login_logo.svg"
+import GoogleLogo from "../../assets/images/search.png"
+import facebookLogo from "../../assets/images/facebook.png"
+
+// components
 import SpaceBetween from '../../components/style/SpaceBetween'
-import { eyeOffOutline, eyeOutline, logoFacebook, logoGoogle } from 'ionicons/icons'
-import OrSeperator from '../../components/OrSeperator/OrSeperator'
-import { effect, useSignal } from '@preact/signals-react'
+import RenderPasswordResetModal from '../../components/RenderPasswordResetModal/RenderPasswordResetModal';
+import { swiper } from '../../signals/passwordResetSignal';
+
 
 
 
 const Login = () => {
-  console.log("rendered")
+  // TODO: fix social media buttons
+  // TODO: disable continue button for forget password modal until email is inputed
+  // TODO: set onChange event for email input so as to disable continue restriction
+
+
+  // 3rd party hooks
+
+
+  // signals
+  const slides = useSignal<string[]>([
+    "forget password",
+    "otp",
+    "reset",
+    "success",
+    "failure"
+  ])
+  const slideCount = useSignal(0)
+  const swiper = useSignal<any>(null)
+
+
+
   // states
   const [showPassword, setShowPassword] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
 
 
   // refs
@@ -29,6 +60,11 @@ const Login = () => {
 
   // functions
 
+
+  function dismissModal() {
+    slideCount.value = 0
+    setShowModal(false)
+  }
 
 
 
@@ -47,7 +83,7 @@ const Login = () => {
             <IonButton className="sm_btn brown_fill" shape='round'>
               Login
             </IonButton>
-            <IonRouterLink routerDirection='forward' routerLink='/singup'>
+            <IonRouterLink routerDirection='forward' routerLink='/register'>
               Sign Up
             </IonRouterLink>
           </SpaceBetween>
@@ -84,13 +120,12 @@ const Login = () => {
 
               {/* Forget Password  */}
               <div className="ion-text-end login_nav_btns">
-                <IonRouterLink
+                <small
                   className='ion-text-end pt-3'
-                  routerLink="/forget_password"
-                  routerDirection='forward'
+                  onClick={() => setShowModal(true)}
                 >
                   Forget Password?
-                </IonRouterLink>
+                </small>
               </div>
             </div>
 
@@ -107,17 +142,47 @@ const Login = () => {
           </form>
         </section>
 
+        {/* Modal */}
+        <IonModal
+          isOpen={showModal}
+          initialBreakpoint={0.5}
+          breakpoints={[0, 0.5, 0.75]}
+          onDidDismiss={dismissModal}
+        >
+          <IonContent className='ion-padding'>
+            <Swiper
+              spaceBetween={50}
+              slidesPerView={1}
+              // onSlideChange={handleSlideChange}
+              allowSlidePrev={false}
+              onSwiper={(swp) => swiper.value = swp}
+            >
+              {
+                slides.value.map((_, indx) => (
+                  <SwiperSlide key={indx}>
+                    <RenderPasswordResetModal  index={indx} />
+                  </SwiperSlide>
+                ))
+              }
+            </Swiper>
 
-        <section className='mt-4'>
+          </IonContent>
+        </IonModal>
+
+
+        <section className='mt-5'>
           <OrSeperator speratorText='Or login with' className='mx-auto w-75' />
 
 
-          <SpaceBetween className='mt-3 mx-auto ion-padding-horizontal'>
-            <IonButton shape='round' className='nm_btn' color={'light'} >
-              <IonIcon icon={logoGoogle} slot='start' size='large' />
+          <SpaceBetween className='mt-2 mx-auto ion-padding-horizontal w-75'>
+            {/* Google Btn */}
+            <IonButton shape='round' className='social_btns' color={'light'} >
+              <IonImg src={GoogleLogo} className='w-25 ion-margin-end' />
               Google
             </IonButton>
-            <IonButton shape='round' className='nm_btn' color={"primary"}>
+
+            {/* Facebook */}
+            <IonButton shape='round' className='social_btns fb_btn' color={"primary"}>
               <IonIcon icon={logoFacebook} slot='start' size='large' />
               Facebook
             </IonButton>

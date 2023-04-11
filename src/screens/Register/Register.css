@@ -1,0 +1,20 @@
+.birthday_modal{
+    --width: fit-content;
+    --min-width: 23em;
+    --height: 450px;
+    /* --height: fit-content; */
+    --border-radius: 15px;
+    --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-button.modal_btn{
+    width: 135px !important;
+    height: 45px;
+}
+
+ion-button.modal_outline_btn{
+    --border-size: 1px;
+    --border-type: solid;
+    --border-color: blue;
+    /* --border: 1px solid #e2e5ed !important; */
+}

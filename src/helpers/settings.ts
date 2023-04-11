@@ -12,7 +12,7 @@ const appName = "Encostay"
 
 const DEBUG = true
 
-const pocketbaseUrl = DEBUG ? "http://127.0.0.1:8090" : "https://"
+const pocketbaseUrl = DEBUG ? "http://127.0.0.1:8090" : "https://encostay-app.pockethost.io"
 
 const pb = new PocketBase(pocketbaseUrl)
 
