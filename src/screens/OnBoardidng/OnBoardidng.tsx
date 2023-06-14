@@ -18,7 +18,7 @@ import P2 from "../../assets/images/2.svg"
 import P3 from "../../assets/images/3.svg"
 import { useHistory } from 'react-router';
 
-import useSwipe from '../../hooks/useSwipe';
+// import useSwipe from '../../hooks/useSwipe';
 import { onBoardingSwipeSignal } from '../../signals/swiperAtom';
 
 
@@ -62,7 +62,7 @@ const OnBoardidng = () => {
 
 
     //hooks
-    const { swipeRef } = useSwipe()
+    // const { swipeRef } = useSwipe()
 
 
 
