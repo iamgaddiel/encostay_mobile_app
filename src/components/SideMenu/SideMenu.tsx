@@ -51,7 +51,7 @@ const SideMenu: React.FC<Props> = ({ userImage }) => {
                             <IonIcon icon={documentTextOutline} slot="start" />
                             <IonLabel>Transactions</IonLabel>
                         </IonItem>
-                        <IonItem routerDirection='forward' routerLink='/transactions' className="mt-3">
+                        <IonItem routerDirection='forward' routerLink='/withdraw' className="mt-3">
                             <IonIcon icon={walletOutline} slot="start" />
                             <IonLabel>Withdraw</IonLabel>
                         </IonItem>

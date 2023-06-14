@@ -37,11 +37,15 @@ const EarningModal: React.FC<EarningModalProp> = ({ isOpen, setIsOpen }) => {
                 <section className="earn_modal_image_wraper" style={{ backgroundImage: `url(${Image})` }}></section>
 
                 <section className="ion-text-center mt-4">
-                    <IonTitle>You widthdrew</IonTitle>
-                    <div className="p-2 rounded-4 w-50 mx-auto my-3" style={{ backgroundColor: "var(--light-orange" }}>
-                        <IonText> <big> ₦2323 </big></IonText>
+                    <div>
+                        <p>You widthdrew</p>
                     </div>
-                    <IonText>to</IonText>
+                    <div className="p-2 rounded-4 w-50 mx-auto my-2" style={{ backgroundColor: "var(--light-orange" }}>
+                        <IonText className=''> <big> ₦2323 </big></IonText>
+                    </div>
+                    <div className=''>
+                        <p className='mt-2'>to</p>
+                    </div>
                 </section>
                 <IonCard className="rounded-3 mt-2 ion-margin-vertical ion-padding-horizontal" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
                     <IonCardContent className='d-flex align-items-center px-1 py-4'>

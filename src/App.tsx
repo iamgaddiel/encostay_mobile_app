@@ -86,6 +86,9 @@ import ContactSupport from './screens/ContactSupport/ContactSupport';
 import BankAccount from './screens/BankAccount/BankAccount';
 import AddPaymentMethod from './screens/AddPaymentMethod/AddPaymentMethod';
 import Transactions from './screens/Transactions/Transactions';
+import Withdrawal from './screens/Withdrawal/Withdrawal';
+import WithdrawReceiving from './screens/WithdrawReceiving/WithdrawReceiving';
+import WithdrawConfirm from './screens/WithdrawConfirm/WithdrawConfirm';
 
 
 
@@ -127,12 +130,18 @@ const App: React.FC = () => {
         <Route exact path="/bank_account" render={() => <BankAccount />} />
         <Route exact path="/add_card" render={() => <AddPaymentMethod />} />
         <Route exact path="/transactions" render={() => <Transactions />} />
+        <Route exact path="/withdraw" render={() => <Withdrawal />} />
+        <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
+        <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
 
 
         {
           showTabs.value ? (
             <IonTabs>
               <IonRouterOutlet>
+                <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
+                <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
+                <Route exact path="/withdraw" render={() => <Withdrawal />} />
                 <Route exact path="/transactions" render={() => <Transactions />} />
                 <Route exact path="/add_card" render={() => <AddPaymentMethod />} />
                 <Route exact path="/bank_account" render={() => <BankAccount />} />

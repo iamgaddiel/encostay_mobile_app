@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @font-face {
-    --ion-font-family: 'Montserrat', sans-serif;
-    font-family: 'Montserrat', sans-serif;
+    --ion-font-family: 'Montserrat';
+    font-family: 'Montserrat';
     src: url('./assets/fonts/Montserrat-Medium.ttf');
     font-weight: normal;
     font-style: normal;
