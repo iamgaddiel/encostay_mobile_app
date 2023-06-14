@@ -7,10 +7,10 @@ import "./OtpModal.css"
 const OtpModal = () => {
     // TODO: go to the next input when one is filled
 
-    
+
     return (
         <>
-            <IonToolbar className='ion-padding-0'>
+            <IonToolbar className='ion-padding-0 ion-padding-top'>
                 <IonTitle className='fw-500'>Enter 4 Digit Code</IonTitle>
             </IonToolbar>
 
@@ -49,6 +49,19 @@ const OtpModal = () => {
                     maxlength={1}
                 />
             </div>
+
+
+            <section className="px-4 mt-5">
+                <IonButton
+                    expand='block'
+                    shape='round'
+                    className='nm_btn yellow_fill w-100'
+                    mode='ios'
+                    type='submit'
+                >
+                    Continue
+                </IonButton>
+            </section>
         </>
     )
 }

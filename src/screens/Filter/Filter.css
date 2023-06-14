@@ -1,0 +1,13 @@
+ion-range.filter_prince_range {
+    --bar-background: #a2d2ff;
+    --bar-background-active: #bde0fe;
+    --bar-height: 2px;
+    --height: 1px;
+    --bar-border-radius: 8px;
+    --knob-background: blue;
+    --knob-size: 90px;
+
+    /* --knob-border-radius:  */
+    /* --pin-background: #ffafcc; */
+    /* --pin-color: #fff; */
+  }

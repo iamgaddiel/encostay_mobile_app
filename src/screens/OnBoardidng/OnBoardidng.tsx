@@ -1,8 +1,8 @@
 import { IonPage, IonContent, IonImg, IonButton } from '@ionic/react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 
 // styles
@@ -17,7 +17,9 @@ import P1 from "../../assets/images/1.svg"
 import P2 from "../../assets/images/2.svg"
 import P3 from "../../assets/images/3.svg"
 import { useHistory } from 'react-router';
-import { swiper } from '../../signals/passwordResetSignal';
+
+import useSwipe from '../../hooks/useSwipe';
+import { onBoardingSwipeSignal } from '../../signals/swiperAtom';
 
 
 
@@ -55,24 +57,37 @@ const OnBoardidng = () => {
 
 
     // states
-    // const [swiper, setSwiper] = useState<any>(null)
     const [nextBtnText, setNextBtnText] = useState("Next")
     const [paginationImage, setPaginationImage] = useState(P1)
+
+
+    //hooks
+    const { swipeRef } = useSwipe()
 
 
 
     // functions
     function handleSlide() {
-        if (!swiper.value?.isEnd) {
-            swiper.value?.slideNext()
-            return
+        // if (swipeRef.current !== null) {
+        //     if (!swipeRef.current.swiper?.isEnd){
+        //         swipeRef.current.swiper.slideNext();
+        //         return
+        //     }
+        // }
+
+        if (onBoardingSwipeSignal.value !== null) {
+            if (!onBoardingSwipeSignal.value?.isEnd){
+                onBoardingSwipeSignal.value?.slideNext();
+                return
+            }
         }
-        
+
         history.push("/login")
     }
 
-    function handleSlideChange(){
-        switch (swiper.value?.activeIndex) {
+    function handleSlideChange() {
+        // switch (swiper.value?.activeIndex) {
+        switch (onBoardingSwipeSignal.value?.activeIndex) {
             case 0:
                 setPaginationImage(P1)
                 break
@@ -86,10 +101,9 @@ const OnBoardidng = () => {
                 break
         }
 
-        swiper.value?.isEnd && setNextBtnText("Get Started")
+        onBoardingSwipeSignal.value.isEnd && setNextBtnText("Get Started")
 
     }
-
 
 
     return (
@@ -102,7 +116,7 @@ const OnBoardidng = () => {
                     onSlideChange={() => handleSlideChange()}
                     pagination={true}
                     allowSlidePrev={false}
-                    onSwiper={(swp) => swiper.value = swp}
+                    onSwiper={swp => onBoardingSwipeSignal.value = swp}
                 >
                     {
                         slides.map((slide) => (

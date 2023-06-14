@@ -11,6 +11,7 @@ interface Props {
 
 const RenderPasswordResetModal: React.FC<Props> = ({ index}) => {
 
+
     function renderModal(modalIndex: number) {
         switch (modalIndex) {
             case 0:

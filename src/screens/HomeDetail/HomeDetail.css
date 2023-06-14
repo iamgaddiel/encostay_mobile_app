@@ -1,0 +1,42 @@
+.home_detail_hero_image{
+    height: 35vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    border-radius: 0 0 35px 35px;
+}
+
+.amenities-item{
+    width: 60px;
+}
+.amenities-item small{
+    font-size: x-small;
+}
+.amenities-item-icon-wrapper{
+    background-color: var(--light-orange);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ion-icon.amenities-item-icon{
+    color: var(--tertiary)
+}
+
+.review-avater{
+    background-color: orange;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.comments{
+    width: 80%;
+    /* background: red; */
+    flex: 1;
+    margin-left: 9px;
+}

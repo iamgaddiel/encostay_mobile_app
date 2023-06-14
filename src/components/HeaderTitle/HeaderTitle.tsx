@@ -7,7 +7,7 @@ import React from 'react'
 
 const HeaderTitle: React.FC<PropType> = ({ title }) => {
     return (
-        <IonHeader className='ion-no-border'>
+        <IonHeader className='ion-no-border' mode='ios'>
             <IonToolbar>
                 <IonTitle>{title}</IonTitle>
             </IonToolbar>

@@ -1,9 +1,9 @@
-import { IonButton, IonButtons, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonTitle, IonToolbar } from '@ionic/react'
-import React, { useRef, useState } from 'react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink } from '@ionic/react'
+import { useState } from 'react'
 import OrSeperator from '../../components/OrSeperator/OrSeperator'
-import { effect, useSignal } from '@preact/signals-react'
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
-import { eyeOffOutline, eyeOutline, logoFacebook, logoGoogle } from 'ionicons/icons'
+import { useSignal } from '@preact/signals-react'
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { eyeOffOutline, eyeOutline, logoFacebook } from 'ionicons/icons'
 
 
 
@@ -14,12 +14,13 @@ import "./Login.css"
 // images
 import Logo from "../../assets/images/login_logo.svg"
 import GoogleLogo from "../../assets/images/search.png"
-import facebookLogo from "../../assets/images/facebook.png"
 
 // components
 import SpaceBetween from '../../components/style/SpaceBetween'
 import RenderPasswordResetModal from '../../components/RenderPasswordResetModal/RenderPasswordResetModal';
-import { swiper } from '../../signals/passwordResetSignal';
+import { passwordResetSwipeSignal } from '../../signals/swiperAtom';
+import { slides } from '../../signals/passwordResetAtom';
+import { useHistory } from 'react-router';
 
 
 
@@ -29,21 +30,15 @@ const Login = () => {
   // TODO: disable continue button for forget password modal until email is inputed
   // TODO: set onChange event for email input so as to disable continue restriction
 
+  // todo: remove this
+  const history = useHistory()
+
 
   // 3rd party hooks
 
 
-  // signals
-  const slides = useSignal<string[]>([
-    "forget password",
-    "otp",
-    "reset",
-    "success",
-    "failure"
-  ])
+  // signal
   const slideCount = useSignal(0)
-  const swiper = useSignal<any>(null)
-
 
 
   // states
@@ -60,12 +55,10 @@ const Login = () => {
 
   // functions
 
-
-  function dismissModal() {
+  function dismissModal(): void {
     slideCount.value = 0
     setShowModal(false)
   }
-
 
 
 
@@ -105,7 +98,7 @@ const Login = () => {
               <IonLabel>Password</IonLabel>
               <IonInput
                 type={showPassword ? "text" : "password"}
-                placeholder='Enter your Email'
+                placeholder='Enter your password'
                 className='mt-2 p-2'
               />
 
@@ -134,7 +127,8 @@ const Login = () => {
               shape='round'
               className='nm_btn yellow_fill mt-5 w-100'
               mode='ios'
-              type='submit'
+              // type='submit' // todo: uncomment this
+              onClick={() => history.push("/home")} // todo: remove this
             >
               Login
             </IonButton>
@@ -142,25 +136,28 @@ const Login = () => {
           </form>
         </section>
 
-        {/* Modal */}
+        {/* 
+        ===================================================
+        =====================[ Reset Modal Password========
+        ===================================================
+        */}
         <IonModal
           isOpen={showModal}
-          initialBreakpoint={0.5}
-          breakpoints={[0, 0.5, 0.75]}
+          initialBreakpoint={0.70}
+          breakpoints={[0, 0.75, 0.90]}
           onDidDismiss={dismissModal}
         >
           <IonContent className='ion-padding'>
             <Swiper
               spaceBetween={50}
               slidesPerView={1}
-              // onSlideChange={handleSlideChange}
+              onSwiper={swp => passwordResetSwipeSignal.value = swp}
               allowSlidePrev={false}
-              onSwiper={(swp) => swiper.value = swp}
             >
               {
                 slides.value.map((_, indx) => (
                   <SwiperSlide key={indx}>
-                    <RenderPasswordResetModal  index={indx} />
+                    <RenderPasswordResetModal index={indx} />
                   </SwiperSlide>
                 ))
               }

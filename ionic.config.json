@@ -1,5 +1,7 @@
 {
   "name": "Encostay",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react-vite"
 }

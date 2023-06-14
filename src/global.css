@@ -1,32 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    --ion-font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    src: url('./assets/fonts/Montserrat-Medium.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
 :root {
+    /* White */
     --primary: #FAFAFA;
-    --t-primary: #F2F2F2;
-    --secondary: #412525;
-    --tertiary: #FEA401;
-    --t-tertiary: #1e8e3e9c;
-    --text-color: #3E3E3E;
+    --primary-2: #F2F2F2;
+    --primary-3: #F5F5F5;
+    --white-4: #F8F9F9;
     --text-color2: #A9A9A9;
+
+    /* Orange */
+    --tertiary: #FEA401;
+    --light-orange: #FFF4E0;
+    
+    /* Brown */
+    --secondary: #412525;
+    --text-color: #3E3E3E;
+
+    /* Red */
+    --light-red: #FFF4E0;
+
+    /* Green */
+    --green: #31B267;
+    --light-green: #1e8e3e9c;
+    --very-light-green: #E2F4F3;
+
+    /* blue */
+    --light-blue: #E2F4F3;
+
+
+
 
 
     /* --ion-text-color: var(--tertiary); */
     --ion-placeholder-color: var(--tertiary);
-    --ion-background-color: var(--primary);
+    --ion-background-color: var(--primary) !important;
     --ion-toolbar-background: var(--primary);
     --ion-toolbar-color: var(--secondary);
-    --ion-tab-bar-background: var(--primary);
+
+
+    --ion-tab-bar-background: var(--secondary);
     --ion-tab-bar-color-selected: var(--tertiary);
-    --ion-tab-bar-color: var(--t-tertiary);
+    --ion-tab-bar-color: var(--primary);
     --ion-tab-bar-border-color: transparent;
     --ion-border-color: var(--secondary);
     --ion-toolbar-border-color: var(--secondary);
-
-    @font-face {
-        --ion-font-family: 'Montserrat', sans-serif;
-        font-family: 'Montserrat', sans-serif;
-        src: url('./assets/fonts/Montserrat-Light.ttf');
-        font-weight: normal;
-        font-style: normal;
-    }
 }
 
 * {
@@ -50,19 +77,25 @@ ion-button,
 ion-button.outline {
     text-transform: capitalize;
     box-shadow: none !important;
+    font-size: medium;
 }
 
 ion-button.brown_fill {
     --background: var(--secondary);
     --color: var(--primary);
 }
-ion-button.yellow_fill {
+ion-button.brown_fill_outline {
+    --background: transparent;
+    --color: var(--secondary);
+    --border-color: var(var(--secondary));
+}
+ion-button.yellow_fill,
+ion-button.yellow_fill:hover  {
     --background: var(--tertiary);
     --color: var(--primary);
     font-size: 18px;
     font-weight: 700;
 }
-
 
 
 ion-button.fill-outline {
@@ -123,4 +156,13 @@ Buttons
     width: 174px;
     height: 58px;
     font-size: 14px;
+}
+/* 
+-----------------------------------
+Divs
+----------------------------------- */
+
+.muted-outline{
+    background-color: transparent;
+    border: 1px solid #bbb;
 }

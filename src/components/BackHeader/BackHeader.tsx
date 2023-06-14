@@ -1,12 +1,18 @@
 import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/react'
 import React from 'react'
 
-const BackHeader: React.FC<PropType> = ({ title }) => {
+
+interface PropType{
+    title: string
+    backLink: string 
+}
+
+const BackHeader: React.FC<PropType> = ({ title, backLink }) => {
     return (
         <IonHeader className='ion-no-border'>
-            <IonToolbar>
+            <IonToolbar mode='ios'>
                 <IonButtons slot='start'>
-                    <IonBackButton />
+                    <IonBackButton defaultHref={backLink} />
                 </IonButtons>
 
                 <IonTitle>{title}</IonTitle>
@@ -15,8 +21,6 @@ const BackHeader: React.FC<PropType> = ({ title }) => {
     )
 }
 
-type PropType = {
-    title: string
-}
+
 
 export default BackHeader

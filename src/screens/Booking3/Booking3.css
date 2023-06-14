@@ -1,0 +1,9 @@
+.number_verification_image_wrapper {
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+}
+.number_verification_image_wrapper img{
+    width: 100%;
+    height: auto;
+}

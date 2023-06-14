@@ -24,23 +24,17 @@ function SettingsProvider({ children }: { children: any }) {
 
   return (
     <SettingsContext.Provider value={{
-      // pb,
       showTabs,
       setshowTabs,
-      // storage,
-      // DEBUG
     }}>
       {children}
     </SettingsContext.Provider>
   )
 }
 
-export interface SettingsContextType{
-  // pb: PocketBase
+export interface SettingsContextType {
   showTabs: boolean
   setshowTabs: React.Dispatch<React.SetStateAction<boolean>>
-  // storage: Storage
-  // DEBUG: boolean
 }
 
 export default SettingsProvider

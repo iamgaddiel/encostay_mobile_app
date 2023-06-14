@@ -1,0 +1,44 @@
+.booking_process {
+    display: flex;
+    justify-content: space-between;
+    height: 100px;
+}
+
+.booking_process>div {
+    margin: 0 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    border-radius: 25px;
+}
+
+.booking_process .booking_process_stage {
+    flex: 1;
+    background-color: var(--light-orange);
+}
+
+.booking_process .booking_process_stage_currnet {
+    background-color: var(--tertiary);
+    flex: 3;
+    color: #ffffff;
+}
+
+
+/* 
+    ===================== [ Booking Time ]
+ */
+.booking_calander {
+    background-color: var(--light-blue);
+    width: 7.3rem;
+    height: 25vh;
+    padding: 20px;
+}
+
+.booking_calander_item {
+    background-color: #ffffff;
+    width: 100%;
+    padding: 12px;
+    height: 4.5rem;
+    font-size: medium;
+}

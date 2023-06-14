@@ -1,0 +1,13 @@
+.payment_wrapper{
+    height: 100%;
+}
+
+.reciving_wapper{
+    width: 250px;
+    overflow: hidden;
+    margin: auto;
+}
+.reciving_wapper img{
+    width: 100%;
+    height: auto;
+}

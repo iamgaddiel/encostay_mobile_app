@@ -1,0 +1,63 @@
+:root {
+    /* --ion-background-color: var(--tertiary) !important; */
+    /* --ion-background-color: black; */
+}
+
+
+/* Reset Justify-content: space-between */
+.ion-page {
+    justify-content: start;
+}
+
+.page_wrapper {
+    background: var(--primary-3);
+}
+
+ion-searchbar.home_search_bar {
+    --background: transparent;
+}
+
+.search_section {
+    background: #ffffff;
+    border-radius: 20px;
+    margin-top: 15px;
+    padding: 0 7px
+}
+
+
+/* 
+----------------------------
+Account CAategory
+---------------------------
+ */
+.apartment_cateogry_item {
+    padding: 10px;
+    border: 1px solid var(--secondary);
+    margin: 0 4px;
+    border-radius: 12px;
+    background-color: #ffffff;
+}
+
+.apartment_cateogry_item_active {
+    background: var(--secondary);
+    color: #ffffff;
+}
+
+
+
+
+
+/* 
+-------------------------
+HOst DAshboard View Earning Card
+-------------------------
+ */
+.view_earnings{
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 150px;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+}

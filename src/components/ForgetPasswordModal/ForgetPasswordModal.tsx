@@ -1,9 +1,16 @@
 import { IonContent, IonToolbar, IonTitle, IonLabel, IonInput, IonButton } from "@ionic/react"
-import { swiper } from "../../signals/passwordResetSignal"
+import { passwordResetSwipeSignal } from "../../signals/swiperAtom";
+
+
+
 
 function ForgetPasswordModal() {
-    
-    // TODO: send otp to email
+
+    const handleNext = () => {
+        // TODO: send otp to email
+        passwordResetSwipeSignal.value?.slideNext()
+    };
+
 
     return (
         <>
@@ -30,9 +37,9 @@ function ForgetPasswordModal() {
                     className='nm_btn yellow_fill w-100'
                     mode='ios'
                     type='submit'
-                    onClick={() => swiper.value?.slideNext()}
+                    onClick={handleNext}
                 >
-                    Continue2
+                    Continue
                 </IonButton>
             </section>
         </>
