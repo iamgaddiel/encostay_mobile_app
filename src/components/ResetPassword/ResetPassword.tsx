@@ -1,4 +1,4 @@
-import { forgetPasswordState } from '../../signals/passwordResetAtom'
+import { forgetPasswordAtom } from '../../atoms/passwordResetAtom'
 import PasswordRestForm from '../PasswordRestForm/PasswordRestForm'
 import PasswordResetSuccessful from '../PasswordResetSuccessful/PasswordResetSuccessful'
 import PasswordResetFailed from '../PasswordResetFailed/PasswordResetFailed'
@@ -6,15 +6,17 @@ import PasswordResetFailed from '../PasswordResetFailed/PasswordResetFailed'
 
 // css
 import "./ResetPassword.css"
+import { useRecoilState } from 'recoil'
 
 const ResetPassword = () => {
+    const [forgetPassword, setForgetPassword] = useRecoilState(forgetPasswordAtom)
 
-    if (forgetPasswordState.value === "success") {
+    if (forgetPassword === "success") {
         return <PasswordResetSuccessful />
     }
 
 
-    if (forgetPasswordState.value === "failed") {
+    if (forgetPassword === "failed") {
         return <PasswordResetFailed />
     }
 

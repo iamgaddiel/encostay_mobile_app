@@ -1019,19 +1019,6 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
-"@preact/signals-core@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@preact/signals-core/-/signals-core-1.2.3.tgz#36bf8b31027a5b9ade9e50cf9fba80614e8a2354"
-  integrity sha512-Kui4p7PMcEQevBgsTO0JBo3gyQ88Q3qzEvsVCuSp11t0JcN4DmGCTJcGRVSCq7Bn7lGxJBO+57jNSzDoDJ+QmA==
-
-"@preact/signals-react@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@preact/signals-react/-/signals-react-1.2.2.tgz#16046c533e7e7592419d6dd21f9017cca3963f6b"
-  integrity sha512-GoESQ9n1bns2FD+8yqH7lBvQMavboKLCNEW+s0hs3Wcp5B1VHvVxwJo6aFs6rpxoh1/q8Tvwbi4vIeehBD2mzA==
-  dependencies:
-    "@preact/signals-core" "^1.2.3"
-    use-sync-external-store "^1.2.0"
-
 "@prettier/plugin-xml@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@prettier/plugin-xml/-/plugin-xml-2.2.0.tgz#2bc2ae667aa817369fdb939aa7d36ea88105483d"
@@ -5365,11 +5352,6 @@ open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-operation@5.0.x:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/operation/-/operation-5.0.2.tgz#e06c22861c8158b4610b7a25e5693a84b9a0bd49"
-  integrity sha512-tFuFcNZMND6vA40IX+faGKE4xrsM9IIqgHf4peTqB1aMLIB0RwjFMzMq5DP0SgWuUEcKGWJFqOCh7xlH2lP50A==
-
 optionator@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"
@@ -6364,13 +6346,6 @@ signal-exit@^3.0.2, signal-exit@^3.0.3:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
 
-signal@^7.0.6:
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/signal/-/signal-7.0.6.tgz#aca1911697c4607b0dcaa57b4e57d14e7c02620f"
-  integrity sha512-9SnDOIATtoRktT5ePD68F+B5i3ZugSBHB1HrBhaI/kkhaMBaMMatoDn+ajdgnFE5Xz1hWliLkpwVEnj3+S+ntg==
-  dependencies:
-    operation "5.0.x"
-
 simple-concat@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/simple-concat/-/simple-concat-1.0.1.tgz#f46976082ba35c2263f1c8ab5edfe26c41c9552f"
@@ -7180,11 +7155,6 @@ url-parse@^1.5.3:
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
-
-use-sync-external-store@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz#7dbefd6ef3fe4e767a0cf5d7287aacfb5846928a"
-  integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

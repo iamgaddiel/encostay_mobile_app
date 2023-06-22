@@ -4,7 +4,7 @@ import React from 'react'
 import SideMenu from '../SideMenu/SideMenu'
 import SpaceBetween from '../style/SpaceBetween'
 import Slider from 'react-slick'
-import { rooms } from '../../signals/demoSignals'
+import { rooms } from '../../atoms/demoSignals'
 
 // images
 import Pana from "../../assets/images/pana.svg"

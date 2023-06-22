@@ -2,7 +2,7 @@ import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, I
 import { optionsOutline } from 'ionicons/icons'
 import React from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
-import { rooms } from '../../signals/demoSignals'
+import { rooms } from '../../atoms/demoSignals'
 import HomeListCard from '../../components/HomeListCard/HomeListCard'
 
 const AppartmentSearch = () => {

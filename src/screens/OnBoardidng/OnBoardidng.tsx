@@ -19,7 +19,6 @@ import P3 from "../../assets/images/3.svg"
 import { useHistory } from 'react-router';
 
 // import useSwipe from '../../hooks/useSwipe';
-import { onBoardingSwipeSignal } from '../../signals/swiperAtom';
 
 
 
@@ -59,6 +58,7 @@ const OnBoardidng = () => {
     // states
     const [nextBtnText, setNextBtnText] = useState("Next")
     const [paginationImage, setPaginationImage] = useState(P1)
+    const [onBoardingSwipe, setOnBoardingSwip] = useState<any | null>(null)
 
 
     //hooks
@@ -75,9 +75,9 @@ const OnBoardidng = () => {
         //     }
         // }
 
-        if (onBoardingSwipeSignal.value !== null) {
-            if (!onBoardingSwipeSignal.value?.isEnd){
-                onBoardingSwipeSignal.value?.slideNext();
+        if (onBoardingSwipe !== null) {
+            if (!onBoardingSwipe?.isEnd){
+                onBoardingSwipe?.slideNext();
                 return
             }
         }
@@ -87,7 +87,7 @@ const OnBoardidng = () => {
 
     function handleSlideChange() {
         // switch (swiper.value?.activeIndex) {
-        switch (onBoardingSwipeSignal.value?.activeIndex) {
+        switch (onBoardingSwipe?.activeIndex) {
             case 0:
                 setPaginationImage(P1)
                 break
@@ -101,7 +101,7 @@ const OnBoardidng = () => {
                 break
         }
 
-        onBoardingSwipeSignal.value.isEnd && setNextBtnText("Get Started")
+        onBoardingSwipe?.isEnd && setNextBtnText("Get Started")
 
     }
 
@@ -116,14 +116,14 @@ const OnBoardidng = () => {
                     onSlideChange={() => handleSlideChange()}
                     pagination={true}
                     allowSlidePrev={false}
-                    onSwiper={swp => onBoardingSwipeSignal.value = swp}
+                    onSwiper={swp => setOnBoardingSwip(swp)}
                 >
                     {
                         slides.map((slide) => (
                             <SwiperSlide key={slide.slideIndex}>
                                 <section className="onboarding_images">
-                                    <div className="hero_image">
-                                        <IonImg src={slide.image} />
+                                    <div className="hero_image" style={{ backgroundImage: `url(${slide.image})`}}>
+                                        {/* <IonImg src={slide.image} /> */}
                                     </div>
 
                                     <div className="hero_heading">

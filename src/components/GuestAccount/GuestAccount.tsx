@@ -1,7 +1,7 @@
 import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent } from "@ionic/react";
 import { heart, bedOutline, wifiOutline, chevronForwardOutline } from "ionicons/icons";
 import Slider from "react-slick";
-import { rooms } from "../../signals/demoSignals";
+import { rooms } from "../../atoms/demoSignals";
 import SpaceBetween from "../style/SpaceBetween";
 import React from "react";
 

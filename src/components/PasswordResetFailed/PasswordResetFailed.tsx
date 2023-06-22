@@ -1,11 +1,12 @@
-import React from 'react'
 import FailedSign from "../../assets/images/failure.svg"
 import { IonToolbar, IonTitle, IonButton, IonImg } from '@ionic/react'
-import { forgetPasswordState } from '../../signals/passwordResetAtom'
+import { forgetPasswordAtom } from '../../atoms/passwordResetAtom'
+import { useRecoilState } from 'recoil'
 
 const PasswordResetFailed = () => {
+    const [_, setForgetPassword] = useRecoilState(forgetPasswordAtom)
 
-    const handleReset = () =>  forgetPasswordState.value = "none"
+    const handleReset = () =>  setForgetPassword("none")
 
     return (
         <>

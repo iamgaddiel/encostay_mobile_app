@@ -1,7 +1,6 @@
 import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink } from '@ionic/react'
 import { useState } from 'react'
 import OrSeperator from '../../components/OrSeperator/OrSeperator'
-import { useSignal } from '@preact/signals-react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { eyeOffOutline, eyeOutline, logoFacebook } from 'ionicons/icons'
 
@@ -18,10 +17,9 @@ import GoogleLogo from "../../assets/images/search.png"
 // components
 import SpaceBetween from '../../components/style/SpaceBetween'
 import RenderPasswordResetModal from '../../components/RenderPasswordResetModal/RenderPasswordResetModal';
-import { passwordResetSwipeSignal } from '../../signals/swiperAtom';
-import { slides } from '../../signals/passwordResetAtom';
 import { useHistory } from 'react-router';
-
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { passwordResetSwipeAtom, slidesAtom } from '../../atoms/passwordResetAtom';
 
 
 
@@ -38,13 +36,19 @@ const Login = () => {
 
 
   // signal
-  const slideCount = useSignal(0)
+  // const slideCount = useSignal(0)
 
 
   // states
   const [showPassword, setShowPassword] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [modalTitle, setModalTitle] = useState("")
+  const [slideCount, setSlideCount] = useState(0)
+
+
+  // Recoil
+  const slides = useRecoilValue(slidesAtom)
+  const [passwordResetSwipe, setPasswordResetSwipe] = useRecoilState(passwordResetSwipeAtom)
 
 
   // refs
@@ -56,7 +60,7 @@ const Login = () => {
   // functions
 
   function dismissModal(): void {
-    slideCount.value = 0
+    setSlideCount(0)
     setShowModal(false)
   }
 
@@ -76,8 +80,10 @@ const Login = () => {
             <IonButton className="sm_btn brown_fill" shape='round'>
               Login
             </IonButton>
-            <IonRouterLink routerDirection='forward' routerLink='/register'>
-              Sign Up
+            <IonRouterLink routerDirection='forward' routerLink='/register' className="">
+              <small>
+                Sign Up
+              </small>
             </IonRouterLink>
           </SpaceBetween>
         </section>
@@ -151,11 +157,11 @@ const Login = () => {
             <Swiper
               spaceBetween={50}
               slidesPerView={1}
-              onSwiper={swp => passwordResetSwipeSignal.value = swp}
+              onSwiper={swp => setPasswordResetSwipe(swp)}
               allowSlidePrev={false}
             >
               {
-                slides.value.map((_, indx) => (
+                slides?.map((_, indx) => (
                   <SwiperSlide key={indx}>
                     <RenderPasswordResetModal index={indx} />
                   </SwiperSlide>
@@ -167,11 +173,11 @@ const Login = () => {
         </IonModal>
 
 
-        <section className='mt-5'>
+        <section className='mt-4'>
           <OrSeperator speratorText='Or login with' className='mx-auto w-75' />
 
 
-          <SpaceBetween className='mt-2 mx-auto ion-padding-horizontal w-75'>
+          <SpaceBetween className='mt-4 mx-auto  w-75'>
             {/* Google Btn */}
             <IonButton shape='round' className='social_btns' color={'light'} >
               <IonImg src={GoogleLogo} className='w-25 ion-margin-end' />

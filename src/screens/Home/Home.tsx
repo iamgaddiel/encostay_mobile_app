@@ -19,14 +19,15 @@ import Slider from "react-slick";
 
 // cotexts
 import { SettingsContext, SettingsContextType } from '../../contexts/SettingsContext'
-import { showTabs } from '../../signals/settingsSignals'
 import { useHistory } from 'react-router'
-import { rooms } from '../../signals/demoSignals'
+import { rooms } from '../../atoms/demoSignals'
 
 
 import OwlCarousel from "react-owl-carousel2"
 import GuestsAccount from '../../components/GuestAccount/GuestAccount'
 import HostAccount from '../../components/HostAccount/HostAccount'
+import { useRecoilState } from 'recoil'
+import { utilsAtom } from '../../atoms/utilityAtom'
 
 
 
@@ -42,12 +43,12 @@ const Home = () => {
     const history = useHistory()
     const [active, setActive] = useState(true)
     const [account, setAccount] = useState<Account>("host")
-    showTabs.value = true
 
 
+    const [utils, setUtilValue] = useRecoilState(utilsAtom)
 
     useEffect(() => {
-        showTabs.value = true
+        setUtilValue({...utils, showTabs: true})
     }, [])
 
 

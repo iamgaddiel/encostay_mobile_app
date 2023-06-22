@@ -1,14 +1,17 @@
-import { IonContent, IonToolbar, IonTitle, IonLabel, IonInput, IonButton } from "@ionic/react"
-import { passwordResetSwipeSignal } from "../../signals/swiperAtom";
+import { IonToolbar, IonTitle, IonLabel, IonInput, IonButton } from "@ionic/react"
+import { useRecoilValue } from "recoil";
+import { passwordResetSwipeAtom } from "../../atoms/passwordResetAtom";
+
 
 
 
 
 function ForgetPasswordModal() {
+    const passwordResetSwipe = useRecoilValue(passwordResetSwipeAtom)
 
     const handleNext = () => {
         // TODO: send otp to email
-        passwordResetSwipeSignal.value?.slideNext()
+        passwordResetSwipe?.slideNext()
     };
 
 

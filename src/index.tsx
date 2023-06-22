@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import SettingsProvider from './contexts/SettingsContext';
 import AuthProvider from './contexts/AuthContext';
 import StorageProvider from './contexts/StorageContext';
+import { RecoilRoot } from 'recoil';
 
 
 
@@ -13,7 +14,9 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <App />
+    <SettingsProvider>
+      <App />
+    </SettingsProvider>
   </React.StrictMode>
 );
 

@@ -26,7 +26,6 @@
     "@ionic/react": "^7.0.0",
     "@ionic/react-router": "^7.0.0",
     "@ionic/storage": "^3.0.6",
-    "@preact/signals-react": "^1.2.2",
     "@splidejs/react-splide": "^0.7.12",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
@@ -46,7 +45,6 @@
     "react-router-dom": "^5.3.4",
     "react-slick": "^0.29.0",
     "recoil": "^0.7.7",
-    "signal": "^7.0.6",
     "slick-carousel": "^1.8.1",
     "swiper": "^9.2.0"
   },

@@ -1,9 +1,8 @@
 import { IonButton, IonContent, IonImg, IonPage } from '@ionic/react'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 
 // import { showTabs } from "../../atoms/settingsAtom"
 import { useRecoilState } from "recoil"
-import { showTabs } from '../../signals/settingsSignals'
 
 
 // images
@@ -13,14 +12,15 @@ import Overlay from "../../assets/images/Oval.png"
 
 // style
 import "./Landidng.css"
+import { utilsAtom } from '../../atoms/utilityAtom'
 
 
 const Landing = () => {
-  // const [showTabs, setShowTabs] = useRecoilState(showTabsState)
+  const [utils, setUtilValue] = useRecoilState(utilsAtom)
 
 
   useEffect(() => {
-    showTabs.value = false;
+    setUtilValue({ ...utils, showTabs: false})
   }, [])
 
 

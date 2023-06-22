@@ -1,28 +1,57 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import "./Register.css"
-import { IonButton, IonButtons, IonContent, IonDatetime, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonSelect, IonSelectOption } from '@ionic/react'
+import { IonButton, IonContent, IonDatetime, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonSelect, IonSelectOption } from '@ionic/react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { useHistory } from 'react-router'
+import { useForm, SubmitHandler } from "react-hook-form";
+import { RegistrationInputs } from '../../@types/auth'
+import { useRecoilState } from 'recoil'
+import { registrationAtom } from '../../atoms/authAtom'
+
+
 
 
 
 const Register = () => {
-  // TODO: handle accessing datetime value
-  // TODO: change ion-select modal btn color and dropdown color
-  // TODO: store form data in registrationSignal
-  // TODO: 
+
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegistrationInputs>();
 
   //hooks
   const history = useHistory()
+  const [regFormData, setRegFormData] = useRecoilState(registrationAtom) 
 
   // states
   const [selectedBirthday, setSelectedBirthday] = useState("")
   const [openModal, setOpenModal] = useState(false)
 
+
   // refs
   const birthdayModal = useRef<null | HTMLIonModalElement>(null)
   const datepicker = useRef<null | HTMLIonDatetimeElement>(null)
+
+
+
+
+
+  const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
+    const formData = { 
+      ...regFormData, 
+      ...data, 
+      name: `${data.first_name} ${data.last_name}` 
+    }
+    setRegFormData(formData)
+    history.push('/passwords')
+  }
+
+
+  function processData(dataTime: string) {
+    // const time = dataTime.split('T')[1]
+    const date = dataTime.split('T')[0]
+    setSelectedBirthday(date)
+  }
+
+
 
   return (
     <IonPage>
@@ -44,120 +73,143 @@ const Register = () => {
 
         <section className='px-3'>
 
+          <form onSubmit={handleSubmit(onSubmitForm)}>
 
-          {/* First Name */}
-          <div className='form_inputs my-4  mt-4'>
-            <IonLabel>First Name</IonLabel>
-            <IonInput type='text' placeholder='Enter your first name' className='mt-2 p-2 mx-0' />
-          </div>
+            {/* First Name */}
+            <div className='form_inputs my-4  mt-4'>
+              <IonLabel>First Name</IonLabel>
+              <IonInput
+                type='text'
+                placeholder='Enter your first name'
+                className='mt-2 p-2 mx-0'
+                {...register("first_name", { required: true })}
+              />
+              {errors.first_name && <small className='text-danger'>This field is required</small>}
+            </div>
 
-          {/* Last Name */}
-          <div className='form_inputs my-4  mt-4'>
-            <IonLabel>Last Name</IonLabel>
-            <IonInput type='text' placeholder='Enter your last name' className='mt-2 p-2 mx-0' />
-          </div>
+            {/* Last Name */}
+            <div className='form_inputs my-4  mt-4'>
+              <IonLabel>Last Name</IonLabel>
+              <IonInput
+                type='text'
+                placeholder='Enter your last name'
+                className='mt-2 p-2 mx-0'
+                {...register("last_name", { required: true })}
+              />
+              {errors.last_name && <small className='text-danger'>This field is required</small>}
+            </div>
 
-          <div className='ion-text-center  mt-4'>
-            <small className='text-muted'>Make sure it matches your name on your government ID</small>
-            <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
-          </div>
+            <div className='ion-text-center  mt-4'>
+              <small className='text-muted'>Make sure it matches your name on your government ID</small>
+              <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
+            </div>
 
-          {/* Email */}
-          <div className='form_inputs my-4  mt-4'>
-            <IonLabel>Email</IonLabel>
-            <IonInput type='email' placeholder='Enter your first name' className='mt-2 p-2 mx-0' />
-          </div>
+            {/* Email */}
+            <div className='form_inputs my-4  mt-4'>
+              <IonLabel>Email</IonLabel>
+              <IonInput
+                type='email'
+                placeholder='Enter your email'
+                className='mt-2 p-2 mx-0'
+                {...register("email", { required: true })}
+              />
+              {errors.email && <small className='text-danger'>This field is required</small>}
+            </div>
 
-          {/* Birthday */}
-          <div className='form_inputs my-4  mt-4'>
-            <IonLabel>Birthday</IonLabel>
-            <IonInput
-              type='date'
-              placeholder='Enter your first name'
-              className='mt-2 p-2 mx-0'
-              onClick={() => setOpenModal(true)}
-              value={selectedBirthday as string}
-            />
+            {/* Phone */}
+            <div className='form_inputs my-4  mt-4'>
+              <IonLabel>Phone</IonLabel>
+              <IonInput
+                type='tel'
+                placeholder='+2345 656 5678'
+                className='mt-2 p-2 mx-0'
+                {...register("phone", { required: true })}
+              />
+              {errors.phone && <small className='text-danger'>This field is required</small>}
+            </div>
 
-            {/* Birthday Modal */}
-            <IonModal
-              ref={birthdayModal}
-              className='birthday_modal'
-              trigger='birthday_modal'
-              isOpen={openModal}
-              onDidDismiss={() => setOpenModal(false)}
+            {/* Birthday */}
+            <div className='form_inputs my-4  mt-4'>
+              <IonLabel>Birthday</IonLabel>
+              <IonInput
+                type='date'
+                placeholder='Enter your first name'
+                className='mt-2 p-2 mx-0'
+                onClick={() => setOpenModal(true)}
+                value={selectedBirthday as string}
+                {...register("birthday", { required: true })}
+              />
+              {errors.email && <small className='text-danger'>This field is required</small>}
+
+              {/* Birthday Modal */}
+              <IonModal
+                ref={birthdayModal}
+                className='birthday_modal'
+                isOpen={openModal}
+                onDidDismiss={() => setOpenModal(false)}
+              >
+                <IonContent>
+                  <IonDatetime
+                    // onIonChange={e => setSelectedBirthday(e.detail?.value as string)}
+                    onIonChange={e => processData(e.detail?.value as string)}
+                    color={"warning"}
+                    presentation='date'
+                    ref={datepicker}
+                    showDefaultButtons
+                  >
+                  </IonDatetime>
+                </IonContent>
+              </IonModal>
+
+            </div>
+
+
+            {/* Type */}
+            <div className='form_inputs my-4 mt-4  mx-0'>
+              <IonLabel className="ion-margin-bottom">Acount type</IonLabel>
+              <IonSelect placeholder='I am guest' className='ion-margin-top' {...register("account_type", { required: true })}>
+                <IonSelectOption value={"guest"}>Guest</IonSelectOption>
+                <IonSelectOption value={"host"}>Host</IonSelectOption>
+              </IonSelect>
+              {errors.account_type && <small className='text-danger'>This field is required</small>}
+            </div>
+
+
+            <section className="mt-5 ion-text-center text-muted" style={{ padding: ".5rem" }}>
+              <small>To use sign up, you need be at least 18. Other people who use Encostay won't see your birthday.</small>
+            </section>
+
+            <section className="mt-4 ion-text-center text-muted" style={{ padding: ".5rem" }}>
+              <small>
+                By selecting Agree and continue below, I agree to Encostay's
+                Terms of Service, Payments Terms of Service, Privacy Policy,
+                and Nondiscrimination Policy.
+              </small>
+            </section>
+            {/* 
+            {
+              loading ?
+                <IonButton expand='block' className='fill mt-5' shape='round' size="large" type='submit'>
+                  <div className='spinner-border'>
+                  </div>
+                </IonButton>
+                :
+                <IonButton expand='block' className='fill mt-5' shape='round' size="large" type='submit'>
+                  Sign Up
+                </IonButton>
+            } */}
+
+            <IonButton
+              expand='block'
+              shape='round'
+              className='nm_btn yellow_fill mt-5 w-100 fw-700 p-2 my-5'
+              mode='ios'
+              type='submit'
             >
-              <IonContent>
-                <IonDatetime
-                  // showDefaultTimeLabel={false}
-                  // onIonChange={e => setSelectedBirthday(e.detail?.value as string)}
-                  onIonChange={e => console.log(e.detail?.value as string)}
-                  color={"warning"}
-                  presentation='date'
-                >
-                  <IonButtons slot="buttons" className='d-flex justify-content-between'>
-                    {/* Cancel Btn */}
-                    <IonButton
-                      className='modal_btn modal_outline_btn border-light'
-                      expand='block'
-                      shape='round'
-                      fill='outline'
-                      onClick={() => birthdayModal.current?.dismiss()}
-                    >
-                      Cancel All
-                    </IonButton>
+              Agree and Continue
+            </IonButton>
 
-                    {/* Save Btn */}
-                    <IonButton
-                      className='yellow_fill  modal_btn'
-                      expand='block'
-                      fill='default'
-                      shape='round'
-                      onClick={() => datepicker.current?.confirm()}
-                    >
-                      Save
-                    </IonButton>
-                  </IonButtons>
-                </IonDatetime>
-              </IonContent>
-            </IonModal>
-
-          </div>
-
-
-          {/* Type */}
-          <div className='form_inputs my-4 mt-4  mx-0'>
-            <IonLabel className="ion-margin-bottom">How do you want to use Encostay</IonLabel>
-            <IonSelect placeholder='I want to book an apartment' className='ion-margin-top'>
-              <IonSelectOption value={"guest"}>Book an apartment</IonSelectOption>
-              <IonSelectOption value={"owner"}>Offer an apartment</IonSelectOption>
-            </IonSelect>
-          </div>
-
-
-          <section className="mt-5 ion-text-center text-muted" style={{ padding: ".5rem" }}>
-            <small>To use sign up, you need be at least 18. Other people who use Encostay won't see your birthday.</small>
-          </section>
-
-          <section className="mt-4 ion-text-center text-muted" style={{ padding: ".5rem" }}>
-            <small>
-              By selecting Agree and continue below, I agree to Encostay's
-              Terms of Service, Payments Terms of Service, Privacy Policy,
-              and Nondiscrimination Policy.
-            </small>
-          </section>
-
-
-          <IonButton
-            expand='block'
-            shape='round'
-            className='nm_btn yellow_fill mt-5 w-100 fw-700 p-2 my-5'
-            mode='ios'
-            routerDirection='forward'
-            routerLink='/passwords'
-          >
-            Agree and Continue
-          </IonButton>
+          </form>
 
         </section>
 

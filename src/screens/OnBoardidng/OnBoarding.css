@@ -1,17 +1,15 @@
 .hero_image{
     width: 75vw;
-    border-radius: 0 0 0 20px;
+    border-radius: 0 0 0 30px;
     margin-left: auto;
     overflow: hidden;
-    height: fit-content;
+    height: 60vh;
     position: relative;
     right: -20px;
-    
-    /* width: 280px; */
-    /* height: 463px; */
-    /* position: absolute; */
-    /* top: 0; */
-    /* left: 375px; */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .hero_images img{

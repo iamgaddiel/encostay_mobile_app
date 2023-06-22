@@ -1,11 +1,13 @@
 import { IonToolbar, IonTitle, IonLabel, IonInput, IonIcon, IonButton } from '@ionic/react'
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons'
 import { useState } from 'react'
-import { forgetPasswordState } from '../../signals/passwordResetAtom'
+import { forgetPasswordAtom } from '../../atoms/passwordResetAtom'
+import { useRecoilState } from 'recoil'
 
 const PasswordRestForm = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [forgetPassword, setForgetPassword] = useRecoilState(forgetPasswordAtom)
     
 
     async function handlePasswordReset(){
@@ -13,9 +15,10 @@ const PasswordRestForm = () => {
         
         //todo: if failed
         // forgetPasswordState.value = "failed"
+        // setForgetPassword("failed")
 
         //todo: if success
-        forgetPasswordState.value = "success"
+        setForgetPassword("success")
     }
 
     return (

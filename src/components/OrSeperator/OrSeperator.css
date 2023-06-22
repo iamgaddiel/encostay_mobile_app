@@ -6,10 +6,11 @@
 
 .or_seperator_wrpper span{
     display: block;
+    font-size: small;
 }
 
 .or_border{
     background-color: #333333;
-    width: 30%;
+    width: 25%;
     height: 1.4px;
 }

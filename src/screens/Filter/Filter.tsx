@@ -1,10 +1,9 @@
 import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonRange, IonText, IonTitle, IonToolbar } from '@ionic/react'
-import React from 'react'
-import { showTabs } from '../../signals/settingsSignals'
-
+import React, { useContext, useEffect } from 'react'
 // css
 import "./Filter.css"
 import { chevronBackCircleOutline } from 'ionicons/icons'
+import { SettingsContext, SettingsContextType } from '../../contexts/SettingsContext'
 
 const Filter = () => {
     // todo: set min range state
@@ -12,7 +11,12 @@ const Filter = () => {
     // todo: set average
 
 
-    showTabs.value = false
+    const { setshowTabs } = useContext(SettingsContext) as SettingsContextType
+    
+
+    useEffect(() => {
+        setshowTabs(false)
+    })
 
 
     return (
