@@ -14,7 +14,7 @@ export const passwordResetSwipeAtom = atom<any | null>({
 export const slidesAtom = atom<string[]>({
     key: "SLIDES",
     default: [
-        "forget password",
+        "forget_password",
         "otp",
         "reset",
     ]

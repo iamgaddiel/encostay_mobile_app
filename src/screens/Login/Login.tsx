@@ -1,8 +1,8 @@
-import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonToast } from '@ionic/react'
 import { useState } from 'react'
 import OrSeperator from '../../components/OrSeperator/OrSeperator'
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { eyeOffOutline, eyeOutline, logoFacebook } from 'ionicons/icons'
+import { eyeOffOutline, eyeOutline, logoFacebook, warning } from 'ionicons/icons'
 
 
 
@@ -20,6 +20,12 @@ import RenderPasswordResetModal from '../../components/RenderPasswordResetModal/
 import { useHistory } from 'react-router';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { passwordResetSwipeAtom, slidesAtom } from '../../atoms/passwordResetAtom';
+import { LoginInputs } from '../../@types/auth';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { createApiCollection } from '../../helpers/apiHelpers';
+import { authenticate } from '../../helpers/authSDK';
+import { saveData } from '../../helpers/storageSDKs';
+import { USER } from '../../helpers/keys';
 
 
 
@@ -33,6 +39,8 @@ const Login = () => {
 
 
   // 3rd party hooks
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<LoginInputs>();
+
 
 
   // signal
@@ -42,6 +50,9 @@ const Login = () => {
   // states
   const [showPassword, setShowPassword] = useState(false)
   const [showModal, setShowModal] = useState(false)
+
+  const [toast, setToast] = useState({ isOpen: false, message: "" })
+
   const [modalTitle, setModalTitle] = useState("")
   const [slideCount, setSlideCount] = useState(0)
 
@@ -64,11 +75,35 @@ const Login = () => {
     setShowModal(false)
   }
 
+  const onSubmitForm: SubmitHandler<LoginInputs> = async ({ email, password }) => {
+
+    const { is_authenticated, record, token, message: responseMessage } = await authenticate(email, password)
+
+    if (is_authenticated) {
+      console.log('Authenticated')
+      // saveData(USER, { token, record })
+      // history.push('/dashboard')
+      return
+    }
+
+    setToast({ message: responseMessage!, isOpen: true, })
+  }
+
 
 
   return (
     <IonPage>
       <IonContent className="ion-padding">
+
+        <IonToast
+          icon={warning}
+          position='bottom'
+          message={toast.message}
+          isOpen={toast.isOpen}
+          onDidDismiss={() => setToast({ isOpen: false, message: "" })}
+          color={"danger"}
+          duration={4000}
+        />
 
         <section className="login_logo mx-auto mt-5">
           <IonImg src={Logo} />
@@ -91,12 +126,18 @@ const Login = () => {
 
         <section className='mt-5 ion-padding'>
 
-          <form action="">
+          <form onSubmit={handleSubmit(onSubmitForm)}>
 
             {/* Email */}
             <div className='form_inputs ion-margin-vertical'>
               <IonLabel>Email</IonLabel>
-              <IonInput type='email' placeholder='Enter your Email' className='mt-2 p-2' />
+              <IonInput
+                type='email'
+                placeholder='Enter your Email'
+                className='mt-2 p-2'
+                {...register("email", { required: true })}
+              />
+              {errors.email && <small className='text-danger'>This field is required</small>}
             </div>
 
             {/* Password */}
@@ -106,7 +147,9 @@ const Login = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder='Enter your password'
                 className='mt-2 p-2'
+                {...register("password", { required: true })}
               />
+              {errors.password && <small className='text-danger'>This field is required</small>}
 
               {/* Toggle Password Visibility */}
               <IonIcon
@@ -133,8 +176,7 @@ const Login = () => {
               shape='round'
               className='nm_btn yellow_fill mt-5 w-100'
               mode='ios'
-              // type='submit' // todo: uncomment this
-              onClick={() => history.push("/home")} // todo: remove this
+              type='submit' // todo: uncomment this
             >
               Login
             </IonButton>
@@ -161,9 +203,9 @@ const Login = () => {
               allowSlidePrev={false}
             >
               {
-                slides?.map((_, indx) => (
-                  <SwiperSlide key={indx}>
-                    <RenderPasswordResetModal index={indx} />
+                slides?.map((screen, indx) => (
+                  <SwiperSlide>
+                    <RenderPasswordResetModal />
                   </SwiperSlide>
                 ))
               }

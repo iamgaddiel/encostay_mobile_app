@@ -1,5 +1,5 @@
 import { atom } from "recoil"
-import { RegistrationInputs } from "../@types/auth"
+import { LoginInputs, RegistrationInputs } from "../@types/auth"
 
 
 
@@ -18,4 +18,14 @@ export const registrationAtom = atom<RegistrationInputs>({
         name: "",
     }
 })
+
+// export const loginAtom = atom<LoginInputs>({
+//     key: "USER_REGISTRATION",
+//     default: {
+//         email: "",
+//         password: "",
+//     }
+// })
+
+
 

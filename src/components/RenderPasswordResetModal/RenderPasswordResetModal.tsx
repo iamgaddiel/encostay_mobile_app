@@ -6,27 +6,27 @@ import ResetPassword from '../ResetPassword/ResetPassword'
 
 
 interface Props {
-    index: number
+    screen: string
 }
 
-const RenderPasswordResetModal: React.FC<Props> = ({ index}) => {
+const RenderPasswordResetModal: React.FC = () => {
 
 
-    function renderModal(modalIndex: number) {
-        switch (modalIndex) {
-            case 0:
-                return <ForgetPasswordModal />
+    function renderModal(screen: string) {
+        switch (screen) {
+            // case 'forget_password':
+            //     return <ForgetPasswordModal />
 
-            case 1:
+            case 'otp':
                 return <OtpModal />
 
-            case 2:
+            case 'reset':
                 return <ResetPassword />
         }
     }
 
     return (
-        <>{renderModal(index)}</>
+        <ForgetPasswordModal />
     )
 }
 

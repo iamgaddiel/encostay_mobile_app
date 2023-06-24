@@ -1,26 +1,63 @@
 import { CreateUserType, StoredUser } from "../@types/users"
+import { _post } from "./api"
 import { USRS_COLLECTION, USER } from "./keys"
 import Settings from "./settings"
 import { getSaveData } from "./storageSDKs"
 
 
-const { pb } = Settings()
+const { pb, DEBUG } = Settings()
 
 
 
 
-export async function authenticate(email: string, password: string) {
+
+interface AuthenReturn {
+    token?: string
+    is_authenticated: boolean
+    message?: string
+    record?: any
+}
+
+
+export async function authenticate(email: string, password: string): Promise<AuthenReturn | any> {
     try {
-        const authData = await pb.collection(USRS_COLLECTION).authWithPassword(
-            email,
-            password
-        )
-        return authData
+        const url = `${pb.baseUrl}/collections/users/auth-with-password`
 
-    } catch (err) {
-        return err
+        const requestData = { identity: email, password }
+
+        const headers = { 'Content-Type': 'application/json' }
+
+        const { data: responseObject } = await _post(url, requestData, headers) // 1st level data
+
+        const { data, code, token, record }: any = responseObject // 2nd level data
+
+        // * Display cosole log if app in debug mode
+        if (DEBUG)
+            console.log("🚀 ~ file: authSDK.ts:44 ~ authenticate ~ responseObject:", responseObject)
+
+        // ! Faid Authentication Checks
+        if (code === 400 && data?.identity) {
+            const { message } = data?.identity // 3rd level data
+            return { is_authenticated: false, message: `Identity: ${message}` }
+        }
+
+        if (code === 400) {
+            return { is_authenticated: false, message: `${responseObject?.message}` }
+        }
+
+        // * Display cosole log if app in debug mode
+        if (DEBUG) {
+            console.log("🚀 ~ file: authSDK.ts:18 ~ authenticate ~ record:", record)
+            console.log("🚀 ~ file: authSDK.ts:18 ~ authenticate ~ token:", token)
+        }
+
+        return { token, record, is_authenticated: true }
+    }
+    catch (err) {
+        return { is_authenticated: false, message: err as string }
     }
 }
+
 
 export async function createUser(data: CreateUserType) {
     try {
