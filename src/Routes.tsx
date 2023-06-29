@@ -35,10 +35,12 @@ import WithdrawReceiving from './screens/WithdrawReceiving'
 import Withdrawal from './screens/Withdrawal'
 import { useRecoilValue } from 'recoil'
 import { utilsAtom } from './atoms/utilityAtom'
+import Appartments from './screens/Appartments/Appartments'
+import AddApartments from './screens/AddApartments/AddApartments'
 
 const Routes = () => {
     const { showTabs } = useRecoilValue(utilsAtom)
-    
+
     return (
         <IonReactRouter>
 
@@ -72,11 +74,15 @@ const Routes = () => {
             <Route exact path="/withdraw" render={() => <Withdrawal />} />
             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
+            <Route exact path="/appartments" render={() => <Appartments />} />
+            <Route exact path="/add_apartment" render={() => <AddApartments />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/add_apartment" render={() => <AddApartments />} />
+                            <Route exact path="/appartments" render={() => <Appartments />} />
                             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
                             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
                             <Route exact path="/withdraw" render={() => <Withdrawal />} />

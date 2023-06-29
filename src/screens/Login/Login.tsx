@@ -18,7 +18,7 @@ import GoogleLogo from "../../assets/images/search.png"
 import SpaceBetween from '../../components/style/SpaceBetween'
 import RenderPasswordResetModal from '../../components/RenderPasswordResetModal/RenderPasswordResetModal';
 import { useHistory } from 'react-router';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { passwordResetSwipeAtom, slidesAtom } from '../../atoms/passwordResetAtom';
 import { LoginInputs } from '../../@types/auth';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -26,6 +26,8 @@ import { createApiCollection } from '../../helpers/apiHelpers';
 import { authenticate } from '../../helpers/authSDK';
 import { saveData } from '../../helpers/storageSDKs';
 import { USER } from '../../helpers/keys';
+import { userAtom } from '../../atoms/appAtom';
+import Home from '../Home/Home';
 
 
 
@@ -33,6 +35,7 @@ const Login = () => {
   // TODO: fix social media buttons
   // TODO: disable continue button for forget password modal until email is inputed
   // TODO: set onChange event for email input so as to disable continue restriction
+  // TODO: change logo to Background not IonImage
 
   // todo: remove this
   const history = useHistory()
@@ -43,23 +46,26 @@ const Login = () => {
 
 
 
-  // signal
-  // const slideCount = useSignal(0)
-
-
   // states
   const [showPassword, setShowPassword] = useState(false)
-  const [showModal, setShowModal] = useState(false)
 
   const [toast, setToast] = useState({ isOpen: false, message: "" })
 
+  const [loading, setLoading] = useState(false)
+
+  // ForgetPassword Modal
+  const [showModal, setShowModal] = useState(false)
   const [modalTitle, setModalTitle] = useState("")
   const [slideCount, setSlideCount] = useState(0)
 
-
-  // Recoil
   const slides = useRecoilValue(slidesAtom)
-  const [passwordResetSwipe, setPasswordResetSwipe] = useRecoilState(passwordResetSwipeAtom)
+  const setPasswordResetSwipe = useSetRecoilState(passwordResetSwipeAtom)
+  const { record } = useRecoilValue(userAtom)
+
+
+  // 
+
+
 
 
   // refs
@@ -70,23 +76,27 @@ const Login = () => {
 
   // functions
 
+  if (record?.id) return <Home />;
+
   function dismissModal(): void {
     setSlideCount(0)
     setShowModal(false)
   }
 
+
   const onSubmitForm: SubmitHandler<LoginInputs> = async ({ email, password }) => {
+
+    setLoading(true)
 
     const { is_authenticated, record, token, message: responseMessage } = await authenticate(email, password)
 
     if (is_authenticated) {
-      console.log('Authenticated')
-      // saveData(USER, { token, record })
-      // history.push('/dashboard')
-      return
+      saveData(USER, { token, record })
+      history.push('/home')
     }
 
     setToast({ message: responseMessage!, isOpen: true, })
+    setLoading(false)
   }
 
 
@@ -110,6 +120,11 @@ const Login = () => {
         </section>
 
 
+        {/* 
+        ===================================================
+        =====================[ Login/Signup Toggle ] ======
+        ===================================================
+        */}
         <section className="login_nav_btns w-50 mx-auto  ion-margin-top mt-4">
           <SpaceBetween>
             <IonButton className="sm_btn brown_fill" shape='round'>
@@ -123,6 +138,14 @@ const Login = () => {
           </SpaceBetween>
         </section>
 
+
+
+
+        {/* 
+        ===================================================
+        =====================[ Authentication Form ] ======
+        ===================================================
+        */}
 
         <section className='mt-5 ion-padding'>
 
@@ -161,32 +184,60 @@ const Login = () => {
               />
 
               {/* Forget Password  */}
-              <div className="ion-text-end login_nav_btns">
-                <small
-                  className='ion-text-end pt-3'
-                  onClick={() => setShowModal(true)}
-                >
-                  Forget Password?
-                </small>
-              </div>
+              {
+                loading ? (
+                  <div className="ion-text-end login_nav_btns">
+                    <small
+                      className='ion-text-end pt-3'
+                    >
+                      Forget Password?
+                    </small>
+                  </div>
+                ) : (
+                  <div className="ion-text-end login_nav_btns">
+                    <small
+                      className='ion-text-end pt-3'
+                      onClick={() => setShowModal(true)}
+                    >
+                      Forget Password?
+                    </small>
+                  </div>
+                )
+              }
             </div>
 
-            <IonButton
-              expand='block'
-              shape='round'
-              className='nm_btn yellow_fill mt-5 w-100'
-              mode='ios'
-              type='submit' // todo: uncomment this
-            >
-              Login
-            </IonButton>
+            {
+              loading ? (
+                <IonButton
+                  expand='block'
+                  shape='round'
+                  className='nm_btn yellow_fill mt-5 w-100'
+                  mode='ios'
+                  type='submit'
+                  disabled
+                >
+                  Processing...
+                </IonButton>
+              ) : (
+                <IonButton
+                  expand='block'
+                  shape='round'
+                  className='nm_btn yellow_fill mt-5 w-100'
+                  mode='ios'
+                  type='submit'
+                >
+                  Login
+                </IonButton>
+
+              )
+            }
 
           </form>
         </section>
 
         {/* 
         ===================================================
-        =====================[ Reset Modal Password========
+        =====================[ Reset Modal Password] ======
         ===================================================
         */}
         <IonModal
@@ -214,7 +265,11 @@ const Login = () => {
           </IonContent>
         </IonModal>
 
-
+        {/* 
+        ===================================================
+        =====================[ Social Media Links] ========
+        ===================================================
+        */}
         <section className='mt-4'>
           <OrSeperator speratorText='Or login with' className='mx-auto w-75' />
 

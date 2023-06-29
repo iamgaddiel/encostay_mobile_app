@@ -1,9 +1,11 @@
-import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent } from "@ionic/react";
+import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText } from "@ionic/react";
 import { heart, bedOutline, wifiOutline, chevronForwardOutline } from "ionicons/icons";
 import Slider from "react-slick";
-import { rooms } from "../../atoms/demoSignals";
+import { demoRoomsAtom } from "../../atoms/demoAtoms";
 import SpaceBetween from "../style/SpaceBetween";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { utilsAtom } from "../../atoms/utilityAtom";
 
 
 
@@ -51,8 +53,24 @@ const GuestsAccount: React.FC<Props> = ({
     }
 
 
+    // ----------------- State -------------------------
+    const rooms = useRecoilValue(demoRoomsAtom)
+    const [loading, setLoading] = useState(false)
+    const updateShowTabs = useSetRecoilState(utilsAtom)
 
-    
+
+
+    useEffect(() => {
+        updateShowTabs({ showTabs: true })
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000)
+    }, [])
+
+
+
+
+
     // ----------------- functions -----------------------
     async function featuredApartments() { }
 
@@ -106,7 +124,7 @@ const GuestsAccount: React.FC<Props> = ({
                     <section className="home_list">
                         <Slider {...cardCarouselSettings}>
                             {
-                                rooms.value.map((home, indx) => (
+                                rooms.map((home, indx) => (
                                     <IonCard color={"light"} className='p-2 home_list_card p-3' key={indx}>
                                         <IonIcon icon={heart} className={`home_list_card_fav_icon text-${home.isFavourite ? "warning" : "light"}`} size='large' />
                                         <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${home.img})` }}></div>
@@ -162,7 +180,7 @@ const GuestsAccount: React.FC<Props> = ({
                     <section className="home_list">
                         <Slider {...cardCarouselSettings}>
                             {
-                                rooms.value.map((home, indx) => (
+                                rooms.map((home, indx) => (
                                     <IonCard color={"light"} className='p-2 home_list_card p-3' key={indx}>
                                         <IonIcon icon={heart} className={`home_list_card_fav_icon text-${home.isFavourite ? "warning" : "light"}`} size='large' />
                                         <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${home.img})` }}></div>

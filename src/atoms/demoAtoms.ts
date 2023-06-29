@@ -56,7 +56,7 @@ const appartment = [
         isFavourite: false
     },
 ]
-export const rooms = atom({
+export const demoRoomsAtom = atom({
     key: 'Rooms',
     default: appartment
 })

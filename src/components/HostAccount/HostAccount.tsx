@@ -1,14 +1,16 @@
-import { IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonMenuToggle, IonPage, IonText, IonThumbnail, IonTitle, IonToolbar } from '@ionic/react'
-import { bedOutline, briefcaseOutline, chatbubbleOutline, chevronForwardOutline, close, documentOutline, heart, menuOutline, notifications, notificationsOutline, pencil, person, personOutline, settingsOutline, wifiOutline } from 'ionicons/icons'
-import React from 'react'
+import { IonAvatar, IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonHeader, IonIcon, IonImg, IonLabel, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/react'
+import { bedOutline, chevronForwardOutline, heart, pencil, wifiOutline } from 'ionicons/icons'
+import React, { useEffect } from 'react'
 import SideMenu from '../SideMenu/SideMenu'
 import SpaceBetween from '../style/SpaceBetween'
 import Slider from 'react-slick'
-import { rooms } from '../../atoms/demoSignals'
 
 // images
 import Pana from "../../assets/images/pana.svg"
 import Card from "../../assets/images/view_ernings.svg"
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { demoRoomsAtom } from '../../atoms/demoAtoms'
+import { utilsAtom } from '../../atoms/utilityAtom'
 
 
 
@@ -37,6 +39,17 @@ const HostAccount: React.FC<Props> = ({
         // cssEase: "linear",
     };
 
+
+    const rooms = useRecoilValue(demoRoomsAtom)
+    const setShowTabs = useSetRecoilState(utilsAtom)
+
+
+    useEffect(() => {
+        setShowTabs({ showTabs: true })
+    }, [])
+
+
+
     return (
         <>
 
@@ -46,6 +59,7 @@ const HostAccount: React.FC<Props> = ({
 
             {/* Man Page */}
             <IonPage id='main-content'>
+
                 {/* Header */}
                 <IonHeader className='ion-no-border'>
                     <IonToolbar className='p-2'>
@@ -54,15 +68,14 @@ const HostAccount: React.FC<Props> = ({
                         </IonButtons>
 
                         <IonTitle>Welcome Back Olaitan!</IonTitle>
-                        <IonAvatar slot="end" style={{ width: "45px", height: "45px"}}>
-                            <IonImg src={userImage}/>
+                        <IonAvatar slot="end" style={{ width: "", height: "45px" }}>
+                            <IonImg src={userImage} />
                         </IonAvatar>
                     </IonToolbar>
                 </IonHeader>
 
 
                 <IonContent className='ion-padding'>
-
                     {/*  */}
                     <section className="mb-4 py-2 border-bottom border-top d-flex align-items-center justify-content-between ">
                         <div className='w-75'>
@@ -121,7 +134,7 @@ const HostAccount: React.FC<Props> = ({
                         </section>
                         <Slider {...cardCarouselSettings}>
                             {
-                                rooms.value.map((home, indx) => (
+                                rooms.map((home, indx) => (
                                     <IonCard color={"light"} className='p-2 home_list_card p-3' key={indx}>
                                         <IonIcon icon={heart} className={`home_list_card_fav_icon text-${home.isFavourite ? "warning" : "light"}`} size='large' />
                                         <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${home.img})` }}></div>

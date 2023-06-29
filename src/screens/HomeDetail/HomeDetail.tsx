@@ -7,7 +7,7 @@ import Man from "../../assets/images/man.png"
 
 //css
 import "./HomeDetail.css"
-import { rooms } from '../../atoms/demoSignals'
+import { rooms } from '../../atoms/demoAtoms'
 import Slider from 'react-slick'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { useHistory } from 'react-router'

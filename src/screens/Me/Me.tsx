@@ -8,15 +8,30 @@ import Person from "../../assets/images/man.png"
 
 import "./Me.css"
 import { ellipse, logOut } from 'ionicons/icons'
+import { clearData } from '../../helpers/storageSDKs'
+import { USER } from '../../helpers/keys'
+import { useHistory } from 'react-router'
+import { useRecoilState, useSetRecoilState } from 'recoil'
+import { utilsAtom } from '../../atoms/utilityAtom'
 
 
-async function logOutUser() {
-  //...lgoin here.
-
-}
 
 
 const Me = () => {
+  const history = useHistory()
+
+  const setShowTabs = useSetRecoilState(utilsAtom)
+
+
+
+  async function logOutUser() {
+    clearData(USER)
+    setShowTabs({ showTabs: false})
+    history.push('/login')
+  }
+
+
+
   return (
     <IonPage>
       <HeaderTitle title='Profile' />

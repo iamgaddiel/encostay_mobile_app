@@ -13,17 +13,31 @@ import Overlay from "../../assets/images/Oval.png"
 // style
 import "./Landidng.css"
 import { utilsAtom } from '../../atoms/utilityAtom'
+import useAppLaunched from '../../hooks/useAppLaunched'
+import Login from '../Login'
+import { useHistory } from 'react-router'
 
 
 const Landing = () => {
+  const history = useHistory()
   const [utils, setUtilValue] = useRecoilState(utilsAtom)
+  const { appLauned } = useAppLaunched()
 
 
+
+
+  
+  // Redirect
+  
+  
   useEffect(() => {
-    setUtilValue({ ...utils, showTabs: false})
+    setUtilValue({ ...utils, showTabs: false })
   }, [])
-
-
+  
+  if (appLauned){
+    history.push('/login')
+  }
+  
   return (
     <IonPage>
       <IonContent className=''>

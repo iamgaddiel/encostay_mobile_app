@@ -1,8 +1,10 @@
 import { IonPage, IonContent, IonImg, IonButton } from '@ionic/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
-
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useHistory } from 'react-router';
+import useAppLaunched from '../../hooks/useAppLaunched';
+import Login from '../Login/Login';
 
 
 // styles
@@ -16,9 +18,7 @@ import View from "../../assets/images/view.png"
 import P1 from "../../assets/images/1.svg"
 import P2 from "../../assets/images/2.svg"
 import P3 from "../../assets/images/3.svg"
-import { useHistory } from 'react-router';
 
-// import useSwipe from '../../hooks/useSwipe';
 
 
 
@@ -53,6 +53,7 @@ const OnBoardidng = () => {
 
     // 3party hooks
     const history = useHistory()
+    const { appLauned } = useAppLaunched()
 
 
     // states
@@ -61,9 +62,10 @@ const OnBoardidng = () => {
     const [onBoardingSwipe, setOnBoardingSwip] = useState<any | null>(null)
 
 
-    //hooks
-    // const { swipeRef } = useSwipe()
 
+
+    // Redirect
+    if (appLauned) return <Login />
 
 
     // functions
@@ -76,7 +78,7 @@ const OnBoardidng = () => {
         // }
 
         if (onBoardingSwipe !== null) {
-            if (!onBoardingSwipe?.isEnd){
+            if (!onBoardingSwipe?.isEnd) {
                 onBoardingSwipe?.slideNext();
                 return
             }
@@ -122,7 +124,7 @@ const OnBoardidng = () => {
                         slides.map((slide) => (
                             <SwiperSlide key={slide.slideIndex}>
                                 <section className="onboarding_images">
-                                    <div className="hero_image" style={{ backgroundImage: `url(${slide.image})`}}>
+                                    <div className="hero_image" style={{ backgroundImage: `url(${slide.image})` }}>
                                         {/* <IonImg src={slide.image} /> */}
                                     </div>
 

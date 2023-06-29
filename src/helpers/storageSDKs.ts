@@ -13,8 +13,7 @@ const { storage } = Settings()
 
 export async function saveData(key: string, data: any) {
     try {
-        const user = await storage.set(key, data)
-        return user
+        return await storage.set(key, data)
     }
     catch (err) {
         return err

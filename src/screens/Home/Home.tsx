@@ -1,6 +1,4 @@
-import { IonAvatar, IonButton, IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonPage, IonRouterLink, IonSearchbar, IonText } from '@ionic/react'
-import React, { useContext, useEffect, useState } from 'react'
-import SpaceBetween from '../../components/style/SpaceBetween'
+import { useEffect, useState } from 'react'
 
 // images
 import Man from "../../assets/images/man.png"
@@ -8,31 +6,18 @@ import Man from "../../assets/images/man.png"
 
 // css
 import "./Home.css"
-import { bed, bedOutline, caretForwardOutline, chevronForwardOutline, filter, heart, optionsOutline, wifiOutline } from 'ionicons/icons'
 
 
-// splide
-import { Swiper, SwiperSlide } from 'swiper/react';
-
-// slider
-import Slider from "react-slick";
-
-// cotexts
-import { SettingsContext, SettingsContextType } from '../../contexts/SettingsContext'
-import { useHistory } from 'react-router'
-import { rooms } from '../../atoms/demoSignals'
-
-
-import OwlCarousel from "react-owl-carousel2"
 import GuestsAccount from '../../components/GuestAccount/GuestAccount'
 import HostAccount from '../../components/HostAccount/HostAccount'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { utilsAtom } from '../../atoms/utilityAtom'
+import useAuth from '../../hooks/useAuth'
+import { userAtom } from '../../atoms/appAtom'
+import { IonSkeletonText } from '@ionic/react'
+import SpaceBetween from '../../components/style/SpaceBetween'
 
 
-
-
-type Account = "guest" | "host"
 
 
 const Home = () => {
@@ -40,30 +25,142 @@ const Home = () => {
     // ----------------- States -----------------------
     //todo: add palceholder while fetching user image
 
-    const history = useHistory()
-    const [active, setActive] = useState(true)
-    const [account, setAccount] = useState<Account>("host")
+    const { token, record: userRecord } = useAuth()
+    const setAppUserObject = useSetRecoilState(userAtom)
+    const [loading, setLoading] = useState(true)
 
 
-    const [utils, setUtilValue] = useRecoilState(utilsAtom)
+
 
     useEffect(() => {
-        setUtilValue({...utils, showTabs: true})
+        // set App Level User State
+        if (userRecord !== null) setAppUserObject({ token, record: userRecord });
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 3000)
     }, [])
 
 
 
     // return TSX
 
-    if (account === "host") {
+    if (userRecord?.account_type === "host") {
         return <HostAccount
             userImage={Man}
         />
     }
+    if (userRecord?.account_type === "guest") {
+        return <GuestsAccount
+            userImage={Man}
+        />
+    }
 
-    return <GuestsAccount
-        userImage={Man}
-    />
+
+    return (
+        <div  className='ion-padding'>
+            {
+                loading ? (
+                    <>
+                        <div>
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "100%", height: "200px" }}
+                                className='rounded-4'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "95%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "80%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "90%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "80%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "90%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <SpaceBetween className='mt-4'>
+                                <IonSkeletonText
+                                    animated
+                                    style={{ width: "40%", height: "60px" }}
+                                    className='rounded-4'
+                                />
+                                <IonSkeletonText
+                                    animated
+                                    style={{ width: "40%", height: "60px" }}
+                                    className='rounded-4'
+                                />
+
+                            </SpaceBetween>
+
+                        </div>
+                        <div className='mt-5'>
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "100%", height: "200px" }}
+                                className='rounded-4'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "95%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "80%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "90%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "80%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <IonSkeletonText
+                                animated
+                                style={{ width: "90%", height: "10px" }}
+                                className='mt-3'
+                            />
+                            <SpaceBetween className='mt-4'>
+                                <IonSkeletonText
+                                    animated
+                                    style={{ width: "40%", height: "60px" }}
+                                    className='rounded-4'
+                                />
+                                <IonSkeletonText
+                                    animated
+                                    style={{ width: "40%", height: "60px" }}
+                                    className='rounded-4'
+                                />
+
+                            </SpaceBetween>
+
+                        </div>
+                    </>
+                ) : null
+            }
+        </div>
+    )
+
+
 }
 
 export default Home

@@ -19,13 +19,6 @@ export const registrationAtom = atom<RegistrationInputs>({
     }
 })
 
-// export const loginAtom = atom<LoginInputs>({
-//     key: "USER_REGISTRATION",
-//     default: {
-//         email: "",
-//         password: "",
-//     }
-// })
 
 
 

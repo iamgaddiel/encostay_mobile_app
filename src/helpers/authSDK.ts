@@ -19,7 +19,7 @@ interface AuthenReturn {
 }
 
 
-export async function authenticate(email: string, password: string): Promise<AuthenReturn | any> {
+export async function authenticate(email: string, password: string): Promise<AuthenReturn> {
     try {
         const url = `${pb.baseUrl}/collections/users/auth-with-password`
 

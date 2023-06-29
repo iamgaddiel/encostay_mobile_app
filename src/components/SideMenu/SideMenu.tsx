@@ -1,12 +1,25 @@
-import { IonMenu, IonHeader, IonToolbar, IonMenuToggle, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonItem, IonLabel, IonText } from '@ionic/react'
-import { personOutline, briefcaseOutline, notificationsOutline, documentOutline, settingsOutline, chatbubbleOutline, close, documentTextOutline, walletOutline } from 'ionicons/icons'
+import { IonMenu, IonHeader, IonToolbar, IonMenuToggle, IonButton, IonIcon, IonContent, IonAvatar, IonImg, IonList, IonItem, IonLabel } from '@ionic/react'
+import { personOutline, briefcaseOutline, notificationsOutline, settingsOutline, chatbubbleOutline, close, documentTextOutline, walletOutline, homeOutline } from 'ionicons/icons'
 import React from 'react'
+import { useHistory } from 'react-router'
 
 
 interface Props {
     userImage: string
 }
 const SideMenu: React.FC<Props> = ({ userImage }) => {
+
+    const history = useHistory()
+
+
+
+    // ----------------------- functions --------------------
+    
+    function logUserOut(){
+        
+    }
+
+
     return (
         <IonMenu contentId="main-content">
             <IonHeader className='ion-no-border px-3'>
@@ -39,6 +52,10 @@ const SideMenu: React.FC<Props> = ({ userImage }) => {
                             <IonIcon icon={personOutline} slot="start" />
                             <IonLabel>My Profile</IonLabel>
                         </IonItem>
+                        <IonItem routerDirection='forward' routerLink='/appartments' className="mt-3">
+                            <IonIcon icon={homeOutline} slot="start" />
+                            <IonLabel>Appartmetns</IonLabel>
+                        </IonItem>
                         <IonItem routerDirection='forward' routerLink='/me' className="mt-3">
                             <IonIcon icon={briefcaseOutline} slot="start" />
                             <IonLabel>Payment method</IonLabel>
@@ -66,7 +83,7 @@ const SideMenu: React.FC<Props> = ({ userImage }) => {
                     </IonList>
                 </section>
 
-                <IonButton className="mt-4 yellow_fill" mode='ios' size='large' shape="round">Log Out</IonButton>
+                <IonButton className="mt-4 yellow_fill" mode='ios' size='large' shape="round" onClick={logUserOut}>Log Out</IonButton>
 
             </IonContent>
         </IonMenu>

@@ -2,10 +2,13 @@ import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, I
 import { optionsOutline } from 'ionicons/icons'
 import React from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
-import { rooms } from '../../atoms/demoSignals'
+import { demoRoomsAtom } from '../../atoms/demoAtoms'
 import HomeListCard from '../../components/HomeListCard/HomeListCard'
+import { useRecoilValue } from 'recoil'
 
 const AppartmentSearch = () => {
+    const rooms = useRecoilValue(demoRoomsAtom)
+
     return (
         <IonPage>
             <IonHeader className='ion-no-border'>
@@ -37,7 +40,7 @@ const AppartmentSearch = () => {
 
                     <div className="mt-4">
                         {
-                            rooms.value.map((home, indx) => (
+                            rooms.map((home, indx) => (
                                 <HomeListCard
                                     has_wifi={home.has_wifi}
                                     is_favourite={home.isFavourite}
