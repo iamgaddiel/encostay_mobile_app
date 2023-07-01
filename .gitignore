@@ -262,3 +262,4 @@ sketch
 # pb_migrations
 pb_data/data.db
 pb_data/logs.db
+pocketbase
