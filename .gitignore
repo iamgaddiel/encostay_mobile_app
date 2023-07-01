@@ -245,6 +245,7 @@ sketch
 # https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 
 .yarn/*
+# 11100222111 - Siri's wifi password
 !.yarn/releases
 !.yarn/patches
 !.yarn/plugins
