@@ -9,6 +9,6 @@ interface UtilAtom {
 export const utilsAtom = atom<UtilAtom>({
     key: "UTILITY",
     default: {
-        showTabs: true
+        showTabs: false
     }
 })
