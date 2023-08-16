@@ -14,7 +14,7 @@ const DEBUG = true
 
 const LOCALHOST = "http://127.0.0.1:8090/api"
 
-const REMOTE_URL = "https://encostay-app.pockethost.io"
+const REMOTE_URL = "https://encostay-app.pockethost.io/api"
 
 const pocketbaseUrl = DEBUG ? LOCALHOST  : REMOTE_URL
 
@@ -28,6 +28,10 @@ const storage = new Storage({
 })
 
 storage.create()
+
+
+//TODO: get and save cloudinary config params
+
 
 
 export default function Settings () {

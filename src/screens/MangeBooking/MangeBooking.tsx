@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar } from '@ionic/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle/BackHeaderNoTitle'
 
 // css
@@ -11,6 +11,11 @@ import SpaceBetween from '../../components/style/SpaceBetween'
 import { person, star } from 'ionicons/icons'
 
 import "./ManageBookings.css"
+import { useRecoilValue } from 'recoil'
+import { userAtom } from '../../atoms/appAtom'
+import { BookingList } from '../../@types/bookings'
+import { getBookings } from '../../helpers/utils'
+import NotFound from '../../components/NotFound/NotFound'
 
 
 type View = "bookings" | "history"
@@ -18,21 +23,42 @@ type View = "bookings" | "history"
 
 const MangeBooking = () => {
     const [view, setView] = useState<View>("bookings")
-    const [isCancelled, setIsCancelled] = useState(true)
+    const [isCancelled, setIsCancelled] = useState(false)
+    const bookingsDemo = [...new Array(2).keys()] //TODO: comment this
 
-    const bookings = [1, 2, 3, 4, 5]
+
+    const {record: user, token: authToken} = useRecoilValue(userAtom)
+    const [isLoading, setIsLoading] = useState(false)
+    const [bookings, setBookings] = useState<BookingList | null>(null)
+
+
+
+
+    //TODO: use ReactQuery
+    
+
+
+    useEffect(() => {
+        loadBookings()
+    }, [])
+
+
+    async function loadBookings() {
+        const response = await getBookings(user.id, authToken)
+        setBookings( () => response)
+    }
 
     return (
         <IonPage>
             <IonHeader className='ion-no-border'>
                 <IonToolbar mode='ios'>
-                    <IonTitle>Mange Booking</IonTitle>
+                    <IonTitle>Manage Booking</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen className="ion-padding">
 
                 {/* Segment */}
-                {/* <IonSegment slot='' value={view} mode='ios' id='manage_bookings_segement'>
+                <IonSegment slot='' value={view} mode='ios' id='manage_bookings_segement w-75'>
                     <IonSegmentButton
                         className="text-capitalize"
                         title='bookings'
@@ -50,15 +76,17 @@ const MangeBooking = () => {
                     >
                         Booking History
                     </IonSegmentButton>
-                </IonSegment> */}
+                </IonSegment>
 
 
                 <section className="mt-1">
                     {
-                        view === "bookings" ? (
+                        // view === "bookings" && bookings?.totalItems! >= 1 ? (
+                        view === "bookings" && bookingsDemo.length >= 1 ? (
                             <IonList>
                                 {
-                                    bookings.map((booking, indx) => (
+                                    // bookings && bookings.items.map((booking, indx) => (
+                                    bookingsDemo && bookingsDemo.map((booking, indx) => (
                                         <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
                                             <IonLabel>
                                                 {/* Home preview */}
@@ -95,7 +123,7 @@ const MangeBooking = () => {
                                     ))
                                 }
                             </IonList>
-                        ) : null
+                        ) : <NotFound message={"You don't have any booking yet... try booking an apartment"} />
                     }
 
                     {

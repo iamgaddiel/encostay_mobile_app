@@ -6,6 +6,7 @@ import { createApiCollection } from '../../helpers/apiHelpers'
 import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
+import { USRS_COLLECTION } from '../../helpers/keys'
 
 
 
@@ -26,8 +27,7 @@ const Passwords = () => {
         setLoading(true)
 
         const formData = { ...regFormData, ...data }
-        const URL_PATH = `/collections/users/records`
-        const { isCreated, response, error } = await createApiCollection(URL_PATH, formData)
+        const { isCreated, response, error } = await createApiCollection(USRS_COLLECTION, formData)
 
 
         if (error?.email) {

@@ -6,10 +6,7 @@ const { storage } = Settings()
 
 
 
-// functions found in this file are SDKs inteface which enables
-// storage to local db, IndexDB or LocalStorage
-//
-
+// functions found in this file enables storage to local db, IndexDB or LocalStorage
 
 export async function saveData(key: string, data: any) {
     try {
@@ -21,7 +18,7 @@ export async function saveData(key: string, data: any) {
 }
 
 
-export async function getSaveData(key: string) {
+export async function getSaveData(key: string): Promise<unknown> {
     try {
         return await storage.get(key)
     }

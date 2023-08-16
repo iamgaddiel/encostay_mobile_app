@@ -2,12 +2,14 @@ import { IonMenu, IonHeader, IonToolbar, IonMenuToggle, IonButton, IonIcon, IonC
 import { personOutline, briefcaseOutline, notificationsOutline, settingsOutline, chatbubbleOutline, close, documentTextOutline, walletOutline, homeOutline } from 'ionicons/icons'
 import React from 'react'
 import { useHistory } from 'react-router'
+import { UserCollectionType } from '../../@types/users'
 
 
 interface Props {
     userImage: string
+    user: UserCollectionType
 }
-const SideMenu: React.FC<Props> = ({ userImage }) => {
+const SideMenu: React.FC<Props> = ({ userImage, user }) => {
 
     const history = useHistory()
 
@@ -40,7 +42,7 @@ const SideMenu: React.FC<Props> = ({ userImage }) => {
                     </IonAvatar>
 
                     <div className='mt-3'>
-                        <big className='fw-bold-sm'>Marvis Ighedosa</big>
+                        <big className='fw-bold-sm'>{ user.name }</big>
                     </div>
                 </section>
 
@@ -54,7 +56,7 @@ const SideMenu: React.FC<Props> = ({ userImage }) => {
                         </IonItem>
                         <IonItem routerDirection='forward' routerLink='/appartments' className="mt-3">
                             <IonIcon icon={homeOutline} slot="start" />
-                            <IonLabel>Appartmetns</IonLabel>
+                            <IonLabel>Apartmetns</IonLabel>
                         </IonItem>
                         <IonItem routerDirection='forward' routerLink='/me' className="mt-3">
                             <IonIcon icon={briefcaseOutline} slot="start" />

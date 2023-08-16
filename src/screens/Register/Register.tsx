@@ -45,7 +45,7 @@ const Register = () => {
   }
 
 
-  function processData(dataTime: string) {
+  function processDate(dataTime: string) {
     // const time = dataTime.split('T')[1]
     const date = dataTime.split('T')[0]
     setSelectedBirthday(date)
@@ -151,7 +151,7 @@ const Register = () => {
                 <IonContent>
                   <IonDatetime
                     // onIonChange={e => setSelectedBirthday(e.detail?.value as string)}
-                    onIonChange={e => processData(e.detail?.value as string)}
+                    onIonChange={e => processDate(e.detail?.value as string)}
                     color={"warning"}
                     presentation='date'
                     ref={datepicker}
@@ -160,7 +160,6 @@ const Register = () => {
                   </IonDatetime>
                 </IonContent>
               </IonModal>
-
             </div>
 
 

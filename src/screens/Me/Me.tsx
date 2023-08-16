@@ -11,8 +11,9 @@ import { ellipse, logOut } from 'ionicons/icons'
 import { clearData } from '../../helpers/storageSDKs'
 import { USER } from '../../helpers/keys'
 import { useHistory } from 'react-router'
-import { useRecoilState, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { utilsAtom } from '../../atoms/utilityAtom'
+import { userAtom } from '../../atoms/appAtom'
 
 
 
@@ -21,6 +22,7 @@ const Me = () => {
   const history = useHistory()
 
   const setShowTabs = useSetRecoilState(utilsAtom)
+  const {record: user} = useRecoilValue(userAtom)
 
 
 
@@ -41,7 +43,7 @@ const Me = () => {
         <section className="ion-text-center mt-3">
           <div className="me_thumbnail" style={{ backgroundImage: `url(${Person})` }}></div>
 
-          <IonTitle className='mt-3 fs-2'>Robert Bowie</IonTitle>
+          <IonTitle className='mt-3 fs-2'>{user.name}</IonTitle>
         </section>
 
         <section className="mt-4">

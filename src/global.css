@@ -15,7 +15,7 @@
     --primary: #FAFAFA;
     --primary-2: #F2F2F2;
     --primary-3: #F5F5F5;
-    --white-4: #F8F9F9;
+    --white-4: #eaeaea;
     --text-color2: #A9A9A9;
 
     /* Orange */
@@ -165,4 +165,13 @@ Divs
 .muted-outline{
     background-color: transparent;
     border: 1px solid #bbb;
+}
+
+
+/* 
+-----------------------------------
+Backgrounds
+----------------------------------- */
+.grey__bg{
+    background-color: var(--white-4);
 }

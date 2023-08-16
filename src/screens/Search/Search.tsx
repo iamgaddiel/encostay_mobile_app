@@ -10,8 +10,6 @@ const Search = () => {
 
     return (
         <h1>sss</h1>
-
-
     )
 }
 

@@ -3,6 +3,9 @@ import { heart, home, bedOutline, wifiOutline, chevronForwardOutline, starOutlin
 import React, { useEffect, useState } from 'react'
 import SpaceBetween from '../style/SpaceBetween'
 import "./HomeListCard.css"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { bookingAtom } from '../../atoms/bookingAtom'
+import { userAtom } from '../../atoms/appAtom'
 
 
 type Location = {
@@ -13,13 +16,14 @@ type Location = {
 interface Props {
     title: string
     location: Location
-    price: string
+    price: number
     numberOfBedrooms: number
     has_wifi: boolean
     ratings: number
-    is_favourite: boolean
+    is_favourite?: boolean
     imageUri: string
     showRattings: boolean
+    homeId: string
 }
 
 
@@ -32,12 +36,11 @@ const HomeListCard: React.FC<Props> = ({
     ratings,
     is_favourite,
     imageUri,
-    showRattings
+    showRattings,
+    homeId,
 }) => {
 
     const [ratingsArray, setRattingsArray] = useState<number[]>([])
-
-
 
     // generate a dynamic array based on the number of ratings
     useEffect(() => {
@@ -47,7 +50,7 @@ const HomeListCard: React.FC<Props> = ({
 
 
     return (
-        <IonCard color={"light"} className='home_list_card' mode='ios' routerDirection='forward' routerLink='/apartment/123'>
+        <IonCard color={"light"} className='home_list_card' mode='ios' routerDirection='forward' routerLink={`/apartment/${homeId}`}>
             <IonIcon icon={heart} className={`home_list_card_fav_icon text-${is_favourite ? "warning" : "light"}`} size='large' />
             <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${imageUri})` }}></div>
 

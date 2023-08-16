@@ -53,6 +53,25 @@ export async function _put(url: string, data: {}, headers?: {}, params?: {}) {
 };
 
 
+export async function _patch(url: string, data: {}, headers?: {}, params?: {}) {
+    const options = {
+        url,
+        headers,
+        data: JSON.stringify(data),
+        params
+    };
+
+    try {
+        const response: HttpResponse = await CapacitorHttp.patch(options);
+        return response
+
+    } catch (err: any) {
+        throw new Error(err)
+    }
+
+};
+
+
 export async function _delete(url: string, headers?: {}, params?: {}) {
     const options = {
         url,
@@ -67,5 +86,4 @@ export async function _delete(url: string, headers?: {}, params?: {}) {
     } catch (err: any) {
         throw new Error(err)
     }
-
 };

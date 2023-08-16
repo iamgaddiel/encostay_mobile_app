@@ -7,6 +7,9 @@ import { USER } from "../helpers/keys"
 export default function useAuth() {
     const [token, setToken] = useState('')
     const [record, setRecord] = useState<UserCollectionType | null>(null)
+    console.log("🚀 ~ file: useAuth.tsx:10 ~ useAuth ~ record:", record)
+
+
 
     useEffect(() => {
         getUser()

@@ -1,4 +1,4 @@
-import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon } from '@ionic/react'
+import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { homeOutline, bookOutline, searchOutline, personOutline } from 'ionicons/icons'
 import React from 'react'
@@ -37,9 +37,12 @@ import { useRecoilValue } from 'recoil'
 import { utilsAtom } from './atoms/utilityAtom'
 import Appartments from './screens/Appartments/Appartments'
 import AddApartments from './screens/AddApartments/AddApartments'
+import HostApartmentDetail from './screens/HostApartmentDetail/HostApartmentDetail'
+import ApartmentUpdate from './screens/ApartmentUpdate/ApartmentUpdate'
 
 const Routes = () => {
     const { showTabs } = useRecoilValue(utilsAtom)
+    //FIXME: correct apartment spelling
 
     return (
         <IonReactRouter>
@@ -74,13 +77,17 @@ const Routes = () => {
             <Route exact path="/withdraw" render={() => <Withdrawal />} />
             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
-            <Route exact path="/appartments" render={() => <Appartments />} />
+            <Route exact path="/appartments" render={() => <Appartments />} /> 
             <Route exact path="/add_apartment" render={() => <AddApartments />} />
+            <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
+            <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                        <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
+                        <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
                             <Route exact path="/add_apartment" render={() => <AddApartments />} />
                             <Route exact path="/appartments" render={() => <Appartments />} />
                             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
@@ -102,7 +109,7 @@ const Routes = () => {
                             <Route exact path="/booking_step_2" render={() => <Booking2 />} />
                             <Route exact path="/booking_step_1" render={() => <Booking1 />} />
                             <Route exact path="/apartment_preview/:id" render={() => <BookingPreview />} />
-                            <Route exact path="/apartment/:id" render={() => <HomeDetail />} />
+                            <Route exact path="/apartment/:apartmentId" render={() => <HomeDetail />} />
                             <Route exact path="/apartment_search" render={() => <AppartmentSearch />} />
                             <Route exact path="/filter" render={() => <Filter />} />
                             <Route exact path="/login" render={() => <Login />} />
@@ -114,18 +121,30 @@ const Routes = () => {
                             <Route exact path="/passwords" render={() => <Passwords />} />
                         </IonRouterOutlet>
 
-                        <IonTabBar slot="bottom">
+                        <IonTabBar slot="bottom" className='ion-padding-top'>
                             <IonTabButton tab="tab1" href="/home">
                                 <IonIcon icon={homeOutline} />
+                                <IonLabel>
+                                    <small>Home</small>
+                                </IonLabel>
                             </IonTabButton>
                             <IonTabButton tab="tab2" href="/manage_bookings">
                                 <IonIcon icon={bookOutline} />
+                                <IonLabel>
+                                    <small>Bookings</small>
+                                </IonLabel>
                             </IonTabButton>
                             <IonTabButton tab="tab3" href="/apartment_search">
                                 <IonIcon icon={searchOutline} />
+                                <IonLabel>
+                                    <small>Search</small>
+                                </IonLabel>
                             </IonTabButton>
                             <IonTabButton tab="tab4" href="/me">
                                 <IonIcon icon={personOutline} />
+                                <IonLabel>
+                                    <small>Profile</small>
+                                </IonLabel>
                             </IonTabButton>
                         </IonTabBar>
                     </IonTabs>

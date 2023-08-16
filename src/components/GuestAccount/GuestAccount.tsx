@@ -95,6 +95,7 @@ const GuestsAccount: React.FC<Props> = ({
 
 
                 {/* apartment category */}
+                {/* TODO: use this as a search to display apartments based on apartment type */}
                 <section className="apartment_types mt-3">
                     <Slider {...homeCategoryCarouselSettings}>
                         {/* <OwlCarousel options={options}> */}

@@ -34,9 +34,7 @@ const Landing = () => {
     setUtilValue({ ...utils, showTabs: false })
   }, [])
   
-  if (appLauned){
-    history.push('/login')
-  }
+  if (appLauned) return <Login key={'login'} />;
   
   return (
     <IonPage>

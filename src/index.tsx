@@ -4,9 +4,9 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import SettingsProvider from './contexts/SettingsContext';
-import AuthProvider from './contexts/AuthContext';
 import StorageProvider from './contexts/StorageContext';
 import { RecoilRoot } from 'recoil';
+
 
 
 
