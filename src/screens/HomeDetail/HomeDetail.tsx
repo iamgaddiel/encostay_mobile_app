@@ -1,20 +1,15 @@
 import {
   IonAccordion,
   IonAccordionGroup,
-  IonAvatar,
   IonButton,
   IonCard,
   IonCardContent,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCheckbox,
   IonContent,
   IonFab,
   IonFabButton,
   IonIcon,
   IonImg,
   IonItem,
-  IonItemDivider,
   IonLabel,
   IonList,
   IonPage,
@@ -28,7 +23,6 @@ import {
   car,
   checkmarkCircle,
   closeCircle,
-  closeOutline,
   location,
   lockClosed,
   logoAndroid,
@@ -36,7 +30,7 @@ import {
   tv,
   wifi,
 } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Room from "../../assets/images/room.png";
 import Man from "../../assets/images/man.png";
@@ -44,7 +38,6 @@ import Man from "../../assets/images/man.png";
 //css
 import "./HomeDetail.css";
 // import { rooms } from '../../atoms/demoAtoms'
-import Slider from "react-slick";
 import SpaceBetween from "../../components/style/SpaceBetween";
 import { useHistory, useParams } from "react-router";
 import { ApartementItem } from "../../@types/apartments";
@@ -60,6 +53,16 @@ const HomeDetail = () => {
   const { token: authToken } = useRecoilValue(userAtom);
 
   // TODO: check if apartment is available
+
+  // TODO: add specified number of guest
+
+  // TODO: add charge of extra guests
+
+  // TODO: add charge for pets
+
+  // TODO: add security charges
+
+  // 
 
   // const [isAvailable, setAvailable] = useState(true)
 

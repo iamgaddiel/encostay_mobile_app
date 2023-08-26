@@ -16,6 +16,7 @@ export const bookingAtom  = atom<BookingFields>({
         checkout_datetime: "",
         host: "",
         price: 0,
-        number_of_guests: 1
+        number_of_guests: 1,
+        transaction_charge: 0
     }
 })

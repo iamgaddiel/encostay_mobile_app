@@ -96,7 +96,7 @@ const AppartmentSearch = () => {
                       showRattings={true}
                       title={home.title}
                       homeId={home.id!}
-                      key={home.id}
+                      key={home?.id!}
                     />
                   ))}
               </>

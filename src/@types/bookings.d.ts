@@ -37,12 +37,13 @@ export interface BookingFields {
     host: string
     price: number
     number_of_guests: number
+    transaction_charge: number
 }
 
 // used in BookingPreview for collecting guest booking details
 export interface BookingPreviewInputs {
-    checkInDate: string;
-    checkOutDate: string;
+    checkInDate: Date;
+    checkOutDate: Date;
     numberOfGuest: number;
     total: number;
     showCheckInModal: boolean;
@@ -51,4 +52,6 @@ export interface BookingPreviewInputs {
     formatedCheckInDate: string;
     formatedCheckOutDate: string;
     toggleGuestEdit: boolean;
+    transaction_charge: number
+    durationOfStay?: number
   }

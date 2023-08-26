@@ -14,8 +14,7 @@ import {
   IonToast,
   IonToolbar,
 } from "@ionic/react";
-import React, {
-  useCallback,
+import {
   useEffect,
   useReducer,
   useRef,
@@ -34,23 +33,25 @@ import {
   person,
   star,
 } from "ionicons/icons";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
-import { format, isAfter, isBefore, isEqual } from "date-fns";
+import { isAfter, isBefore, isEqual } from "date-fns";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
 import { bookingAtom } from "../../atoms/bookingAtom";
 import {
   SET_GUEST_NUMBER,
   TOGGLE_CHECKIN_CALANDER,
   TOGGLE_CHECKOUT_CALANDER,
-  SET_TOTAL,
   SET_CHECKIN_DATE,
   SET_CHECKOUT_DATE,
-  SET_DATE_DIFFERENCE,
   TOGGLE_GUEST_EDIT,
+  SET_TRANSACTION_CHARGE,
 } from "../../reducers/actions/bookingPreviewActions";
 import BookingPreviewReducer from "../../reducers/bookingPreviewReducer";
 import { useHistory, useParams } from "react-router";
+
+
+
 
 const BookingPreview = () => {
   // const [appConfig, setConfigDetails] = useState<AppConfig | null>(null);
@@ -66,8 +67,8 @@ const BookingPreview = () => {
   const appConfig = useRecoilValue(appConfigAtom);
 
   const [state, setState] = useReducer(BookingPreviewReducer, {
-    checkInDate: "",
-    checkOutDate: "",
+    checkInDate: new Date('2003-01-23'),
+    checkOutDate: new Date('2003-01-23'),
     numberOfGuest: 1,
     total: 1,
     showCheckInModal: false,
@@ -76,6 +77,8 @@ const BookingPreview = () => {
     formatedCheckInDate: "Jan 3",
     formatedCheckOutDate: "Jan 3",
     toggleGuestEdit: false,
+    durationOfStay: 1,
+    transaction_charge: 1,
   });
 
   const [showToast, setShowToast] = useState({
@@ -96,7 +99,7 @@ const BookingPreview = () => {
   const checkOutDatePicker = useRef<null | HTMLIonDatetimeElement>(null);
 
   // Computation
-  const [durationOfStay, setDurationOfStay] = useState(15); //TODO; get the diffenrence between two dates
+  // const [durationOfStay, setDurationOfStay] = useState(15); //TODO; get the diffenrence between two dates
 
   const [subTotal, setSubTotal] = useState(0);
 
@@ -104,44 +107,46 @@ const BookingPreview = () => {
 
   useEffect(() => {
     calculateSubPrice();
-  }, [durationOfStay]);
+  }, [state.durationOfStay]);
 
   // ==================================== Functions =================================
 
   function checkDatesAndContinueReservation() {
     const selectedCheckInDate = new Date(state.checkInDate);
     const selectedCheckOutDate = new Date(state.checkOutDate);
-    
+
     // check if selected checkInDate is after checkoutDate
     if (isAfter(selectedCheckInDate, selectedCheckOutDate)) {
       setShowToast({
-        message: 'Invalid date selection. Your check in date is futher than your checkout date',
-        enabled: true
-      })
+        message:
+          "Invalid date selection. Your check in date is futher than your checkout date",
+        enabled: true,
+      });
       return;
     }
 
     // check if selected checkInDate is after checkoutDate
     if (isBefore(selectedCheckOutDate, selectedCheckInDate)) {
       setShowToast({
-        message: 'Invalid date selection. Your CheckOut Date Is More Recent Than Your CheckIn date',
-        enabled: true
-      })
+        message:
+          "Invalid date selection. Your CheckOut Date Is More Recent Than Your CheckIn date",
+        enabled: true,
+      });
       return;
     }
 
     // check if both checkin and checkout date are the same
     if (isEqual(selectedCheckOutDate, selectedCheckInDate)) {
       setShowToast({
-        message: 'Invalid date selection. Select different CheckIn And CheckOut Dates',
-        enabled: true
-      })
+        message:
+          "Invalid date selection. Select different CheckIn And CheckOut Dates",
+        enabled: true,
+      });
       return;
     }
 
-    // history.push("booking_step_1");
+    history.push("/booking_step_1");
   }
-
 
   // TODO: move function to utils
   function extractDateFromDateTimeString(
@@ -154,33 +159,49 @@ const BookingPreview = () => {
       setState({ type: SET_CHECKOUT_DATE, payload: date });
   }
 
-
   function calculateSubPrice() {
-    const bookingSubTotal = selectedApartment.price * durationOfStay;
-    calculateTotalPrice(bookingSubTotal);
+    const bookingSubTotal = selectedApartment.price * state.durationOfStay!;
+
+    calculateTransactionCharge(bookingSubTotal);
     setSubTotal(bookingSubTotal);
   }
 
-
-  function calculateTotalPrice(subTotal: number) {
-    let totalPrice = appConfig?.service_charge! + subTotal;
+  function calculateTransactionCharge(subTotal: number) {
+    let transactionCharge = appConfig?.service_charge! * subTotal;
+    
+    setState({
+      type: SET_TRANSACTION_CHARGE,
+      payload: transactionCharge,
+    });
+    
+    // Set app level booking atom
     setBookingDetail({
       ...bookingDetail,
-      checkin_datetime: state.checkInDate,
-      checkout_datetime: state.checkOutDate,
+      transaction_charge: transactionCharge,
+    });
+
+    calculateTotalPrice(subTotal, transactionCharge)
+  }
+
+  function calculateTotalPrice(subTotal: number, transactionCharge: number) {
+    let totalPrice = transactionCharge + subTotal;
+
+    setBookingDetail({
+      ...bookingDetail,
+      checkin_datetime: state.checkInDate.toString(),
+      checkout_datetime: state.checkOutDate.toString(),
       price: totalPrice,
       number_of_guests: state.numberOfGuest,
     });
     setTotal(totalPrice);
   }
 
-
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/apartment/3" mode="ios" />
+            <IonBackButton defaultHref={`/apartment/${apartmentId}`} mode="ios" />
           </IonButtons>
           <IonTitle>Make Reservation</IonTitle>
         </IonToolbar>
@@ -189,7 +210,7 @@ const BookingPreview = () => {
         {/* =========================== Toast Start ======================== */}
         <IonToast
           isOpen={showToast.enabled}
-          color={'warning'}
+          color={"warning"}
           message={showToast.message}
           duration={4000}
           position="top"
@@ -408,14 +429,14 @@ const BookingPreview = () => {
           <div className="mt-5">
             <SpaceBetween className="my-3">
               <IonText className="text-muted">
-                ${selectedApartment.price} x {durationOfStay} night
+                ${selectedApartment.price} x {state?.durationOfStay} night
               </IonText>
               <IonText className="fw-bold-sm">${subTotal}</IonText>
             </SpaceBetween>
             <SpaceBetween className="my-3">
               <IonText className="text-muted">Services Charges</IonText>
               <IonText className="fw-bold-sm">
-                ${appConfig?.service_charge}
+                ${state.transaction_charge}
               </IonText>
             </SpaceBetween>
           </div>

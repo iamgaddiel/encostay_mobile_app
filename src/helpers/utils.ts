@@ -6,6 +6,24 @@ import { getApiCollectionItem, listApiCollection } from "./apiHelpers";
 import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION } from "./keys";
 
 
+
+
+
+/**
+ * 
+ * @param date1 
+ * @param date2 
+ * @returns the difference between date1 and date2 in number of days 
+ */
+export function getDateDiffInDays(date1: Date, date2: Date): number {
+  const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+
+  const diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime()); // Get the absolute difference in milliseconds
+  const diffInDays = Math.floor(diffInMilliseconds / oneDay); // Convert milliseconds to days
+
+  return diffInDays;
+}
+
 /**
  * 
  * @param length 

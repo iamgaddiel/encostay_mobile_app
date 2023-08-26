@@ -1,8 +1,8 @@
 import { isAfter, isBefore } from "date-fns";
 import { Action } from "../@types/action";
 import { BookingPreviewInputs } from "../@types/bookings";
-import { formatDate } from "../helpers/utils";
-import { SET_GUEST_NUMBER, TOGGLE_CHECKIN_CALANDER, TOGGLE_CHECKOUT_CALANDER, SET_TOTAL, SET_CHECKIN_DATE, SET_CHECKOUT_DATE, SET_DATE_DIFFERENCE, TOGGLE_GUEST_EDIT } from "./actions/bookingPreviewActions";
+import { formatDate, getDateDiffInDays } from "../helpers/utils";
+import { SET_GUEST_NUMBER, TOGGLE_CHECKIN_CALANDER, TOGGLE_CHECKOUT_CALANDER, SET_TOTAL, SET_CHECKIN_DATE, SET_CHECKOUT_DATE, SET_DATE_DIFFERENCE, TOGGLE_GUEST_EDIT, SET_TRANSACTION_CHARGE } from "./actions/bookingPreviewActions";
 
 
 
@@ -27,14 +27,19 @@ export default function BookingPreviewReducer(state: BookingPreviewInputs, { typ
       break;
 
     case SET_CHECKIN_DATE:
-      // upated UI dates
+      const checkinDateObefct = new Date(payload)
+      const currentCheckOutDate = new Date(updatedState.checkOutDate)
+
+      updatedState.durationOfStay = getDateDiffInDays(checkinDateObefct, currentCheckOutDate)
       updatedState.checkInDate = payload;
       updatedState.formatedCheckInDate = formatDate(payload);
-
       break;
 
     case SET_CHECKOUT_DATE:
-      // upated UI dates
+      const currentCheckinDate = new Date(updatedState.checkInDate)
+      const checkoutDateObject = new Date(payload)
+
+      updatedState.durationOfStay = getDateDiffInDays(currentCheckinDate, checkoutDateObject)
       updatedState.checkOutDate = payload;
       updatedState.formatedCheckOutDate = formatDate(payload);
       break;
@@ -45,6 +50,10 @@ export default function BookingPreviewReducer(state: BookingPreviewInputs, { typ
 
     case TOGGLE_GUEST_EDIT:
       updatedState.toggleGuestEdit = payload;
+      break;
+
+    case SET_TRANSACTION_CHARGE:
+      updatedState.transaction_charge = payload;
       break;
 
     default:
