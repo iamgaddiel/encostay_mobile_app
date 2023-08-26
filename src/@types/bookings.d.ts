@@ -38,3 +38,17 @@ export interface BookingFields {
     price: number
     number_of_guests: number
 }
+
+// used in BookingPreview for collecting guest booking details
+export interface BookingPreviewInputs {
+    checkInDate: string;
+    checkOutDate: string;
+    numberOfGuest: number;
+    total: number;
+    showCheckInModal: boolean;
+    showCheckOutModal: boolean;
+    dateDifference: number;
+    formatedCheckInDate: string;
+    formatedCheckOutDate: string;
+    toggleGuestEdit: boolean;
+  }

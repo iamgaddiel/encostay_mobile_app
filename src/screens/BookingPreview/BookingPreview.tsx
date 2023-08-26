@@ -2,20 +2,16 @@ import {
   IonBackButton,
   IonButton,
   IonButtons,
-  IonCard,
-  IonCardContent,
   IonContent,
   IonDatetime,
   IonHeader,
   IonIcon,
   IonInput,
-  IonItem,
-  IonLabel,
-  IonList,
   IonModal,
   IonPage,
   IonText,
   IonTitle,
+  IonToast,
   IonToolbar,
 } from "@ionic/react";
 import React, {
@@ -31,12 +27,8 @@ import "./BookPreview.css";
 
 import Image from "../../assets/images/room-pt.png";
 import {
-  checkmark,
   checkmarkCircleOutline,
-  checkmarkDone,
-  checkmarkDoneOutline,
   chevronForward,
-  informationCircle,
   informationCircleOutline,
   pencilOutline,
   person,
@@ -44,97 +36,36 @@ import {
 } from "ionicons/icons";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
-import { getStoredUser } from "../../helpers/authSDK";
-import { APP_CONFIG } from "../../helpers/keys";
-import { AppConfig } from "../../@types/appConfig";
-import { getSaveData } from "../../helpers/storageSDKs";
-import { format } from "date-fns";
-import { Action } from "../../@types/action";
-import { formatDate } from "../../helpers/utils";
+import { format, isAfter, isBefore, isEqual } from "date-fns";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
 import { bookingAtom } from "../../atoms/bookingAtom";
-
-interface BookingInputs {
-  checkInDate: string;
-  checkOutDate: string;
-  numberOfGuest: number;
-  total: number;
-  showCheckInModal: boolean;
-  showCheckOutModal: boolean;
-  dateDifference: number;
-  formatedCheckInDate: string;
-  formatedCheckOutDate: string;
-  toggleGuestEdit: boolean;
-}
-
-const SET_GUEST_NUMBER = "SET_GUEST_NUMBER";
-const TOGGLE_CHECKIN_CALANDER = "TOGGLE_CHECKIN_CALANDER";
-const TOGGLE_CHECKOUT_CALANDER = "TOGGLE_CHECKOUT_CALANDER";
-const TOGGLE_GUEST_EDIT = "TOGGLE_GUEST_EDIT";
-const SET_TOTAL = "SET_TOTAL";
-const SET_CHECKIN_DATE = "SET_CHECKIN_DATE";
-const SET_CHECKOUT_DATE = "SET_CHECKOUT_DATE";
-const SET_DATE_DIFFERENCE = "SET_DATE_DIFFERENCE";
-
-function BookingReducer(state: BookingInputs, { type, payload }: Action) {
-  let updatedState = { ...state };
-
-  switch (type) {
-    case SET_GUEST_NUMBER:
-      updatedState.numberOfGuest = payload;
-      break;
-
-    case TOGGLE_CHECKIN_CALANDER:
-      updatedState.showCheckInModal = payload;
-      break;
-
-    case TOGGLE_CHECKOUT_CALANDER:
-      updatedState.showCheckOutModal = payload;
-      break;
-
-    case SET_TOTAL:
-      updatedState.total = payload;
-      break;
-
-    case SET_CHECKIN_DATE:
-      updatedState.checkInDate = payload;
-      updatedState.formatedCheckInDate = formatDate(payload);
-      break;
-
-    case SET_CHECKOUT_DATE:
-      updatedState.checkOutDate = payload;
-      updatedState.formatedCheckOutDate = formatDate(payload);
-      break;
-
-    case SET_DATE_DIFFERENCE:
-      updatedState.dateDifference = payload;
-      break;
-
-    case TOGGLE_GUEST_EDIT:
-      updatedState.toggleGuestEdit = payload;
-      break;
-
-    // case SET_CHECKOUT_DATE:
-    //     updatedState.showCheckOutModal = payload
-    //     break;
-
-    default:
-      return updatedState;
-  }
-
-  return updatedState;
-}
+import {
+  SET_GUEST_NUMBER,
+  TOGGLE_CHECKIN_CALANDER,
+  TOGGLE_CHECKOUT_CALANDER,
+  SET_TOTAL,
+  SET_CHECKIN_DATE,
+  SET_CHECKOUT_DATE,
+  SET_DATE_DIFFERENCE,
+  TOGGLE_GUEST_EDIT,
+} from "../../reducers/actions/bookingPreviewActions";
+import BookingPreviewReducer from "../../reducers/bookingPreviewReducer";
+import { useHistory, useParams } from "react-router";
 
 const BookingPreview = () => {
   // const [appConfig, setConfigDetails] = useState<AppConfig | null>(null);
+
+  const { apartmentId } = useParams<{ apartmentId: string }>();
+
+  const history = useHistory();
 
   const selectedApartment = useRecoilValue(apartmentAtom);
 
   const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom);
 
-  const appConfig = useRecoilValue(appConfigAtom)
+  const appConfig = useRecoilValue(appConfigAtom);
 
-  const [state, setState] = useReducer(BookingReducer, {
+  const [state, setState] = useReducer(BookingPreviewReducer, {
     checkInDate: "",
     checkOutDate: "",
     numberOfGuest: 1,
@@ -145,6 +76,11 @@ const BookingPreview = () => {
     formatedCheckInDate: "Jan 3",
     formatedCheckOutDate: "Jan 3",
     toggleGuestEdit: false,
+  });
+
+  const [showToast, setShowToast] = useState({
+    enabled: false,
+    message: "",
   });
 
   //  CheckIn
@@ -160,15 +96,54 @@ const BookingPreview = () => {
   const checkOutDatePicker = useRef<null | HTMLIonDatetimeElement>(null);
 
   // Computation
-  const [durationOfStay, _] = useState(15); //TODO; get the diffenrence between two dates
+  const [durationOfStay, setDurationOfStay] = useState(15); //TODO; get the diffenrence between two dates
 
-  const subTotal = useCallback(calculateSubPrice, [durationOfStay])();
+  const [subTotal, setSubTotal] = useState(0);
 
-  const total = useCallback(calculateTotalPrice, [subTotal])();
+  const [total, setTotal] = useState(0);
 
+  useEffect(() => {
+    calculateSubPrice();
+  }, [durationOfStay]);
 
   // ==================================== Functions =================================
 
+  function checkDatesAndContinueReservation() {
+    const selectedCheckInDate = new Date(state.checkInDate);
+    const selectedCheckOutDate = new Date(state.checkOutDate);
+    
+    // check if selected checkInDate is after checkoutDate
+    if (isAfter(selectedCheckInDate, selectedCheckOutDate)) {
+      setShowToast({
+        message: 'Invalid date selection. Your check in date is futher than your checkout date',
+        enabled: true
+      })
+      return;
+    }
+
+    // check if selected checkInDate is after checkoutDate
+    if (isBefore(selectedCheckOutDate, selectedCheckInDate)) {
+      setShowToast({
+        message: 'Invalid date selection. Your CheckOut Date Is More Recent Than Your CheckIn date',
+        enabled: true
+      })
+      return;
+    }
+
+    // check if both checkin and checkout date are the same
+    if (isEqual(selectedCheckOutDate, selectedCheckInDate)) {
+      setShowToast({
+        message: 'Invalid date selection. Select different CheckIn And CheckOut Dates',
+        enabled: true
+      })
+      return;
+    }
+
+    // history.push("booking_step_1");
+  }
+
+
+  // TODO: move function to utils
   function extractDateFromDateTimeString(
     dataTime: string,
     type: "checkin" | "checkout"
@@ -179,21 +154,26 @@ const BookingPreview = () => {
       setState({ type: SET_CHECKOUT_DATE, payload: date });
   }
 
+
   function calculateSubPrice() {
-    return selectedApartment.price * durationOfStay;;
+    const bookingSubTotal = selectedApartment.price * durationOfStay;
+    calculateTotalPrice(bookingSubTotal);
+    setSubTotal(bookingSubTotal);
   }
 
-  function calculateTotalPrice() {
+
+  function calculateTotalPrice(subTotal: number) {
     let totalPrice = appConfig?.service_charge! + subTotal;
     setBookingDetail({
       ...bookingDetail,
       checkin_datetime: state.checkInDate,
       checkout_datetime: state.checkOutDate,
       price: totalPrice,
-      number_of_guests: state.numberOfGuest
-    })
-    return totalPrice
+      number_of_guests: state.numberOfGuest,
+    });
+    setTotal(totalPrice);
   }
+
 
   return (
     <IonPage>
@@ -206,6 +186,22 @@ const BookingPreview = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        {/* =========================== Toast Start ======================== */}
+        <IonToast
+          isOpen={showToast.enabled}
+          color={'warning'}
+          message={showToast.message}
+          duration={4000}
+          position="top"
+          onDidDismiss={() =>
+            setShowToast({
+              enabled: false,
+              message: "",
+            })
+          }
+        />
+        {/* =========================== Toast Ends ======================== */}
+
         {/* =========================== Modals Start ======================== */}
         {/* Checkin Modal */}
         <IonModal
@@ -445,8 +441,9 @@ const BookingPreview = () => {
             shape="round"
             size="large"
             style={{ width: "12rem", height: "55px" }}
-            routerDirection="forward"
-            routerLink="/booking_step_1"
+            onClick={checkDatesAndContinueReservation}
+            // routerDirection="forward"
+            // routerLink="/booking_step_1"
           >
             Reserve
           </IonButton>

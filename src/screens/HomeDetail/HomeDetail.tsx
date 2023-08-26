@@ -80,6 +80,7 @@ const HomeDetail = () => {
 
 
   useEffect(() => {
+    setIsLoading(true);
     (async () => {
       const res = await getApartmentDetail(apartmentId, authToken);
 
@@ -94,6 +95,7 @@ const HomeDetail = () => {
       });
 
       setSelectedApartment({...res!}) // set app level selected apartment for booking
+      setIsLoading(false)
     })();
   }, []);
 
