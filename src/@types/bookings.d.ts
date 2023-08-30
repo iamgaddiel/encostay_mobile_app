@@ -38,6 +38,8 @@ export interface BookingFields {
     price: number
     number_of_guests: number
     transaction_charge: number
+    duration_of_stay: number
+    guest_phone: string
 }
 
 // used in BookingPreview for collecting guest booking details
@@ -54,4 +56,5 @@ export interface BookingPreviewInputs {
     toggleGuestEdit: boolean;
     transaction_charge: number
     durationOfStay?: number
+    appServiceChargePercentage: number
   }

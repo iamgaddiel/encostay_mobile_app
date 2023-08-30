@@ -17,6 +17,8 @@ export const bookingAtom  = atom<BookingFields>({
         host: "",
         price: 0,
         number_of_guests: 1,
-        transaction_charge: 0
+        transaction_charge: 0,
+        duration_of_stay: 1,
+        guest_phone: ''
     }
 })

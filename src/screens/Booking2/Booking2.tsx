@@ -4,8 +4,20 @@ import React from 'react'
 import "../Booking1/Booking1.css"
 import { cameraReverseOutline, shield, shieldOutline, warningOutline } from 'ionicons/icons'
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle'
+import { useRecoilState } from 'recoil'
+import { bookingAtom } from '../../atoms/bookingAtom'
 
 const Booking1 = () => {
+    const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
+
+
+
+    function handleExtraInfo(detail: string){
+        setBookingDetail({
+            ...bookingDetail,
+            aditional_info: detail
+        })
+    }
     return (
         <IonPage>
             <BackHeaderNoTitle defaultHref='/booking_step_1' />
@@ -15,8 +27,8 @@ const Booking1 = () => {
                     <div className="booking_process_stage">1</div>
                     <div className="booking_process_stage_currnet">Step 2</div>
                     <div className="booking_process_stage">3</div>
-                    <div className="booking_process_stage">4</div>
-                    <div className="booking_process_stage">5</div>
+                    {/* <div className="booking_process_stage">4</div> */}
+                    {/* <div className="booking_process_stage">5</div> */}
                 </section>
 
                 <section className="mt-5 ion-padding">
@@ -30,6 +42,7 @@ const Booking1 = () => {
                     placeholder="Type your message..."
                     className="mt-4 ion-padding shadow-sm rounded-4"
                     style={{ height: "20vh"}}
+                    onIonChange={(e) => handleExtraInfo(e.detail?.value! as string)}
                 />
 
                 <IonButton

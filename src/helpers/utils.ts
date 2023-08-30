@@ -7,8 +7,26 @@ import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION } from "./keys";
 
 
 
+interface HumanReadableDate {
+  day: number;
+  weekday: string;
+  monthAbbreviation: string;
+}
 
+export function getHumanReadableDate(date: Date): HumanReadableDate {
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+  const day = date.getDate();
+  const weekday = daysOfWeek[date.getDay()];
+  const monthAbbreviation = monthAbbreviations[date.getMonth()];
+
+  return {
+    day,
+    weekday,
+    monthAbbreviation
+  };
+}
 /**
  * 
  * @param date1 

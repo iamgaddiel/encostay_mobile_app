@@ -40,12 +40,15 @@ import "./HomeDetail.css";
 // import { rooms } from '../../atoms/demoAtoms'
 import SpaceBetween from "../../components/style/SpaceBetween";
 import { useHistory, useParams } from "react-router";
-import { ApartementItem } from "../../@types/apartments";
+import { ApartementItem, Apartment } from "../../@types/apartments";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
 import { getApartmentDetail } from "../../helpers/utils";
 import { bookingAtom } from "../../atoms/bookingAtom";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
+import { getSaveData } from "../../helpers/storageSDKs";
+import { USER } from "../../helpers/keys";
+import { StoredUser } from "../../@types/users";
 
 const HomeDetail = () => {
   const { apartmentId } = useParams<{ apartmentId: string }>();
@@ -64,7 +67,7 @@ const HomeDetail = () => {
 
   // 
 
-  // const [isAvailable, setAvailable] = useState(true)
+  const [isAvailable, setAvailable] = useState(true)
 
   const [apartment, setApartment] = useState<ApartementItem | null>(null);
 
@@ -72,7 +75,7 @@ const HomeDetail = () => {
 
   const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom);
 
-  const { record: user } = useRecoilValue(userAtom);
+  // const { record: user } = useRecoilValue(userAtom); // FIXME: Remove this line, Ref: line 95
 
   const setSelectedApartment = useSetRecoilState(apartmentAtom)
 
@@ -85,19 +88,21 @@ const HomeDetail = () => {
   useEffect(() => {
     setIsLoading(true);
     (async () => {
-      const res = await getApartmentDetail(apartmentId, authToken);
+      const selectedApartment = await getApartmentDetail(apartmentId, authToken) as ApartementItem;
 
-      setApartment(res); // set component state
+      setApartment(selectedApartment); // set component state
+
+      const {record: user} = await getSaveData(USER) as StoredUser
 
       // set app level booking state
       setBookingDetail({
         ...bookingDetail,
-        apartment: apartment?.id!,
+        apartment: selectedApartment?.id!,
         guest: user.id,
         host: apartment?.host!
       });
 
-      setSelectedApartment({...res!}) // set app level selected apartment for booking
+      setSelectedApartment({...selectedApartment!}) // set app level selected apartment for booking
       setIsLoading(false)
     })();
   }, []);

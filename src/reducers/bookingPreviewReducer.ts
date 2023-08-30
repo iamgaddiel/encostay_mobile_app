@@ -2,7 +2,7 @@ import { isAfter, isBefore } from "date-fns";
 import { Action } from "../@types/action";
 import { BookingPreviewInputs } from "../@types/bookings";
 import { formatDate, getDateDiffInDays } from "../helpers/utils";
-import { SET_GUEST_NUMBER, TOGGLE_CHECKIN_CALANDER, TOGGLE_CHECKOUT_CALANDER, SET_TOTAL, SET_CHECKIN_DATE, SET_CHECKOUT_DATE, SET_DATE_DIFFERENCE, TOGGLE_GUEST_EDIT, SET_TRANSACTION_CHARGE } from "./actions/bookingPreviewActions";
+import { SET_GUEST_NUMBER, TOGGLE_CHECKIN_CALANDER, TOGGLE_CHECKOUT_CALANDER, SET_TOTAL, SET_CHECKIN_DATE, SET_CHECKOUT_DATE, SET_DATE_DIFFERENCE, TOGGLE_GUEST_EDIT, SET_TRANSACTION_CHARGE, SET_APP_SERVICE_CHARGE_PERCENTAGE } from "./actions/bookingPreviewActions";
 
 
 
@@ -54,6 +54,10 @@ export default function BookingPreviewReducer(state: BookingPreviewInputs, { typ
 
     case SET_TRANSACTION_CHARGE:
       updatedState.transaction_charge = payload;
+      break;
+
+    case SET_APP_SERVICE_CHARGE_PERCENTAGE:
+      updatedState.appServiceChargePercentage = payload;
       break;
 
     default:

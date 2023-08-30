@@ -50,11 +50,14 @@ import {
   APP_CONFIG_RECORD_ID,
   USER,
 } from "../../helpers/keys";
-import { userAtom } from "../../atoms/appAtom";
 import Home from "../Home/Home";
 import useAuth from "../../hooks/useAuth";
 import { AppConfig } from "../../@types/appConfig";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
+
+
+
+
 
 const Login = () => {
   // TODO: fix social media buttons

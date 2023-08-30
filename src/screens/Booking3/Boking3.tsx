@@ -7,8 +7,28 @@ import Image from "../../assets/images/twemoji_flag-for-flag-nigeria.svg"
 
 // css
 import "./Booking3.css"
+import { useRecoilState } from 'recoil'
+import { bookingAtom } from '../../atoms/bookingAtom'
+import { useHistory } from 'react-router'
 
 const Booking1 = () => {
+    const history = useHistory()
+
+    const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
+
+    function addPhoneNumber (phone: string) {
+        setBookingDetail({...bookingDetail, guest_phone: phone})
+    }
+
+    function finishBookProcess() {
+
+        console.log(bookingDetail)
+
+        // history.push('/payment_prcessing')
+
+    }
+
+
     return (
         <IonPage>
             <BackHeaderNoTitle defaultHref='/booking_step_2' />
@@ -18,7 +38,7 @@ const Booking1 = () => {
                     <div className="booking_process_stage">1</div>
                     <div className="booking_process_stage">2</div>
                     <div className="booking_process_stage_currnet">Step 3</div>
-                    <div className="booking_process_stage">4</div>
+                    {/* <div className="booking_process_stage">4</div> */}
                 </section>
 
                 <section className="mt-5 ion-padding">
@@ -35,6 +55,7 @@ const Booking1 = () => {
                             placeholder="070x xxxx xxx"
                             className='border-bottom ml-2'
                             inputMode='numeric'
+                            onIonChange={(e) => addPhoneNumber(e.detail.value as string)}
                         />
                     </div>
 
@@ -44,8 +65,7 @@ const Booking1 = () => {
                     className='yellow_fill mt-4'
                     size='large'
                     shape="round"
-                    routerDirection='forward'
-                    routerLink='/booking_step_4'
+                    onClick={finishBookProcess}
                     expand='block'
                     mode='ios'
                 >

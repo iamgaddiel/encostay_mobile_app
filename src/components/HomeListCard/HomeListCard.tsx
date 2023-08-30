@@ -44,7 +44,8 @@ const HomeListCard: React.FC<Props> = ({
 
     // generate a dynamic array based on the number of ratings
     useEffect(() => {
-        const arr = [...new Array(ratings).map((_, i) => ++i)]
+        // const arr = [...new Array(ratings).map((_, i) => ++i)]
+        const arr = [...new Array(ratings).keys()]
         setRattingsArray(arr)
     }, [])
 
@@ -95,8 +96,8 @@ const HomeListCard: React.FC<Props> = ({
                                 <div className='ion-text-center'>
                                     <span className="text-muted ion-margin-end">{ratings}.0</span>
                                     {
-                                        ratingsArray.map(() => (
-                                            <IonIcon icon={star} color="warning" />
+                                        ratingsArray.map((indx) => (
+                                            <IonIcon icon={star} color="warning" key={indx}/>
                                         ))
                                     }
                                 </div>
