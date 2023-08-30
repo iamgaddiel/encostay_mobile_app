@@ -37,7 +37,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
 import { isAfter, isBefore, isEqual } from "date-fns";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
-import { bookingAtom } from "../../atoms/bookingAtom";
+import { bookingAtom, selectedApartmentIdAtom } from "../../atoms/bookingAtom";
 import {
   SET_GUEST_NUMBER,
   TOGGLE_CHECKIN_CALANDER,
@@ -58,9 +58,8 @@ import { APP_CONFIG } from "../../helpers/keys";
 
 
 const BookingPreview = () => {
-  // const [appConfig, setConfigDetails] = useState<AppConfig | null>(null);
 
-  const { apartmentId } = useParams<{ apartmentId: string }>();
+  const apartmentId = useRecoilValue(selectedApartmentIdAtom)
 
   const history = useHistory();
 

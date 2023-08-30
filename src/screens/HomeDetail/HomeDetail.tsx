@@ -44,14 +44,16 @@ import { ApartementItem, Apartment } from "../../@types/apartments";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
 import { getApartmentDetail } from "../../helpers/utils";
-import { bookingAtom } from "../../atoms/bookingAtom";
+import { bookingAtom, selectedApartmentIdAtom } from "../../atoms/bookingAtom";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { USER } from "../../helpers/keys";
 import { StoredUser } from "../../@types/users";
+import { get } from "react-hook-form";
 
 const HomeDetail = () => {
-  const { apartmentId } = useParams<{ apartmentId: string }>();
+
+  const apartmentId = useRecoilValue(selectedApartmentIdAtom)
 
   const { token: authToken } = useRecoilValue(userAtom);
 
@@ -87,24 +89,36 @@ const HomeDetail = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    (async () => {
-      const selectedApartment = await getApartmentDetail(apartmentId, authToken) as ApartementItem;
+    async function getApartment () {
+      console.log("🚀 ~ file: HomeDetail.tsx:92 ~ apartmentId:", apartmentId)
+      console.log("🚀 ~ file: HomeDetail.tsx:93 ~ authToken:", authToken)
 
-      setApartment(selectedApartment); // set component state
+      try {
+        const selectedApartment = await getApartmentDetail(apartmentId, authToken) as ApartementItem;
 
-      const {record: user} = await getSaveData(USER) as StoredUser
+        setApartment(selectedApartment); // set component state
 
-      // set app level booking state
-      setBookingDetail({
-        ...bookingDetail,
-        apartment: selectedApartment?.id!,
-        guest: user.id,
-        host: apartment?.host!
-      });
+        const { record: user } = await getSaveData(USER) as StoredUser
 
-      setSelectedApartment({...selectedApartment!}) // set app level selected apartment for booking
-      setIsLoading(false)
-    })();
+        // set app level booking state
+        setBookingDetail({
+          ...bookingDetail,
+          apartment: selectedApartment?.id!,
+          guest: user.id,
+          host: apartment?.host!
+        });
+
+        setSelectedApartment(selectedApartment) // set app level selected apartment for booking
+        setIsLoading(false)
+
+      } catch (e: any) {
+        console.warn(e)
+      }
+
+
+    }
+
+    getApartment()
   }, []);
 
 

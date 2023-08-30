@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react'
 import SpaceBetween from '../style/SpaceBetween'
 import "./HomeListCard.css"
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
-import { bookingAtom } from '../../atoms/bookingAtom'
+import { bookingAtom, selectedApartmentIdAtom } from '../../atoms/bookingAtom'
 import { userAtom } from '../../atoms/appAtom'
+import { useHistory } from 'react-router'
 
 
 type Location = {
@@ -39,8 +40,11 @@ const HomeListCard: React.FC<Props> = ({
     showRattings,
     homeId,
 }) => {
+    const history = useHistory()
 
     const [ratingsArray, setRattingsArray] = useState<number[]>([])
+
+    const setSelectedApartmentId = useSetRecoilState(selectedApartmentIdAtom)
 
     // generate a dynamic array based on the number of ratings
     useEffect(() => {
@@ -50,10 +54,16 @@ const HomeListCard: React.FC<Props> = ({
     }, [])
 
 
+    function viewApartment(apartmentId: string) {
+        setSelectedApartmentId(apartmentId) // set for app level state
+        history.push(`/apartment/${apartmentId}`)
+    }
+
+
     return (
-        <IonCard color={"light"} className='home_list_card' mode='ios' routerDirection='forward' routerLink={`/apartment/${homeId}`}>
+        <IonCard color={"light"} className='home_list_card' mode='ios' onClick={(() => viewApartment(homeId))}>
             <IonIcon icon={heart} className={`home_list_card_fav_icon text-${is_favourite ? "warning" : "light"}`} size='large' />
-            <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${imageUri})` }}></div>
+            <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${imageUri})` }}></div >
 
             <IonCardContent>
 
@@ -97,7 +107,7 @@ const HomeListCard: React.FC<Props> = ({
                                     <span className="text-muted ion-margin-end">{ratings}.0</span>
                                     {
                                         ratingsArray.map((indx) => (
-                                            <IonIcon icon={star} color="warning" key={indx}/>
+                                            <IonIcon icon={star} color="warning" key={indx} />
                                         ))
                                     }
                                 </div>
@@ -106,7 +116,7 @@ const HomeListCard: React.FC<Props> = ({
                     ) : null
                 }
             </IonCardContent>
-        </IonCard>
+        </IonCard >
     )
 }
 

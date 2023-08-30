@@ -22,3 +22,8 @@ export const bookingAtom  = atom<BookingFields>({
         guest_phone: ''
     }
 })
+
+export const selectedApartmentIdAtom = atom({
+    key: 'SELECTED_BOOKING_APARTMENT_ID',
+    default: ''
+})  
