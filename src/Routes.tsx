@@ -121,7 +121,7 @@ const Routes = () => {
                             <Route exact path="/passwords" render={() => <Passwords />} />
                         </IonRouterOutlet>
 
-                        <IonTabBar slot="bottom" className='ion-padding-top'>
+                        <IonTabBar slot="bottom" className='ion-padding-vertical'>
                             <IonTabButton tab="tab1" href="/home">
                                 <IonIcon icon={homeOutline} />
                                 <IonLabel>

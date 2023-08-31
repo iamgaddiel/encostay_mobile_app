@@ -76,7 +76,7 @@ const Booking1 = () => {
             className="ion-margin-top d-flex justify-content-between p-2 rounded-4"
             style={{ backgroundColor: "var(--white-4)" }}
           >
-            <IonText className="text-muted">
+            <IonText className="text-muted p-2 text-justify">
               Lorem ipsum dolor sit amet consectetur adipisicing elit.
               Veritatis, corporis omnis necessitatibus deleniti doloremque
               alias.
@@ -159,7 +159,7 @@ const Booking1 = () => {
                     Guns or other dangerouse things are not allowed.
                   </IonText>
                 </SpaceBetween>
-                <SpaceBetween className="my-2">
+                <div className="my-2 d-flex align-items-center">
                   <div className="bg-light rounded-3 p-2">
                     <IonIcon
                       icon={cameraReverseOutline}
@@ -167,8 +167,8 @@ const Booking1 = () => {
                       size="large"
                     />
                   </div>
-                  <IonText className="">Cameras are not allowed.</IonText>
-                </SpaceBetween>
+                  <IonText className="ms-3">Cameras are not allowed.</IonText>
+                </div>
                 <SpaceBetween className="my-2">
                   <div className="bg-light rounded-3 p-2">
                     <IonIcon

@@ -69,8 +69,6 @@ const BookingPreview = () => {
 
   // const appConfig = useRecoilValue(appConfigAtom);
 
-  const [appConfig, setAppConfig] = useState<AppConfig | null>(null)
-
   const [state, setState] = useReducer(BookingPreviewReducer, {
     checkInDate: new Date('2003-01-23'),
     checkOutDate: new Date('2003-01-23'),
@@ -127,7 +125,7 @@ const BookingPreview = () => {
   // ==================================== Functions =================================
 
   async function getAppServiceChargePercentage() {
-    const {service_charge} = await getSaveData(APP_CONFIG) as AppConfig
+    const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig
     setState({
       type: SET_APP_SERVICE_CHARGE_PERCENTAGE,
       payload: service_charge
@@ -199,16 +197,8 @@ const BookingPreview = () => {
       payload: transactionCharge,
     });
 
-    // Set app level booking atom
-    setBookingDetail({
-      ...bookingDetail,
-      transaction_charge: transactionCharge,
-      duration_of_stay: state?.durationOfStay!
-    });
-
     calculateTotalPrice(subTotal, transactionCharge)
   }
-
 
 
   function calculateTotalPrice(subTotal: number, transactionCharge: number) {
@@ -220,9 +210,14 @@ const BookingPreview = () => {
       checkout_datetime: state.checkOutDate.toString(),
       price: totalPrice,
       number_of_guests: state.numberOfGuest,
+      transaction_charge: transactionCharge,
+      duration_of_stay: state?.durationOfStay!
     });
+
+    console.log(bookingDetail, '<---')
     setTotal(totalPrice);
   }
+
 
   return (
     <IonPage>
@@ -234,6 +229,7 @@ const BookingPreview = () => {
           <IonTitle>Make Reservation</IonTitle>
         </IonToolbar>
       </IonHeader>
+
       <IonContent className="ion-padding">
         {/* =========================== Toast Start ======================== */}
         <IonToast
@@ -251,8 +247,7 @@ const BookingPreview = () => {
         />
         {/* =========================== Toast Ends ======================== */}
 
-        {/* =========================== Modals Start ======================== */}
-        {/* Checkin Modal */}
+        {/* =========================== Checkin Modal Start ======================== */}
         <IonModal
           ref={checkInCalanderModal}
           className="birthday_modal"
@@ -280,15 +275,16 @@ const BookingPreview = () => {
             ></IonDatetime>
           </IonContent>
         </IonModal>
+        {/* =========================== Checkin Modal Ends ======================== */}
 
-        {/* Checkout Modal */}
+        {/* =========================== Checkout Modal Ends ======================== */}
         <IonModal
           ref={checkOutCalanderModal}
           className="birthday_modal"
           isOpen={state.showCheckOutModal}
           onDidDismiss={() =>
             setState({
-              type: TOGGLE_CHECKIN_CALANDER,
+              type: TOGGLE_CHECKOUT_CALANDER,
               payload: false,
             })
           }
@@ -309,7 +305,7 @@ const BookingPreview = () => {
             ></IonDatetime>
           </IonContent>
         </IonModal>
-        {/* =========================== Modals Ends ======================== */}
+        {/* =========================== Checkout Modal Ends ======================== */}
 
         {/* Home preview */}
         <section className="d-flex mt-3">
@@ -329,7 +325,7 @@ const BookingPreview = () => {
               <div className="fs-5">
                 <IonIcon icon={star} color="warning" /> 4.8
               </div>
-            <div className="text-muted mx-4">(234)</div>
+              <div className="text-muted mx-4">(234)</div>
             </span>
           </div>
         </section>
