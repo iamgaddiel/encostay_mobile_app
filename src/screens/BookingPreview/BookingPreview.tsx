@@ -125,23 +125,6 @@ const BookingPreview = () => {
 
 
   function handleBooking(){
-    checkDatesAndBookReservation()
-
-    setBookingDetail({
-      ...bookingDetail,
-      checkin_datetime: state.checkInDate.toString(),
-      checkout_datetime: state.checkOutDate.toString(),
-      price: state.total,
-      number_of_guests: state.numberOfGuest!,
-      transaction_charge: state.transaction_charge,
-      duration_of_stay: state?.durationOfStay!,
-      host: apartmentId
-    });
-
-    history.push("/booking_step_1");
-  }
-
-  function checkDatesAndBookReservation() {
     const selectedCheckInDate = new Date(state.checkInDate);
     const selectedCheckOutDate = new Date(state.checkOutDate);
 
@@ -174,8 +157,21 @@ const BookingPreview = () => {
       });
       return;
     }
-  }
 
+    setBookingDetail({
+      ...bookingDetail,
+      checkin_datetime: state.checkInDate.toString(),
+      checkout_datetime: state.checkOutDate.toString(),
+      price: state.total,
+      number_of_guests: state.numberOfGuest!,
+      transaction_charge: state.transaction_charge,
+      duration_of_stay: state?.durationOfStay!,
+      host: apartmentId
+    });
+
+    history.push("/booking_step_1");
+  }
+  
 
   async function getAppServiceChargePercentage() {
     const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig

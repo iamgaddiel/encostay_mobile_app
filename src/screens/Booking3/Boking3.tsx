@@ -1,5 +1,5 @@
-import { IonAccordion, IonAccordionGroup, IonButton, IonContent, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonText, IonTextarea, IonThumbnail } from '@ionic/react'
-import React from 'react'
+import { IonAccordion, IonAccordionGroup, IonButton, IonContent, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonText, IonTextarea, IonThumbnail, IonToast } from '@ionic/react'
+import React, { useEffect, useState } from 'react'
 
 import "../Booking1/Booking1.css"
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle'
@@ -16,15 +16,33 @@ const Booking1 = () => {
 
     const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
 
-    function addPhoneNumber (phone: string) {
-        setBookingDetail({...bookingDetail, guest_phone: phone})
+    const [phone, setPhone] = useState('')
+
+    const [showToast, setShowToast] = useState({
+        enabled: false,
+        message: ''
+    })
+
+
+    useEffect(() => {
+        processPhoneNumber()
+    }, [phone])
+
+
+    function processPhoneNumber(){
+        setBookingDetail({ ...bookingDetail, guest_phone: phone })
     }
 
     function finishBookProcess() {
+        if (phone === '') {
+            setShowToast({
+                enabled: true,
+                message: 'Your phone number is required'
+            })
+            return
+        }
 
-        console.log(bookingDetail)
-
-        // history.push('/payment_prcessing')
+        history.push('/payment_prcessing')
 
     }
 
@@ -33,6 +51,18 @@ const Booking1 = () => {
         <IonPage>
             <BackHeaderNoTitle defaultHref='/booking_step_2' />
             <IonContent className='ion-padding' fullscreen>
+
+                <IonToast
+                    message={showToast.message}
+                    isOpen={showToast.enabled}
+                    onDidDismiss={() => setShowToast({
+                        enabled: false,
+                        message: ''
+                    })}
+                    duration={4000}
+                    position='top'
+                    color={'danger'}
+                />
 
                 <section className="mt-3 booking_process ion-padding-horizontal">
                     <div className="booking_process_stage">1</div>
@@ -55,7 +85,7 @@ const Booking1 = () => {
                             placeholder="070x xxxx xxx"
                             className='border-bottom ml-2'
                             inputMode='numeric'
-                            onIonChange={(e) => addPhoneNumber(e.detail.value as string)}
+                            onIonChange={(e) => setPhone(e.detail.value as string)}
                         />
                     </div>
 
