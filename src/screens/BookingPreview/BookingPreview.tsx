@@ -47,6 +47,7 @@ import {
   TOGGLE_GUEST_EDIT,
   SET_TRANSACTION_CHARGE,
   SET_APP_SERVICE_CHARGE_PERCENTAGE,
+  SET_TOTAL,
 } from "../../reducers/actions/bookingPreviewActions";
 import BookingPreviewReducer from "../../reducers/bookingPreviewReducer";
 import { useHistory, useParams } from "react-router";
@@ -66,8 +67,6 @@ const BookingPreview = () => {
   const selectedApartment = useRecoilValue(apartmentAtom);
 
   const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom);
-
-  // const appConfig = useRecoilValue(appConfigAtom);
 
   const [state, setState] = useReducer(BookingPreviewReducer, {
     checkInDate: new Date('2003-01-23'),
@@ -90,24 +89,23 @@ const BookingPreview = () => {
     message: "",
   });
 
-  //  CheckIn
+  //  CheckInModal
 
   const checkInCalanderModal = useRef<null | HTMLIonModalElement>(null);
 
   const checkInDatePicker = useRef<null | HTMLIonDatetimeElement>(null);
 
-  //   CheckOut
+  //   CheckOutModal
 
   const checkOutCalanderModal = useRef<null | HTMLIonModalElement>(null);
 
   const checkOutDatePicker = useRef<null | HTMLIonDatetimeElement>(null);
 
   // Computation
-  // const [durationOfStay, setDurationOfStay] = useState(15); //TODO; get the diffenrence between two dates
 
   const [subTotal, setSubTotal] = useState(0);
 
-  const [total, setTotal] = useState(0);
+  // const [total, setTotal] = useState(0);
 
 
 
@@ -117,23 +115,33 @@ const BookingPreview = () => {
 
   useEffect(() => {
     calculateSubPrice();
-  }, [state.durationOfStay]);
+  }, [state.durationOfStay, state.numberOfGuest]);
 
 
 
-
+ 
   // ==================================== Functions =================================
 
-  async function getAppServiceChargePercentage() {
-    const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig
-    setState({
-      type: SET_APP_SERVICE_CHARGE_PERCENTAGE,
-      payload: service_charge
-    })
+
+
+  function handleBooking(){
+    checkDatesAndBookReservation()
+
+    setBookingDetail({
+      ...bookingDetail,
+      checkin_datetime: state.checkInDate.toString(),
+      checkout_datetime: state.checkOutDate.toString(),
+      price: state.total,
+      number_of_guests: state.numberOfGuest!,
+      transaction_charge: state.transaction_charge,
+      duration_of_stay: state?.durationOfStay!,
+      host: apartmentId
+    });
+
+    history.push("/booking_step_1");
   }
 
-
-  function checkDatesAndContinueReservation() {
+  function checkDatesAndBookReservation() {
     const selectedCheckInDate = new Date(state.checkInDate);
     const selectedCheckOutDate = new Date(state.checkOutDate);
 
@@ -166,8 +174,15 @@ const BookingPreview = () => {
       });
       return;
     }
+  }
 
-    history.push("/booking_step_1");
+
+  async function getAppServiceChargePercentage() {
+    const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig
+    setState({
+      type: SET_APP_SERVICE_CHARGE_PERCENTAGE,
+      payload: service_charge
+    })
   }
 
 
@@ -197,25 +212,24 @@ const BookingPreview = () => {
       payload: transactionCharge,
     });
 
-    calculateTotalPrice(subTotal, transactionCharge)
+    calculateTotalAndTransactionCost(subTotal, transactionCharge)
   }
 
 
-  function calculateTotalPrice(subTotal: number, transactionCharge: number) {
+  function calculateTotalAndTransactionCost(subTotal: number, transactionCharge: number) {
     let totalPrice = transactionCharge + subTotal;
 
-    setBookingDetail({
-      ...bookingDetail,
-      checkin_datetime: state.checkInDate.toString(),
-      checkout_datetime: state.checkOutDate.toString(),
-      price: totalPrice,
-      number_of_guests: state.numberOfGuest,
-      transaction_charge: transactionCharge,
-      duration_of_stay: state?.durationOfStay!
-    });
+    setState({
+      type: SET_TOTAL,
+      payload: totalPrice
+    })
 
-    console.log(bookingDetail, '<---')
-    setTotal(totalPrice);
+    setState({
+      type: SET_TRANSACTION_CHARGE,
+      payload: transactionCharge
+    })
+
+    // setTotal(totalPrice);
   }
 
 
@@ -475,7 +489,7 @@ const BookingPreview = () => {
               className="shadow-sm p-2 bg-light rounded-3 text-end w-75 mt-3"
               style={{ fontSize: "1.2rem" }}
             >
-              <IonText>${total}</IonText>
+              <IonText>${state.total}</IonText>
             </div>
           </SpaceBetween>
         </section>
@@ -486,9 +500,7 @@ const BookingPreview = () => {
             shape="round"
             size="large"
             style={{ width: "12rem", height: "55px" }}
-            onClick={checkDatesAndContinueReservation}
-          // routerDirection="forward"
-          // routerLink="/booking_step_1"
+            onClick={handleBooking}
           >
             Reserve
           </IonButton>
