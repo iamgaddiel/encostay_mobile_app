@@ -123,10 +123,23 @@ export async function getApartmentDetail(apartmentId: string, authToken: string)
 
 // ========================== Bookings =================================
 
-export async function getBookings(userId: string, authToken: string): Promise<BookingList> {
-  const params = {
-    filter: `(guest="${userId}")`,
-  };
+export async function getBookings(userId: string, authToken: string, accountType: 'guest' | 'host'): Promise<BookingList> {
+  let params = {}
+
+  if (accountType === 'guest'){
+    params = {
+      filter: `(guest="${userId}")`,
+      expand: `apartment`
+    };
+  }
+
+  if (accountType === 'host'){
+    params = {
+      filter: `(host="${userId}")`,
+      expand: `apartment`
+    };
+  }
+
   const { data } = await listApiCollection(
     BOOKINGS_COLLECTION,
     authToken,
@@ -140,12 +153,16 @@ export async function getBookings(userId: string, authToken: string): Promise<Bo
 }
 
 //FIXME: Api Rule: only admin, host, guest reated to a booking can view
-export async function getBookingDetai(bookingId: string, authToken: string): Promise<BookingItem | any> {
+export async function getBookingDetail(bookingId: string, authToken: string): Promise<BookingItem | any> {
   //TODO: make this function a method of a class
+  const params = {
+    expand: `apartment`
+  };
   const { response, error } = await getApiCollectionItem(
     BOOKINGS_COLLECTION,
     bookingId,
-    authToken
+    authToken,
+    params
   );
   if (error) {
     console.log(

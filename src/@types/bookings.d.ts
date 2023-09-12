@@ -1,3 +1,6 @@
+import { ApartementItem } from "./apartments"
+import { UserCollectionType } from "./users"
+
 export interface BookingItem {
     id: string
     collectionId: string
@@ -6,6 +9,11 @@ export interface BookingItem {
     updated: string
     apartment: string
     guest: string
+    expand?: {
+        apartment?: ApartementItem
+        guest?: UserCollectionType
+        host?: UserCollectionType
+    }
     checkin_datetime: string
     aditional_info: string
     is_paid: boolean,
@@ -13,7 +21,15 @@ export interface BookingItem {
     checkout_datetime: string
     host: string
     price: number
-    number_of_guests: number
+    number_of_guests: number,
+    transaction_charge: number
+    duration_of_stay: number
+    guest_phone: string
+    reason_for_cancel?: string
+    cancellation_charge?: number,
+    is_approved?: boolean
+    refund_amount?: number
+    is_pending: boolean
 }
 
 
@@ -57,4 +73,4 @@ export interface BookingPreviewInputs {
     transaction_charge: number
     durationOfStay?: number
     appServiceChargePercentage: number
-  }
+}

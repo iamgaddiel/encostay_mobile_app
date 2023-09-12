@@ -166,7 +166,7 @@ const BookingPreview = () => {
       number_of_guests: state.numberOfGuest!,
       transaction_charge: state.transaction_charge,
       duration_of_stay: state?.durationOfStay!,
-      host: apartmentId
+      host: selectedApartment.host
     });
 
     history.push("/booking_step_1");

@@ -39,6 +39,7 @@ import Appartments from './screens/Appartments/Appartments'
 import AddApartments from './screens/AddApartments/AddApartments'
 import HostApartmentDetail from './screens/HostApartmentDetail/HostApartmentDetail'
 import ApartmentUpdate from './screens/ApartmentUpdate/ApartmentUpdate'
+import HostAcceptOrDecline from './screens/HostAcceptOrDecline/HostAcceptOrDecline'
 
 const Routes = () => {
     const { showTabs } = useRecoilValue(utilsAtom)
@@ -77,17 +78,19 @@ const Routes = () => {
             <Route exact path="/withdraw" render={() => <Withdrawal />} />
             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
-            <Route exact path="/appartments" render={() => <Appartments />} /> 
+            <Route exact path="/appartments" render={() => <Appartments />} />
             <Route exact path="/add_apartment" render={() => <AddApartments />} />
             <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
+            <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
-                        <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
-                        <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
+                            <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
+                            <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
+                            <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
                             <Route exact path="/add_apartment" render={() => <AddApartments />} />
                             <Route exact path="/appartments" render={() => <Appartments />} />
                             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
@@ -100,7 +103,7 @@ const Routes = () => {
                             <Route exact path="/edit_profile" render={() => <EditProfile />} />
                             <Route exact path="/change_password" render={() => <ChangePassword />} />
                             <Route exact path="/booking_cancellation_survey/:bookingId" render={() => <CancellationSurvey />} />
-                            <Route exact path="/manage_booking_preview" render={() => <MangeBookingPreivew />} />
+                            <Route exact path="/manage_booking_preview/:bookingId" render={() => <MangeBookingPreivew />} />
                             <Route exact path="/manage_bookings" render={() => <MangeBooking />} />
                             <Route exact path="/payment_confirm" render={() => <PaymentConfirmed />} />
                             <Route exact path="/payment_prcessing" render={() => <PaymentProcessing />} />

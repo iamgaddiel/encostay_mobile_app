@@ -1,15 +1,59 @@
 import { IonButton, IonContent, IonIcon, IonPage, IonText, IonTitle } from '@ionic/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 import { star, person, ellipsisHorizontalCircleSharp, ellipsisHorizontal, chevronForward } from 'ionicons/icons'
 
 import Image from "../../assets/images/room-pt.png"
 import { useParams } from 'react-router'
 import SpaceBetween from '../../components/style/SpaceBetween'
+import { BookingItem } from '../../@types/bookings'
+import { getBookingDetail, getHumanReadableDate } from '../../helpers/utils'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { userAtom } from '../../atoms/appAtom'
+import { appartmnetBookingAtom } from '../../atoms/bookingAtom'
+import { saveData } from '../../helpers/storageSDKs'
+import { SELECTED_BOOKING_FOR_CANCELATION } from '../../helpers/keys'
 
 
 const MangeBookingPreivew = () => {
     const { bookingId } = useParams<{ bookingId: string }>()
+
+    // recoil
+    const { token } = useRecoilValue(userAtom)
+    const setBookedApartment = useSetRecoilState(appartmnetBookingAtom)
+
+
+    const [booking, setBooking] = useState<BookingItem>()
+
+
+    const [checkInAndOutDateString, setInAndOutDateString] = useState({
+        checkinString: '',
+        checkoutString: ''
+    })
+
+
+
+    useEffect(() => {
+        fetchBookingDetails()
+    }, [])
+
+
+
+    async function fetchBookingDetails(): Promise<void> {
+        const bookingRes = await getBookingDetail(bookingId, token) as BookingItem
+        
+        saveData(SELECTED_BOOKING_FOR_CANCELATION, bookingRes) // store selected booking to DB
+
+        const { day: checkInDay, monthAbbreviation: checkInMonth} = getHumanReadableDate(new Date(bookingRes.checkin_datetime))
+        const { day: checkOutDay, monthAbbreviation: checkOutMonth} = getHumanReadableDate(new Date(bookingRes.checkout_datetime))
+
+        setInAndOutDateString({
+            checkinString: `${checkInMonth} ${checkInDay}`,
+            checkoutString: `${checkOutMonth} ${checkOutDay}`,
+        })
+
+        setBooking(bookingRes)
+    }
 
 
     return (
@@ -19,8 +63,8 @@ const MangeBookingPreivew = () => {
                 <section className='d-flex mt-3'>
                     <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
                     <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
-                        <big>Perfect Room and all</big>
-                        <IonText className='fs-3 block'>₦234/night</IonText>
+                        <big>{ }</big>
+                        <IonText className='fs-3 block'>₦{booking?.expand?.apartment?.price}/night</IonText>
                         <span className='d-flex align-items-center justify-content-between'>
 
                             <div className='fs-5 d-flex'>
@@ -49,7 +93,7 @@ const MangeBookingPreivew = () => {
                         <div className="d-flex align-items-center">
                             <div className='rounded-3 p-2 mt-2 shadow-sm' style={{ width: "90px", backgroundColor: "white" }}>
                                 <SpaceBetween>
-                                    <IonText className='text-muted'>Jan 3</IonText>
+                                    <IonText className='text-muted'>{checkInAndOutDateString.checkinString}</IonText>
                                     <IonIcon icon={chevronForward} />
                                 </SpaceBetween>
                             </div>
@@ -64,7 +108,7 @@ const MangeBookingPreivew = () => {
                         <div className="d-flex align-items-center">
                             <div className='rounded-3 p-2 mt-2 shadow-sm' style={{ width: "90px", backgroundColor: "white" }}>
                                 <SpaceBetween>
-                                    <IonText className='text-muted'>Jan 3</IonText>
+                                    <IonText className='text-muted'>{checkInAndOutDateString.checkoutString}</IonText>
                                     <IonIcon icon={chevronForward} />
                                 </SpaceBetween>
                             </div>
@@ -79,12 +123,12 @@ const MangeBookingPreivew = () => {
                 <SpaceBetween className='mt-4'>
                     <IonText className='text-muted'>Total price</IonText>
                     <div className="shadow-sm p-2 bg-light rounded-3 text-center" style={{ width: "80px", fontSize: '1.2rem' }}>
-                        <IonText>$596</IonText>
+                        <IonText>${booking?.price}</IonText>
                     </div>
                 </SpaceBetween>
 
 
-                <div className='ion-text-center' style={{ marginTop: "80px"}}>
+                <div className='ion-text-center' style={{ marginTop: "80px" }}>
                     <IonButton
                         className='brown_fill'
                         shape='round'
@@ -93,7 +137,7 @@ const MangeBookingPreivew = () => {
                         routerDirection='forward'
                         routerLink='/booking_cancellation_survey/3'
                     >
-                        Cancellation
+                        Cancel Booking
                     </IonButton>
                 </div>
             </IonContent>

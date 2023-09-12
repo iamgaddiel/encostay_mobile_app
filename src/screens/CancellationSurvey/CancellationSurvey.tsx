@@ -1,32 +1,94 @@
 import { IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonIcon, IonItem, IonLabel, IonList, IonModal, IonPage, IonRadio, IonRadioGroup, IonText, IonTitle } from '@ionic/react'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { informationCircleOutline, personCircle } from 'ionicons/icons'
 
 // css
 import "./CancellationSurvey.css"
-import { useHistory } from 'react-router'
+import { useHistory, useParams } from 'react-router'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { userAtom } from '../../atoms/appAtom'
+import { BookingItem } from '../../@types/bookings'
+import { getBookingDetail, getBookings } from '../../helpers/utils'
+import { APP_CONFIG, BOOKINGS_COLLECTION, SELECTED_BOOKING_FOR_CANCELATION } from '../../helpers/keys'
+import { getSaveData } from '../../helpers/storageSDKs'
+import { AppConfig } from '../../@types/appConfig'
+import { appartmnetBookingAtom } from '../../atoms/bookingAtom'
+import { updateApiCollectionItem } from '../../helpers/apiHelpers'
+
 
 
 const CancellationSurvey = () => {
+    const { bookingId } = useParams<{ bookingId: string }>()
     const history = useHistory()
 
-    // values
-    const DATES_CHANGED = "dates_changed"
-    const DUAL_BOOKING = "dual_changed"
-    const CHOICE_CHANGED = "choice_changed"
-    const TRIP_CANCELLED = "trip_cancelled"
+
 
     // states
     const [surveyReason, setSurveyReason] = useState("")
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    const [booking, setBooking] = useState<BookingItem>()
+    const [cancelBookingPrice, setCancelBookingPrice] = useState(0)
+    const [showPrompt, setShowPrompt] = useState({
+        enabled: false,
+        message: ''
+    })
+
+    // Atoms
+    const { token } = useRecoilValue(userAtom)
+    const selectedApartmentBooking = useRecoilValue(appartmnetBookingAtom)
 
     //modal
     const cancelationModal = useRef<HTMLIonModalElement>(null);
 
+
+
+
+    useEffect(() => {
+        fetchBookingDetails()
+    }, [])
+
+
+
+    async function fetchBookingDetails(): Promise<void> {
+
+        const booking = await getSaveData(SELECTED_BOOKING_FOR_CANCELATION) as BookingItem
+        setBooking(booking)
+
+        // calculate cancellation charge
+        const cancelationCost = parseInt(
+            (booking?.price! * CANCELATION_CHARGEE_PERCENTAGE).toFixed(3)
+        )
+        setCancelBookingPrice(cancelationCost)
+    }
+
+
     function dismiss() {
         cancelationModal.current?.dismiss();
+    }
+
+
+    async function handleBookingCancellation() {
+        const refundAmount = booking?.price! - cancelBookingPrice
+
+        const updateData = {
+            is_canceled: true,
+            refund_amount: refundAmount,
+            cancellation_charge: cancelBookingPrice,
+            reason_for_cancel: surveyReason
+        }
+        console.log("🚀 ~ file: CancellationSurvey.tsx:77 ~ handleBookingCancellation ~ updateData:", updateData)
+
+        // const { isUPdated } = await updateApiCollectionItem(BOOKINGS_COLLECTION, booking?.id!, updateData, token)
+
+        // if (!isUPdated){
+        //     //TODO: show alert
+        //     return
+        // }
+
+        // const nextScreen = '/manage_bookings'
+        // history.push(nextScreen)
     }
 
 
@@ -43,57 +105,61 @@ const CancellationSurvey = () => {
                     isOpen={showConfirmationModal}
                     onDidDismiss={() => setShowConfirmationModal(false)}
                 >
-                    <div className="wrapper ion-padding">
-                        {/* <div className="py-2">
+                    <IonContent className='ion-padding'>
+                        <div className="wrapper ">
+                            {/* <div className="py-2">
                             <IonTitle>Perfect Room, East <br /> Vilage Dream</IonTitle>
                         </div> */}
 
-                        <section className="mt-3 ion-padding rounded-4 p-3" style={{ backgroundColor: "var(--light-red)" }}>
-                            <IonText className='text-muted fw-bold'>Cancellation cost </IonText>
+                            <section className="mt-3 ion-padding rounded-4 p-3" style={{ backgroundColor: "var(--light-red)" }}>
+                                <IonText className='text-muted fw-bold'>Cancellation cost </IonText>
 
-                            <div className="mt-3">
-                                <SpaceBetween className="my-3">
-                                    <IonText className="text-muted">Room</IonText>
-                                    <IonText className='fw-bold-sm'>free</IonText>
-                                </SpaceBetween>
-                                <SpaceBetween className="my-3">
-                                    <IonText className="text-muted">Services Charges</IonText>
-                                    <IonText className='fw-bold-sm'>₦14</IonText>
-                                </SpaceBetween>
-                            </div>
-
-                            <div className='w-100 mt-4 border border-warning'></div>
-
-                            <SpaceBetween className='mt-4'>
-                                <IonText className='text-muted'>Total</IonText>
-                                <div className="shadow-sm p-2 bg-light rounded-3 text-center" style={{ width: "80px", fontSize: '1.2rem' }}>
-                                    <IonText>$596</IonText>
+                                <div className="mt-3">
+                                    <SpaceBetween className="my-3">
+                                        <IonText className="text-muted">Room</IonText>
+                                        <IonText className='fw-bold-sm'>free</IonText>
+                                    </SpaceBetween>
+                                    <SpaceBetween className="my-3">
+                                        <IonText className="text-muted">Services Charges</IonText>
+                                        <IonText className='fw-bold-sm'>${cancelBookingPrice}</IonText>
+                                    </SpaceBetween>
                                 </div>
-                            </SpaceBetween>
-                            
-                        </section>
 
-                        <SpaceBetween className='mt-3'>
-                            <IonButton
-                                className='brown_fill_outline w-50 mx-2'
-                                shape='round'
-                                onClick={dismiss}
-                                // onClick={() => setShowConfirmationModal(false)}
-                            >
-                                Close
-                            </IonButton>
-                            <IonButton
-                                className='brown_fill w-50 mx-2'
-                                shape='round'
-                                routerDirection='forward'
-                                routerLink='/manage_bookings'
-                                // onClick={() => history.push("/manage_bookings")}
-                            >
-                                Confirm
-                            </IonButton>
-                        </SpaceBetween>
-                    </div>
+                                <div className='w-100 mt-4 border border-warning'></div>
+
+                                <SpaceBetween className='mt-4'>
+                                    <IonText className='text-muted'>Total</IonText>
+                                    <div className="shadow-sm p-2 bg-light rounded-3 text-end" style={{ width: "180px", fontSize: '1.2rem' }}>
+                                        <IonText>${cancelBookingPrice}</IonText>
+                                    </div>
+                                </SpaceBetween>
+
+                            </section>
+
+                            <SpaceBetween className='mt-3'>
+                                <IonButton
+                                    className='brown_fill_outline w-50 mx-2'
+                                    shape='round'
+                                    // onClick={dismiss}
+                                    onClick={() => setShowConfirmationModal(false)}
+                                >
+                                    Close
+                                </IonButton>
+                                <IonButton
+                                    className='brown_fill w-50 mx-2'
+                                    shape='round'
+                                    expand='block'
+                                    onClick={() => {
+                                        console.log('fine')
+                                    }}
+                                >
+                                    Confirm
+                                </IonButton>
+                            </SpaceBetween>
+                        </div>
+                    </IonContent>
                 </IonModal>
+
 
 
                 {/* Cancellation Notice */}
@@ -173,3 +239,11 @@ const CancellationSurvey = () => {
 }
 
 export default CancellationSurvey
+
+
+// values
+const DATES_CHANGED = "dates_changed"
+const DUAL_BOOKING = "dual_changed"
+const CHOICE_CHANGED = "choice_changed"
+const TRIP_CANCELLED = "trip_cancelled"
+const CANCELATION_CHARGEE_PERCENTAGE = 0.1

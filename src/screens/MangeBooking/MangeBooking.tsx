@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar } from '@ionic/react'
+import { IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonText, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle/BackHeaderNoTitle'
 
@@ -11,11 +11,13 @@ import SpaceBetween from '../../components/style/SpaceBetween'
 import { person, star } from 'ionicons/icons'
 
 import "./ManageBookings.css"
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { userAtom } from '../../atoms/appAtom'
 import { BookingList } from '../../@types/bookings'
 import { getBookings } from '../../helpers/utils'
 import NotFound from '../../components/NotFound/NotFound'
+import { utilsAtom } from '../../atoms/utilityAtom'
+import { useQuery } from '@tanstack/react-query'
 
 
 type View = "bookings" | "history"
@@ -23,30 +25,70 @@ type View = "bookings" | "history"
 
 const MangeBooking = () => {
     const [view, setView] = useState<View>("bookings")
-    const [isCancelled, setIsCancelled] = useState(false)
+
+    const { record: user, token: authToken } = useRecoilValue(userAtom)
+
+    const hostId = user?.id!
+
+    const setUtil = useSetRecoilState(utilsAtom)
+
+    const [isCancelled, setIsCancelled] = useState(false) //TODO: comment this.
+
     const bookingsDemo = [...new Array(2).keys()] //TODO: comment this
 
+    // const [isLoading, setIsLoading] = useState(false)
 
-    const {record: user, token: authToken} = useRecoilValue(userAtom)
-    const [isLoading, setIsLoading] = useState(false)
-    const [bookings, setBookings] = useState<BookingList | null>(null)
+    // const [bookings, setBookings] = useState<BookingList | null>(null)
+
+    const { data: bookings, isLoading, isError } = useQuery({
+        queryKey: ['manageBookings'],
+        queryFn: loadBookings
+    })
 
 
 
 
     //TODO: use ReactQuery
-    
-
 
     useEffect(() => {
-        loadBookings()
+        setUtil({ showTabs: true })
     }, [])
 
+    // useEffect(() => {
+    //     loadBookings()
+    // }, [])
 
-    async function loadBookings() {
-        const response = await getBookings(user.id, authToken)
-        setBookings( () => response)
+
+    function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+        setTimeout(() => {
+            // Any calls to load data go here
+            loadBookings()
+            event.detail.complete();
+        }, 2000);
     }
+
+
+    async function loadBookings(): Promise<BookingList> {
+        try {
+            let response;
+
+            if (user.account_type === 'guest') {
+                response = await getBookings(user?.id!, authToken, 'guest')
+            }
+            else if (user.account_type === 'host') {
+                response = await getBookings(user?.id!, authToken, 'host')
+            }
+
+            // setBookings(response!)
+            console.log("🚀 ~ file: MangeBooking.tsx:82 ~ loadBookings ~ response:", response)
+            return response! as BookingList
+        }
+        catch (e: any) {
+            console.error(e)
+            throw new Error(e)
+        }
+    }
+
 
     return (
         <IonPage>
@@ -56,6 +98,10 @@ const MangeBooking = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen className="ion-padding">
+
+                <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                    <IonRefresherContent></IonRefresherContent>
+                </IonRefresher>
 
                 {/* Segment */}
                 <IonSegment slot='' value={view} mode='ios' id='manage_bookings_segement w-75'>
@@ -78,60 +124,109 @@ const MangeBooking = () => {
                     </IonSegmentButton>
                 </IonSegment>
 
+                {
+                    view === "bookings" ? (
+                        <>
+                            {
+                                bookings?.items.length! >= 1 ? (
+                                    <section className="mt-1">
+                                        <IonList lines='none'>
+                                            {
+                                                bookings && bookings.items.slice(0, 5).map((booking, indx) => (
+                                                    // bookingsDemo && bookingsDemo.map((booking, indx) => (
+                                                    <IonItem key={indx} routerDirection='forward' routerLink={user.account_type === 'host' ? `/host/booking/preview/${booking.id}` : `/manage_booking_preview/${booking.id}`}>
+                                                        <IonLabel>
+                                                            <section className='d-flex mt-1'>
+                                                                <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
+                                                                <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
+                                                                    <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
+                                                                    <IonText className='fs-5 block'>₦{booking.expand?.apartment?.price}/night</IonText>
+                                                                    <span className='d-flex align-items-center justify-content-between'>
 
-                <section className="mt-1">
-                    {
-                        // view === "bookings" && bookings?.totalItems! >= 1 ? (
-                        view === "bookings" && bookingsDemo.length >= 1 ? (
-                            <IonList>
-                                {
-                                    // bookings && bookings.items.map((booking, indx) => (
-                                    bookingsDemo && bookingsDemo.map((booking, indx) => (
-                                        <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
-                                            <IonLabel>
-                                                {/* Home preview */}
-                                                <section className='d-flex mt-3'>
-                                                    <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
-                                                    <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
-                                                        <IonLabel>Perfect Room and all sfsdf</IonLabel>
-                                                        <IonText className='fs-5 block'>₦234/night</IonText>
-                                                        <span className='d-flex align-items-center justify-content-between'>
+                                                                        <div className='d-flex'>
+                                                                            <IonIcon icon={star} color='warning' /> 4.8  <small className='ms-1'>(234)</small>
+                                                                        </div>
 
-                                                            <div className='d-flex'>
-                                                                <IonIcon icon={star} color='warning' /> 4.8
-                                                                <span className="text-muted ml-2">
-                                                                    <small>(234)</small>
-                                                                </span>
-                                                            </div>
+                                                                        {
+                                                                            !booking.is_canceled ? (
+                                                                                <div className="d-flex align-items-center">
+                                                                                    <IonIcon icon={person} color='warning' className="mr-1" /> {booking.number_of_guests}
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className='rounded-5 p-2' style={{ backgroundColor: "var(--light-red)" }}>
+                                                                                    <IonLabel className='text-danger'>Cancelled</IonLabel>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </section>
+                                                        </IonLabel>
+                                                    </IonItem>
+                                                ))
+                                            }
+                                        </IonList>
+                                    </section>
+                                ) : <NotFound
+                                    heading='No Bookings'
+                                    subheading="...try booking an apartment"
+                                />
+                            }
+                        </>
+                    ) : null
+                }
 
-                                                            {
-                                                                !isCancelled ? (
-                                                                    <div className="d-flex align-items-center">
-                                                                        <IonIcon icon={person} color='warning' className="mr-1" /> 1
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className='rounded-5 p-2' style={{ backgroundColor: "var(--light-red)" }}>
-                                                                        <IonLabel className='text-danger'>Cancelled</IonLabel>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </section>
-                                            </IonLabel>
-                                        </IonItem>
-                                    ))
-                                }
-                            </IonList>
-                        ) : <NotFound message={"You don't have any booking yet... try booking an apartment"} />
-                    }
+                {
+                    view === "history" ? (
+                        <>
+                            {
+                                bookings?.items.length! >= 1 ? (
+                                    <section className="mt-1">
+                                        <IonList lines='none'>
+                                            {
+                                                bookings && bookings.items.map((booking, indx) => (
+                                                    // bookingsDemo && bookingsDemo.map((booking, indx) => (
+                                                    <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
+                                                        <IonLabel>
+                                                            <section className='d-flex mt-1'>
+                                                                <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
+                                                                <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
+                                                                    <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
+                                                                    <IonText className='fs-5 block'>₦{booking.expand?.apartment?.price}/night</IonText>
+                                                                    <span className='d-flex align-items-center justify-content-between'>
 
-                    {
-                        view === "history" ? (
-                            <div></div>
-                        ) : null
-                    }
-                </section>
+                                                                        <div className='d-flex'>
+                                                                            <IonIcon icon={star} color='warning' /> 4.8  <small className='ms-1'>(234)</small>
+                                                                        </div>
+
+                                                                        {
+                                                                            !booking.is_canceled ? (
+                                                                                <div className="d-flex align-items-center">
+                                                                                    <IonIcon icon={person} color='warning' className="mr-1" /> {booking.number_of_guests}
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className='rounded-5 p-2' style={{ backgroundColor: "var(--light-red)" }}>
+                                                                                    <IonLabel className='text-danger'>Cancelled</IonLabel>
+                                                                                </div>
+                                                                            )
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </section>
+                                                        </IonLabel>
+                                                    </IonItem>
+                                                ))
+                                            }
+                                        </IonList>
+                                    </section>
+                                ) : <NotFound
+                                    heading='No History'
+                                    subheading="...try booking an apartment"
+                                />
+                            }
+                        </>
+                    ) : null
+                }
             </IonContent>
         </IonPage>
     )

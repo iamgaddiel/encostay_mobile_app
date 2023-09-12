@@ -48,6 +48,7 @@ import { APARTMENTS_COLLECTION } from "../../helpers/keys";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
 import { ApartementItem } from "../../@types/apartments";
+import { useQuery } from "@tanstack/react-query";
 
 const HostApartmentDetail = () => {
   const { apartmentId } = useParams<{ apartmentId: string }>();
@@ -71,13 +72,13 @@ const HostApartmentDetail = () => {
     cssEase: "linear",
   };
 
-  const [apartment, setApartment] = useState<ApartementItem>();
-  const [showAleart, setShowAleart] = useState(false);
   const [showDeleteConfirmDialogue, setShowDeleteConfirmDialogue] = useState(false)
 
-  useEffect(() => {
-    getApartmentDetail();
-  }, []);
+  const {data: apartment, isLoading, isError, error } = useQuery({
+    queryKey: ['hostApartmentDetail', apartmentId],
+    queryFn: getApartmentDetail
+  })
+
 
   async function getApartmentDetail() {
     //TODO: make this function a method of a class
@@ -86,14 +87,16 @@ const HostApartmentDetail = () => {
       apartmentId,
       token
     );
-    if (error) {
+    if (!response) {
       console.log(
         "🚀 ~ file: HostApartmentDetail.tsx:54 ~ getApartmentDetail ~ error:",
         error
       );
-      return;
+      throw new Error('Error fetching apartment details')
     }
-    setApartment(response as ApartementItem);
+    
+    return response as ApartementItem
+    // setApartment();
   }
 
   async function deleteApartemnt() {

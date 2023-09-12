@@ -1,5 +1,5 @@
 import { HttpResponse } from "@capacitor/core";
-import { _delete, _get, _post, _put } from "./api";
+import { _delete, _get, _patch, _post, _put } from "./api";
 import Settings from "./settings";
 import { recording } from "ionicons/icons";
 
@@ -12,7 +12,7 @@ const { pb, DEBUG } = Settings()
 interface CreateCollection { response: any | null, isCreated: boolean, error?: any }
 
 
-function pareseHeader(userToken?: string): {} {
+function parseHeader(userToken?: string): {} {
     const headers: any = {
         'Content-Type': 'application/json; charset=UTF-8'
     }
@@ -25,7 +25,7 @@ function pareseHeader(userToken?: string): {} {
 export async function createApiCollection(collection: string, formData: any, userToken?: string): Promise<CreateCollection> {
     // const URL = `${pb.baseUrl}${urlRelPath}`
     const URL = `${pb.baseUrl}/collections/${collection}/records`
-    const headers: any = pareseHeader(userToken)
+    const headers: any = parseHeader(userToken)
 
     const { data }: HttpResponse = await _post(URL, formData, headers)
     if (data?.code !== 200) {
@@ -45,7 +45,7 @@ export async function createApiCollection(collection: string, formData: any, use
 // Delete Collection
 export function deleteApiCollection(collection: string, recordId: string, authToken: string): { isDeleted: boolean } {
     const URL = `${pb.baseUrl}/collections/${collection}/records/${recordId}`
-    const HEADERS = pareseHeader(authToken)
+    const HEADERS = parseHeader(authToken)
     const PARAMS = {}
     const res = _delete(URL, HEADERS, PARAMS)
     if (res !== null) return { isDeleted: true };
@@ -54,20 +54,41 @@ export function deleteApiCollection(collection: string, recordId: string, authTo
 
 
 // Update Collection
-export async function updateApiCollectionItem(collection: string, id: string, formData: {}, userToken: string): Promise<{ isUPdated: boolean, error: unknown | null, response: unknown | null }> {
+export async function updateApiCollectionItem(collection: string, id: string, formData: {}, userToken: string): Promise<{ isUpdated: boolean, error: unknown | null, response: unknown | null }> {
     const URL = `${pb.baseUrl}/collections/${collection}/records/${id}`
-    const headers: any = pareseHeader(userToken)
+    const headers: any = parseHeader(userToken)
+
+    console.log(URL, headers, formData, userToken, '<-----')
 
     const { data }: HttpResponse = await _put(URL, formData, headers)
     if (data?.code !== 200) {
         return {
-            isUPdated: false,
+            isUpdated: false,
             response: null,
             error: data?.data
         }
     }
     return {
-        isUPdated: true,
+        isUpdated: true,
+        error: null,
+        response: data?.data
+    }
+}
+// Update Collection
+export async function updatePatchApiCollectionItem(collection: string, id: string, formData: {}, userToken: string): Promise<{ isUpdated: boolean, error: unknown | null, response: unknown | null }> {
+    const URL = `${pb.baseUrl}/collections/${collection}/records/${id}`
+    const headers: any = parseHeader(userToken)
+
+    const { data }: HttpResponse = await _patch(URL, formData, headers)
+    if (data?.code !== 200) {
+        return {
+            isUpdated: false,
+            response: null,
+            error: data?.data
+        }
+    }
+    return {
+        isUpdated: true,
         error: null,
         response: data?.data
     }
@@ -75,10 +96,11 @@ export async function updateApiCollectionItem(collection: string, id: string, fo
 
 
 // Get Collection
-export async function getApiCollectionItem(collection: string, recordId: string, userToken?: string): Promise<{ response: unknown, error: unknown | null }> {
+export async function getApiCollectionItem(collection: string, recordId: string, userToken?: string, params?: {}): Promise<{ response: unknown, error: unknown | null }> {
     const URL = `${pb.baseUrl}/collections/${collection}/records/${recordId}`
-    const headers: any = pareseHeader(userToken)
-    const { data, status } = await _get(URL, headers) as HttpResponse
+    const headers: any = parseHeader(userToken)
+    
+    const { data, status } = await _get(URL, headers, params) as HttpResponse
     if (status !== 200) {
         return {
             response: data?.message,

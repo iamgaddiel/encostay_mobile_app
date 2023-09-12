@@ -81,9 +81,13 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
   }, []);
 
   async function getHostApartments() {
-    const { data } = await listApiCollection(APARTMENTS_COLLECTION, token);
-    const aprtments = data as ApartementList;
-    setApartmentList(aprtments);
+
+    const params = {
+      filter : `host="${user.id}"`
+    }
+    const { data } = await listApiCollection(APARTMENTS_COLLECTION, token, params);
+    const appartments = data as ApartementList;
+    setApartmentList(appartments);
   }
 
   return (
@@ -166,7 +170,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
           </IonCard>
 
           {/* Apartments  */}
-          <IonList>
+          {/* <IonList>
             <IonListHeader>
               <IonTitle className="block ion-no-margin ion-no-padding">Apartements</IonTitle>
               <IonRouterLink
@@ -182,7 +186,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
             </IonListHeader>
 
             {apartmentList?.totalItems > 0
-              ? apartmentList?.items.map(() => (
+              ? apartmentList?.items.splice(0, 4).map((apartment) => (
                   <IonItem
                     lines="none"
                     routerDirection="forward"
@@ -190,13 +194,13 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
                     mode="ios"
                   >
                     <IonLabel>
-                      <h2>title</h2>
-                      <p>description</p>
+                      <h2>{apartment.title}</h2>
+                      <p>{apartment.description}</p>
                     </IonLabel>
                   </IonItem>
                 ))
               : null}
-          </IonList>
+          </IonList> */}
 
           {/* Most Rated Listing */}
           <section className="home_list">

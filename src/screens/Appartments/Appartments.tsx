@@ -17,58 +17,40 @@ import {
 import { useRecoilValue } from "recoil";
 import SpaceBetween from "../../components/style/SpaceBetween";
 import { userAtom } from "../../atoms/appAtom";
-import { getHostApartments } from "../../helpers/utils";
 import { useQuery } from "@tanstack/react-query";
 import NotFound from "../../components/NotFound/NotFound";
+import { APARTMENTS_COLLECTION } from "../../helpers/keys";
+import { listApiCollection } from "../../helpers/apiHelpers";
+import { ApartementList } from "../../@types/apartments";
 
 const Appartments = () => {
-  const {token: authToken, record } = useRecoilValue(userAtom);
-  const hostId = record.id
-
-  // const [apartmentList, setApartmentList] = useState<ApartementList | null>(
-  //   null
-  // );
+  const {token: authToken, record: user } = useRecoilValue(userAtom);
+  const hostId = user?.id!
 
 
-  //FIXME: remove the error on queryKey
-  const { data: apartmentList, isLoading, error} = useQuery({ 
+  const { data: apartmentList, isLoading, isError, error} = useQuery({ 
     queryKey: ['hostApartmentList', hostId, authToken],
-    queryFn:  getHostApartments(hostId, authToken)
+    queryFn:  () => getHostApartments(hostId, authToken)
   })
-  console.log("🚀 ~ file: Appartments.tsx:51 ~ Appartments ~ apartmentList:", apartmentList)
-  
-  
-  // useEffect(() => {
-  //   loadHostApartements();
-  // }, []);
-  
-  // // TODO: use ReactQuery for fetching data from database.
-  // const rooms = useRecoilValue(demoRoomsAtom);
 
 
-  // async function loadHostApartements() {
-  //   const apartments = await getHostApartments(user.record.id, user.token)
-  //   setApartmentList(apartments)
-  //   setIsLoading(() => false)
-  // }
+  async function getHostApartments(hostId: string, authToken: string) { //
+    const params = {
+      filter: `(host="${hostId}")`,
+    };
+    const { data } = await listApiCollection(
+      APARTMENTS_COLLECTION,
+      authToken,
+      params
+    );
+    const aprtments = data as ApartementList;
+    console.log("🚀 ~ file: Appartments.tsx:47 ~ getHostApartments ~ data:", data)
+    console.log("🚀 ~ file: Appartments.tsx:47 ~ getHostApartments ~ aprtments:", aprtments)
+    return aprtments
+  }
 
-  // async function getHostApartments(hostId: string, authToken: string) { //
-  //   const params = {
-  //     filter: `(host="${hostId}")`,
-  //   };
-  //   const { data } = await listApiCollection(
-  //     APARTMENTS_COLLECTION,
-  //     authToken,
-  //     params
-  //   );
-  //   const aprtments = data as ApartementList;
-  //   console.log("🚀 ~ file: Appartments.tsx:79 ~ getHostApartments ~ aprtments:", aprtments)
-  //   return aprtments
-  //   // setApartmentList(aprtments);
-  //   // setIsLoading(() => false)
-  // }
 
-  if (error){
+  if (isError){
     return <NotFound heading="Error" subheading="Could Not Try Again" />
   }
 

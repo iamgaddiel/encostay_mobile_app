@@ -16,8 +16,8 @@ const PaymentConfirmed = () => {
                         </div>
 
                         <div className="mt-4 ion-text-center">
-                            <IonText className='fs-1'>Receiving</IonText>
-                            <small className="text-muted block mt-2">the property's confimation</small>
+                            <IonText className='fs-1'>Received</IonText>
+                            <small className="text-muted block mt-2">the property's confirmation</small>
                         </div>
 
                         <div className="ion-text-center mt-5">
