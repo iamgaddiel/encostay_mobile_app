@@ -23,21 +23,25 @@ function parseHeader(userToken?: string): {} {
 
 // Create Collection
 export async function createApiCollection(collection: string, formData: any, userToken?: string): Promise<CreateCollection> {
-    // const URL = `${pb.baseUrl}${urlRelPath}`
-    const URL = `${pb.baseUrl}/collections/${collection}/records`
-    const headers: any = parseHeader(userToken)
-
-    const { data }: HttpResponse = await _post(URL, formData, headers)
-    if (data?.code !== 200) {
+    try{
+        const URL = `${pb.baseUrl}/collections/${collection}/records`
+        const headers: any = parseHeader(userToken)
+    
+        const { data }: HttpResponse = await _post(URL, formData, headers)
+        if (data?.code !== 200) {
+            return {
+                response: data?.message,
+                isCreated: false,
+                error: data?.data
+            }
+        }
         return {
-            response: data?.message,
-            isCreated: false,
-            error: data?.data
+            response: data?.data,
+            isCreated: true
         }
     }
-    return {
-        response: data?.data,
-        isCreated: true
+    catch( error: any){
+        throw new Error(error)
     }
 }
 

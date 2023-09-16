@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router';
-import { getApiCollectionItem, updateApiCollectionItem, updatePatchApiCollectionItem } from '../../helpers/apiHelpers';
-import { BOOKINGS_COLLECTION, USRS_COLLECTION } from '../../helpers/keys';
+import { createApiCollection, getApiCollectionItem, updatePatchApiCollectionItem } from '../../helpers/apiHelpers';
+import { BOOKINGS_COLLECTION, TRANSACTIONS_COLLECTION } from '../../helpers/keys';
 import { userAtom } from '../../atoms/appAtom';
 import { useRecoilValue } from 'recoil';
 import { BookingItem } from '../../@types/bookings';
 import { useQuery } from '@tanstack/react-query';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonToast, IonText, IonIcon, IonInput, IonButton, IonItem, IonList, IonLabel, IonCard, IonCardContent, IonListHeader, IonLoading } from '@ionic/react';
-import { star, chevronForward, person, checkmarkCircleOutline, pencilOutline, informationCircleOutline, trainSharp } from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonToast, IonText, IonIcon, IonInput, IonButton, IonItem, IonList, IonLabel, IonListHeader, IonLoading } from '@ionic/react';
+import { star, chevronForward, person, informationCircleOutline } from 'ionicons/icons';
 import SpaceBetween from '../../components/style/SpaceBetween';
-import { TOGGLE_CHECKIN_CALANDER, TOGGLE_CHECKOUT_CALANDER, SET_GUEST_NUMBER, TOGGLE_GUEST_EDIT } from '../../reducers/actions/bookingPreviewActions';
 import { getHumanReadableDate } from '../../helpers/utils';
 
 // image
 import Image from "../../assets/images/room-pt.png"
-import { UserCollectionType } from '../../@types/users';
 import { Toast } from '../../@types/toast';
+import { TransactionCreateFields } from '../../@types/transactions';
+
+
+
 
 
 
@@ -23,7 +25,7 @@ const HostAcceptOrDecline = () => {
 
     const { bookingId } = useParams<{ bookingId: string }>()
 
-    const { token: authToken } = useRecoilValue(userAtom)
+    const { token: authToken, record: user } = useRecoilValue(userAtom)
 
     const history = useHistory();
 
@@ -44,10 +46,32 @@ const HostAcceptOrDecline = () => {
         queryFn: getBookingDetails
     })
 
+    const [bookingStatus, setBookingStatus] = useState<'pending' | 'approved' | 'declined' > ('pending')
+
     const { day: checkInDay, monthAbbreviation: checkInMonth } = getHumanReadableDate(new Date(booking?.checkin_datetime!))
     const { day: checkOutDay, monthAbbreviation: checkOutMonth } = getHumanReadableDate(new Date(booking?.checkout_datetime!))
 
 
+
+    useEffect(() => {
+        function getBookingStatus(){
+            // Pending
+            if (booking?.is_pending && !booking?.is_approved ){
+                setBookingStatus('pending')
+            }
+
+            // Approve
+            if (!booking?.is_pending && booking?.is_approved ){
+                setBookingStatus('approved')
+            }
+
+            // Declined
+            if (!booking?.is_pending && !booking?.is_approved ){
+                setBookingStatus('declined')
+            }
+        }
+        getBookingStatus()
+    }, [booking])
 
 
 
@@ -96,7 +120,7 @@ const HostAcceptOrDecline = () => {
 
             const response = await getBookingDetails()
 
-            if (!response?.is_pending){
+            if (!response?.is_pending) {
                 setShowLoading({
                     enabled: false,
                     message: ''
@@ -123,7 +147,6 @@ const HostAcceptOrDecline = () => {
 
     async function approveBooking() {
         //TODO; update host cash in wallet
-        //TODO: add transaction to host transaction history
         //FIXME: remove loading when booking is approved
 
         setShowLoading({
@@ -139,14 +162,9 @@ const HostAcceptOrDecline = () => {
 
             updatePatchApiCollectionItem(BOOKINGS_COLLECTION, bookingId, data, authToken)
 
-            const response = await getBookingDetails()
+            createTransaction() // Create EArnings Transaction ---------------------
 
-            if (response?.is_approved){
-                setShowLoading({
-                    enabled: false,
-                    message: ''
-                })
-            }
+            setBookingStatus('approved')
 
         }
         catch (error: any) {
@@ -163,6 +181,37 @@ const HostAcceptOrDecline = () => {
             return
         }
 
+        setTimeout(() => {
+            setShowLoading({
+                enabled: false,
+                message: ''
+            })
+        }, 5000)
+    }
+
+
+    async function createTransaction(): Promise< boolean| undefined > {
+        const transactionData: TransactionCreateFields = {
+            amount: booking?.price!,
+            apartment: booking?.apartment!,
+            is_in: true,
+            host: user.id,
+            booking: booking?.id!
+        }
+
+        const { isCreated } = await createApiCollection(TRANSACTIONS_COLLECTION, transactionData, authToken)
+
+        if (!isCreated) {
+            //FIXME: shows error when there's none
+            setShowToast({
+                enabled: true,
+                message: 'Error: Unable create transactions',
+                type: 'danger'
+            })
+            return
+        }
+
+        return isCreated
     }
 
 
@@ -253,11 +302,13 @@ const HostAcceptOrDecline = () => {
                             <IonLabel>
                                 <p>Status </p>
                                 {/* Pending Booking Request */}
-                                {booking?.is_pending && !booking?.is_approved ? <IonText color={'warning'}>Pending</IonText> : null}
+                                {bookingStatus === 'pending' ? <IonText color={'warning'}>Pending</IonText> : null}
+
                                 {/* Approved Booking Request */}
-                                {!booking?.is_pending && booking?.is_approved ? <IonText color={'success'}>Approved</IonText> : null}
+                                {bookingStatus === 'approved' ? <IonText color={'success'}>Approved</IonText> : null}
+
                                 {/* Declined Booking Request */}
-                                {!booking?.is_pending && !booking?.is_approved ? <IonText color={'danger'}>Declined</IonText> : null}
+                                {bookingStatus === 'declined' ? <IonText color={'danger'}>Declined</IonText> : null}
                                 <IonText></IonText>
                             </IonLabel>
                         </IonItem>
@@ -371,7 +422,7 @@ const HostAcceptOrDecline = () => {
                 </section>
 
                 {/* Pending Bookking Request */}
-                {booking?.is_pending && !booking?.is_approved ? (
+                { bookingStatus === 'pending' ? (
 
                     <div className="ion-text-center mt-5 d-flex justify-content-evenly">
                         <IonButton

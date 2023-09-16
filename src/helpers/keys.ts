@@ -7,6 +7,7 @@ export const USRS_COLLECTION = "users"
 export const IMAGEKIT_COLLECTION = "imagekit"
 export const APARTMENTS_COLLECTION = 'apartments'
 export const BOOKINGS_COLLECTION = 'bookings'
+export const TRANSACTIONS_COLLECTION = 'transactions'
 export const APP_CONFIG_COLLECTION = 'app_config'
 
 

@@ -1,25 +1,21 @@
-import { IonModal, IonText, IonButton, IonCard, IonIcon, IonTitle } from '@ionic/react'
+import { IonModal, IonText, IonCard, IonCardContent, IonImg } from '@ionic/react'
 import React, { useRef } from 'react'
-import SpaceBetween from '../style/SpaceBetween'
-import { heart, home, bedOutline, wifiOutline, chevronForwardOutline, person, star } from 'ionicons/icons'
 
-
-import HomeImage from "../../assets/images/room-ld.png"
+import Image from "../../assets/images/earn_modal_img.svg"
+import MC from "../../assets/images/label.svg"
+import { WithdrawModalType } from '../../@types/transactions'
 
 
 
 interface WithdrawModalProp {
     isOpen: boolean
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setModal: React.Dispatch<React.SetStateAction<WithdrawModalType>>
+    modal: WithdrawModalType
 }
 
 
-const WithdrawModal: React.FC<WithdrawModalProp> = ({ isOpen, setIsOpen }) => {
+const WithdrawModal: React.FC<WithdrawModalProp> = ({ isOpen, setModal, modal }) => {
     const cancelationModal = useRef<HTMLIonModalElement>(null);
-
-    function dismiss() {
-        cancelationModal.current?.dismiss();
-    }
 
     return (
         <IonModal
@@ -27,28 +23,44 @@ const WithdrawModal: React.FC<WithdrawModalProp> = ({ isOpen, setIsOpen }) => {
             ref={cancelationModal}
             trigger="open-custom-dialog"
             isOpen={isOpen}
-            onDidDismiss={() => setIsOpen(false)}
+            onDidDismiss={() => setModal({
+                amountWithdrew: 0,
+                is_enabled: false,
+                price: 0,
+                bank: {
+                    account_name: '',
+                    account_number: '',
+                    bank_name: '',
+                    bvn: ''
+                }
+            })}
         >
-            <div className="wrapper ion-padding home_list_card p-3">
+            <div className="wrapper ion-padding">
+                {/* image */}
+                <section className="earn_modal_image_wraper" style={{ backgroundImage: `url(${Image})` }}></section>
 
-                <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${HomeImage})` }}></div>
-
-                <div className="home_list_card_hero_section">
+                <section className="ion-text-center mt-4">
                     <div>
-                        <big>{"Rest Room"}</big> <br />
-                        <span className="text-muted">{'location'}</span>
+                        <p>You withdraw</p>
                     </div>
-                </div>
-                <SpaceBetween>
-                    <span className='text-muted'><big className='text-warning '>${123}</big>/ Day</span>
-                    <span className='d-flex align-items-center'><IonIcon icon={person} color='warning' /> 2</span>
-                    <span className='d-flex align-items-center'><IonIcon icon={star} color='warning' /> 4.8 <span className="text-muted">(3443)</span></span>
-                </SpaceBetween>
-                
+                    <div className="p-2 rounded-4 w-50 mx-auto my-2" style={{ backgroundColor: "var(--light-orange" }}>
+                        <IonText className=''> <big> ₦{123} </big></IonText>
+                    </div>
+                    <div className=''>
+                        <p className='mt-2'>to</p>
+                    </div>
+                </section>
+                <IonCard className="rounded-3 mt-2 ion-margin-vertical ion-padding-horizontal" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
+                    <IonCardContent className='d-flex align-items-center px-1 py-4'>
+                        <IonImg src={MC} />
 
-                <div className="ion-text-center mt-4">
-                    <IonTitle> Eearned ₦232 </IonTitle>
-                </div>
+                        <IonText className='ml-3'>
+                            <small><span className="text-muted">Card Name: </span> John Keney Doe</small> <br />
+                            <small>Card Number: <span className="text-muted">1255 1255 1255 1255</span></small> <br />
+                            <small>Expiry Date: <span className="text-muted">12 / 2002</span></small>
+                        </IonText>
+                    </IonCardContent>
+                </IonCard>
             </div>
         </IonModal>
     )

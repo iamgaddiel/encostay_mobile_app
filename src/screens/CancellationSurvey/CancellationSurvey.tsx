@@ -20,6 +20,7 @@ import { updateApiCollectionItem } from '../../helpers/apiHelpers'
 
 
 const CancellationSurvey = () => {
+    //TODO: if survey is canceled refund guest money to account using selected payment method
     const { bookingId } = useParams<{ bookingId: string }>()
     const history = useHistory()
 
