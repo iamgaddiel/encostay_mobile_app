@@ -42,12 +42,15 @@ import { userAtom } from "../../atoms/appAtom";
 import { ApartementList } from "../../@types/apartments";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
+import { useHistory } from "react-router";
 
 interface Props {
   userImage: string;
 }
 
 const HostAccount: React.FC<Props> = ({ userImage }) => {
+  const history = useHistory()
+
   // ----------------- Couresel Settings -----------------------
   const cardCarouselSettings = {
     dots: true,
@@ -135,7 +138,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
           <section
             className="my-5 shadow rounded-4 view_earnings ion-padding"
             style={{ backgroundImage: `url(${Card})` }}
-            onClick={() => alert("google")}
+            onClick={() => history.push('/transactions')}
           ></section>
 
           {/* Add New Listing */}
