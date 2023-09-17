@@ -11,7 +11,7 @@ export type TransactionCreateFields = {
     is_out?: boolean
     amount: number
     host: string
-    booking: string
+    booking?: string
 }
 
 export type TransactionItem = {

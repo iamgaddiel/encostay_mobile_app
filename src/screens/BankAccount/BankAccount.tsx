@@ -1,16 +1,45 @@
-import { IonButton, IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonRadio, IonRadioGroup, IonText, IonThumbnail } from '@ionic/react'
-import React, { useState } from 'react'
+import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonList, IonPage, IonRadio, IonRadioGroup, IonText } from '@ionic/react'
+import { useState } from 'react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 
 // 
 import MC from "../../assets/images/label.svg"
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { pencil } from 'ionicons/icons'
+import { useQuery } from '@tanstack/react-query'
+import { useRecoilValue } from 'recoil'
+import { BankItem, BankList } from '../../@types/bank'
+import { userAtom } from '../../atoms/appAtom'
+import { listApiCollection } from '../../helpers/apiHelpers'
+import { BANKS_COLLECTION } from '../../helpers/keys'
+import NotFound from '../../components/NotFound'
+
+
+
+
 
 const BankAccount = () => {
+    const { token: authToken, record: user } = useRecoilValue(userAtom)
+
+    
     const [surveyReason, setSurveyReason] = useState("")
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    
+    
+    const { data: bankAccountFound } = useQuery({
+        queryKey: ['getHostBankDetails'],
+        queryFn: getUserBankDetails
+    })
+    
+    
 
+
+    async function getUserBankDetails(): Promise<BankItem[]> {
+        const params = { filter: `host='${user.id}'` }
+        const { data } = await listApiCollection(BANKS_COLLECTION, authToken, params) as { data: BankList }
+        const userBank = data?.items
+        return userBank
+    }
 
     return (
         <IonPage>
@@ -18,23 +47,27 @@ const BankAccount = () => {
             <IonContent className='ion-padding' fullscreen>
 
                 <IonList lines='none'>
-                    <IonRadioGroup value={surveyReason}>
-                        <IonItem className='ion-no-padding'>
-                            <IonCard className="rounded-3 mt-2 ion-margin-vertical ion-padding-horizontal w-100" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
-                                <IonCardContent className='d-flex align-items-center px-1 py-4'>
-                                    <IonImg src={MC} />
+                    {
+                        bankAccountFound?.length! >= 1 ? bankAccountFound?.map((bank) => (
+                            <IonRadioGroup value={surveyReason}>
+                                <IonItem className='ion-no-padding'>
+                                    <IonCard className="rounded-3 mt-2 ion-margin-vertical ion-padding-horizontal w-100" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
+                                        <IonCardContent className='d-flex align-items-center px-1 py-4'>
+                                            <IonImg src={MC} />
 
-                                    <IonText className='ml-3'>
-                                        <small><span className="text-muted">Card Name: </span> John Keney Doe</small> <br />
-                                        <small>Card Number: <span className="text-muted">1255 1255 1255 1255</span></small> <br />
-                                        <small>Expiry Date: <span className="text-muted">12 / 2002</span></small>
-                                    </IonText>
+                                            <IonText className='ml-3'>
+                                                <small><span className="text-muted">Name: </span> { bank.account_name }</small> <br />
+                                                <small>Account Number: <span className="text-muted">{bank.account_number}</span></small> <br />
+                                                <small>Bank: <span className="text-muted">{bank.bank_name}</span></small>
+                                            </IonText>
 
-                                    <IonRadio slot="end" value={() => setSurveyReason("Helo")} />
-                                </IonCardContent>
-                            </IonCard>
-                        </IonItem>
-                    </IonRadioGroup>
+                                            <IonRadio slot="end" value={() => setSurveyReason("Helo")} />
+                                        </IonCardContent>
+                                    </IonCard>
+                                </IonItem>
+                            </IonRadioGroup>
+                        )) : <NotFound heading='No Bank Details Found' subheading='Could not fetching any details' />
+                    }
                 </IonList>
 
 
@@ -44,7 +77,7 @@ const BankAccount = () => {
                     mode="ios"
                     style={{ backgroundColor: "var(--white-4)" }}
                     routerDirection='forward'
-                    routerLink='/add_card'
+                    routerLink='/add_bank'
 
                 >
                     <IonCardContent className='p-3'>
@@ -54,9 +87,9 @@ const BankAccount = () => {
                             </div>
 
                             <div className='ml-4'>
-                                <strong>Add Pyament method</strong>
+                                <strong>Add a bank account</strong>
                                 <small className='block mt-1 text-muted'>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing
+                                    A least one bank account must be added in other to withdraw from your wallet
                                 </small>
                             </div>
                         </SpaceBetween>

@@ -5,7 +5,7 @@ export interface RegistrationInputs{
     password: string
     passwordConfirm: string
     name?: string
-    account_type: string
+    account_type: 'guest' | 'host'
     birthday: string
     phone: string
 }

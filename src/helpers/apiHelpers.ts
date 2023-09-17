@@ -28,7 +28,8 @@ export async function createApiCollection(collection: string, formData: any, use
         const headers: any = parseHeader(userToken)
     
         const { data }: HttpResponse = await _post(URL, formData, headers)
-        if (data?.code !== 200) {
+        console.log("🚀 ~ file: apiHelpers.ts:31 ~ createApiCollection ~ data:", data)
+        if (!data?.id) {
             return {
                 response: data?.message,
                 isCreated: false,

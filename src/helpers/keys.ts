@@ -9,6 +9,8 @@ export const APARTMENTS_COLLECTION = 'apartments'
 export const BOOKINGS_COLLECTION = 'bookings'
 export const TRANSACTIONS_COLLECTION = 'transactions'
 export const APP_CONFIG_COLLECTION = 'app_config'
+export const WALLETS_COLLECTION = 'wallets'
+export const BANKS_COLLECTION = 'banks'
 
 
 // DB

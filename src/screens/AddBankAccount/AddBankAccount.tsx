@@ -1,37 +1,92 @@
-import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonPage, IonToast } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonPage, IonProgressBar, IonToast } from '@ionic/react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 import SpaceBetween from '../../components/style/SpaceBetween'
 
 
 import MC from "../../assets/images/label.svg"
-import { warningOutline } from 'ionicons/icons'
+import { warning, warningOutline } from 'ionicons/icons'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { AddBankFields } from '../../@types/bank'
 import { useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import { userAtom } from '../../atoms/appAtom'
+import { createApiCollection } from '../../helpers/apiHelpers'
+import { BANKS_COLLECTION } from '../../helpers/keys'
+import { Toast } from '../../@types/toast'
+import { useHistory } from 'react-router'
 
 
 
-const AddPaymentMethod = () => {
+const AddBankAccount = () => {
     // TODO: show bvn field only if user is Nigerian
+    // TODO: add bank listing API
+
+    const history = useHistory()
+
+    const { token: authToken, record: user } = useRecoilValue(userAtom)
 
     const { register, handleSubmit, formState: { errors } } = useForm<AddBankFields>()
 
     const [isLoading, setIsLoading] = useState(false)
 
+    const [showToast, setShowToast] = useState<Toast>({
+        enabled: false,
+        message: "",
+        type: 'warning'
+    });
 
 
-    const handleAddBankAccount: SubmitHandler<AddBankFields> = (data) => {
+
+
+    const handleAddBankAccount: SubmitHandler<AddBankFields> = async (data) => {
         setIsLoading(true)
         console.log(data, '<---- Data')
 
+        const formData = {
+            ...data,
+            host: user.id
+        }
+
+        const { isCreated, response } = await createApiCollection(BANKS_COLLECTION, formData, authToken)
+
+        if (!isCreated) {
+            setIsLoading(false)
+            setShowToast({
+                enabled: true,
+                message: 'An error occurred while adding your banking account',
+                type: 'danger'
+            })
+            return
+        }
+
         setIsLoading(false)
+        history.goBack()
     }
 
 
     return (
         <IonPage>
-            <BackHeader title='Add Card' backLink='/bank_account' />
+            <BackHeader title='Add Bank Account' backLink='/bank_account' />
             <IonContent className='ion-padding' fullscreen>
+                {/* =========================== Loading Start ======================== */}
+                { isLoading && <IonProgressBar type='indeterminate' color={warning}/> }
+                {/* =========================== Loading ends ======================== */}
+
+                {/* =========================== Toast Start ======================== */}
+                <IonToast
+                    isOpen={showToast.enabled}
+                    color={showToast.type}
+                    message={showToast.message}
+                    duration={4000}
+                    position="top"
+                    onDidDismiss={() =>
+                        setShowToast({
+                            enabled: false,
+                            message: ""
+                        })
+                    }
+                />
+                {/* =========================== Toast Ends ======================== */}
 
                 <form onSubmit={handleSubmit(handleAddBankAccount)}>
                     {/* Account Name */}
@@ -127,4 +182,4 @@ const AddPaymentMethod = () => {
     )
 }
 
-export default AddPaymentMethod
+export default AddBankAccount

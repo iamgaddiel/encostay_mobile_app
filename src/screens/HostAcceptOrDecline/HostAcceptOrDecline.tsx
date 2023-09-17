@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router';
-import { createApiCollection, getApiCollectionItem, updatePatchApiCollectionItem } from '../../helpers/apiHelpers';
-import { BOOKINGS_COLLECTION, TRANSACTIONS_COLLECTION } from '../../helpers/keys';
+import { createApiCollection, getApiCollectionItem, listApiCollection, updatePatchApiCollectionItem } from '../../helpers/apiHelpers';
+import { BOOKINGS_COLLECTION, TRANSACTIONS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys';
 import { userAtom } from '../../atoms/appAtom';
 import { useRecoilValue } from 'recoil';
 import { BookingItem } from '../../@types/bookings';
@@ -15,6 +15,7 @@ import { getHumanReadableDate } from '../../helpers/utils';
 import Image from "../../assets/images/room-pt.png"
 import { Toast } from '../../@types/toast';
 import { TransactionCreateFields } from '../../@types/transactions';
+import { WalletItem, WalletList } from '../../@types/wallet';
 
 
 
@@ -26,8 +27,6 @@ const HostAcceptOrDecline = () => {
     const { bookingId } = useParams<{ bookingId: string }>()
 
     const { token: authToken, record: user } = useRecoilValue(userAtom)
-
-    const history = useHistory();
 
     const [showToast, setShowToast] = useState<Toast>({
         enabled: false,
@@ -44,6 +43,11 @@ const HostAcceptOrDecline = () => {
     const { data: booking, isLoading, isError, error } = useQuery({
         queryKey: ['hostBookingPreview'],
         queryFn: getBookingDetails
+    })
+
+    const { data: wallet} = useQuery({
+        queryKey: ['getHostWalletForTransaction'],
+        queryFn: getHostWallet
     })
 
     const [bookingStatus, setBookingStatus] = useState<'pending' | 'approved' | 'declined' > ('pending')
@@ -163,6 +167,7 @@ const HostAcceptOrDecline = () => {
             updatePatchApiCollectionItem(BOOKINGS_COLLECTION, bookingId, data, authToken)
 
             createTransaction() // Create EArnings Transaction ---------------------
+            incrementWalletBalance() // Update wallet balance ---------------------
 
             setBookingStatus('approved')
 
@@ -213,6 +218,35 @@ const HostAcceptOrDecline = () => {
 
         return isCreated
     }
+
+
+    async function getHostWallet(): Promise<WalletItem>{
+        try{
+            const params = {
+                filter: `host='${user.id}'`
+            }
+    
+            const { data } = await listApiCollection(WALLETS_COLLECTION, authToken, params) as { data: WalletList}
+    
+            const hostWallet = data?.items[0]
+            console.log("🚀 ~ file: HostAcceptOrDecline.tsx:234 ~ getHostWallet ~ hostWallet:", hostWallet)
+            
+            return hostWallet
+        }
+        catch(error: any){
+            throw new Error(error)
+        }
+    }
+
+
+    async function incrementWalletBalance(){
+        const newBalance = wallet!.balance + booking!.price!
+        const data = { balance: newBalance }
+        console.log("🚀 ~ file: HostAcceptOrDecline.tsx:244 ~ incrementWalletBalance ~ newBalance:", data)
+        updatePatchApiCollectionItem(WALLETS_COLLECTION, wallet?.id!, data, authToken)
+    }
+
+
 
 
     return (

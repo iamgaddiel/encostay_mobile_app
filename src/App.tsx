@@ -71,3 +71,8 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+//TODO: request of location to be always active (if location is not turned on the app wouldn't work)
+//TODO: same applies for network
+//TODO: 

@@ -6,7 +6,7 @@ import { createApiCollection } from '../../helpers/apiHelpers'
 import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
-import { USRS_COLLECTION } from '../../helpers/keys'
+import { USRS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
 
 
 
@@ -63,6 +63,15 @@ const Passwords = () => {
             return;
         }
 
+        if (regFormData.account_type === 'host'){
+            const walletDetails = { host: response?.id!}
+            const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletDetails)
+            if(!walletIsCreated){
+                // TODO: check if wallet is not created
+                console.log(error)
+                return
+            }
+        }
 
         setLoading(false)
         setShowAleart(true)

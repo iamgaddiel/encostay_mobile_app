@@ -11,7 +11,7 @@ export const registrationAtom = atom<RegistrationInputs>({
         birthday: "",
         password: "",
         passwordConfirm: "",
-        account_type: "",
+        account_type: 'guest',
         phone: "",
         first_name: "",
         last_name: "",
