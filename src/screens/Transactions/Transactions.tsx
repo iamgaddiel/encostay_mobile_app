@@ -64,7 +64,8 @@ const Transactions = () => {
         try {
             const params = {
                 filter: `host="${user.id}"`,
-                expand: 'apartment,booking'
+                expand: 'apartment,booking',
+                sort: '-created'
             }
             const { data } = await listApiCollection(TRANSACTIONS_COLLECTION, token, params) as { data: TransactionList }
             console.log("🚀 ~ file: Transactions.tsx:69 ~ getHostTransactions ~ data:", data)

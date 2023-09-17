@@ -1,5 +1,5 @@
-import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonToast } from '@ionic/react'
-import React, { useState } from 'react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonProgressBar, IonSelect, IonSelectOption, IonToast } from '@ionic/react'
+import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
 import SpaceBetween from '../../components/style/SpaceBetween'
 
@@ -16,6 +16,7 @@ import { TransactionCreateFields } from '../../@types/transactions'
 import { Toast } from '../../@types/toast'
 import { authenticate } from '../../helpers/authSDK'
 import { BankItem, BankList } from '../../@types/bank'
+import { warning } from 'ionicons/icons'
 
 
 
@@ -29,6 +30,10 @@ const Withdraw = () => {
     const [amount, setAmount] = useState(0)
 
     const [password, setPassword] = useState('')
+
+    const [bankId, setBankId] = useState('')
+
+    const [walletBalance, setWalletBalance] = useState(0)
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -44,12 +49,12 @@ const Withdraw = () => {
     })
 
 
-    const { data: wallet } = useQuery({
+    const { data: wallet, isLoading: isLoadingWalletBalance } = useQuery({
         queryKey: ['getHostWalletForTransaction'],
         queryFn: getHostWallet
     })
 
-    const { data: bankAccountFound } = useQuery({
+    const { data: bankAccountsFound } = useQuery({
         queryKey: ['getHostBankDetailsTransaction'],
         queryFn: getUserBankDetails
     })
@@ -58,8 +63,17 @@ const Withdraw = () => {
 
 
 
+    useEffect(() => {
+        if (!isLoadingWalletBalance){
+            setWalletBalance(wallet?.balance!)
+        }
+    }, [wallet?.balance!])
 
 
+
+
+
+    
     async function getHostWallet(): Promise<WalletItem> {
         try {
             const params = {
@@ -78,10 +92,11 @@ const Withdraw = () => {
     }
 
 
-    async function decreaseWalletBalance() {
+    async function decreaseWalletBalance() {    
         const newBalance = wallet!.balance - amount
         const data = { balance: newBalance }
         updatePatchApiCollectionItem(WALLETS_COLLECTION, wallet?.id!, data, authToken)
+        setWalletBalance(newBalance)
     }
 
 
@@ -95,7 +110,6 @@ const Withdraw = () => {
         const { isCreated } = await createApiCollection(TRANSACTIONS_COLLECTION, transactionData, authToken)
 
         if (!isCreated) {
-            //FIXME: shows error when there's none
             setShowToast({
                 enabled: true,
                 message: 'Error: Unable create transactions',
@@ -130,7 +144,17 @@ const Withdraw = () => {
             setShowToast({
                 enabled: true,
                 message: 'Minimum amount to withdraw is 100',
-                type: 'danger'
+                type: 'warning'
+            })
+            return
+        }
+
+        if (amount > wallet?.balance!) {
+            setIsLoading(false)
+            setShowToast({
+                enabled: true,
+                message: 'Insufficient funds',
+                type: 'warning'
             })
             return
         }
@@ -149,11 +173,11 @@ const Withdraw = () => {
         }
 
         //  if false: direct user to add bank account screen
-        if (bankAccountFound?.length! < 1) {
+        if (bankAccountsFound?.length! < 1) {
             setIsLoading(false)
             setShowToast({
                 enabled: true,
-                message: "You have not added any bank account",
+                message: "You have not added any bank account. Go to Profile > Bank Account > Add a bank account",
                 type: 'warning'
             })
             return
@@ -161,12 +185,18 @@ const Withdraw = () => {
 
         createWithdrawTransaction()
 
-        const userBankAccount = bankAccountFound![0]
+        const userBankAccount = bankAccountsFound![0]
 
-        // submit user's bank credit request with flutter | stripe
+        // TODO: send money to users account using strip or flutter wave depending on preference
 
         decreaseWalletBalance()
-
+        
+        
+        // Reset State Values
+        setBankId('')
+        setPassword('')
+        setAmount(0)
+        
         setIsLoading(false)
         // history.push('/withdraw_receiving')
     }
@@ -177,7 +207,7 @@ const Withdraw = () => {
             <HeaderTitle title='Withdraw' />
             <IonContent className='ion-padding' fullscreen>
                 {/* =========================== Loading Start ======================== */}
-                <IonLoading isOpen={showLoading.enabled} message={showLoading.message} />
+                {isLoading && <IonProgressBar type='indeterminate' color={warning} />}
                 {/* =========================== Loading ends ======================== */}
 
                 {/* =========================== Toast Start ======================== */}
@@ -199,7 +229,7 @@ const Withdraw = () => {
                     <SpaceBetween>
                         <div>
                             <small>Available Balance</small>
-                            <p className="fs-3">₦{wallet?.balance}</p>
+                            <p className="fs-3">₦{walletBalance.toFixed(2)}</p>
                         </div>
                         <IonImg src={CardImg} />
                     </SpaceBetween>
@@ -218,6 +248,25 @@ const Withdraw = () => {
                             required
                             onIonChange={(e) => setAmount(parseInt(e.detail.value as string))}
                         />
+
+                        {
+                            bankAccountsFound?.length! >= 1 ? (
+                                <IonSelect
+                                    className='mt-4 py-2 rounded-5 px-4'
+                                    style={{ background: "var(--primary-3)" }}
+                                    color={warning}
+                                    placeholder='Select account'
+                                    onIonChange={(e) => setBankId(e.detail.value)}
+                                    mode='ios'
+                                >
+                                    {
+                                        bankAccountsFound!.map(account => (
+                                            <IonSelectOption value={account.id} color='warning'>{account.bank_name}</IonSelectOption>
+                                        ))
+                                    }
+                                </IonSelect>
+                            ) : null
+                        }
                         <IonInput
                             type="password"
                             placeholder='Enter password'
