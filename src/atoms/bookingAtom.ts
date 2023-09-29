@@ -20,6 +20,7 @@ export const bookingAtom  = atom<BookingFields>({
         transaction_charge: 0,
         duration_of_stay: 1,
         guest_phone: '',
+        is_pending: true
     }
 })
 
@@ -50,7 +51,8 @@ export const appartmnetBookingAtom = atom<BookingItem>({
         transaction_charge: 0,
         duration_of_stay: 0,
         guest_phone: "",
-        refund_amount: 0
+        refund_amount: 0,
+        is_pending: false
     }
 })
 

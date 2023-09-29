@@ -13,6 +13,9 @@ import {
   wifiOutline,
   chevronForwardOutline,
   codeWorkingOutline,
+  scaleOutline,
+  shieldOutline,
+  tvOutline,
 } from "ionicons/icons";
 import { useRecoilValue } from "recoil";
 import SpaceBetween from "../../components/style/SpaceBetween";
@@ -24,13 +27,13 @@ import { listApiCollection } from "../../helpers/apiHelpers";
 import { ApartementList } from "../../@types/apartments";
 
 const Appartments = () => {
-  const {token: authToken, record: user } = useRecoilValue(userAtom);
+  const { token: authToken, record: user } = useRecoilValue(userAtom);
   const hostId = user?.id!
 
 
-  const { data: apartmentList, isLoading, isError, error} = useQuery({ 
+  const { data: apartmentList, isLoading, isError, error } = useQuery({
     queryKey: ['hostApartmentList', hostId, authToken],
-    queryFn:  () => getHostApartments(hostId, authToken)
+    queryFn: () => getHostApartments(hostId, authToken)
   })
 
 
@@ -50,7 +53,7 @@ const Appartments = () => {
   }
 
 
-  if (isError){
+  if (isError) {
     return <NotFound heading="Error" subheading="Could Not Try Again" />
   }
 
@@ -61,7 +64,7 @@ const Appartments = () => {
         {!isLoading ? (
           <section className="home_list">
             <section className="mt-4">
-              {}
+              { }
               <IonButton
                 shape="round"
                 className="yellow_fill"
@@ -97,42 +100,57 @@ const Appartments = () => {
                       <div className="home_list_card_hero_section">
                         <div>
                           <big>{home.title}</big> <br />
-                          <span className="text-muted">{home.address}</span>
+                          <span className="text-muted">{home.state_location}, {home.country}</span>
+                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold mt-2">
+                            <IonIcon icon={bedOutline} size="small" />
+                            <span style={{ marginLeft: "7px" }}>
+                              {home.bedrooms} Rooms
+                            </span>
+                          </SpaceBetween>
                         </div>
                         <div>
                           <span className="text-muted">
-                            <big className="text-warning ">
-                              {home.max_nights}
-                            </big>
-                            / Day
+                            <big className="text-warning ">{home.price}</big>/ Day
                           </span>
                         </div>
                       </div>
 
                       <div className="home_list_card_info mt-3">
-                        <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
-                          <IonIcon icon={bedOutline} size="large" />
-                          <span style={{ marginLeft: "7px" }}>
-                            {home.bedrooms} Bedroom
-                          </span>
-                        </SpaceBetween>
-
-                        {home.has_gym && (
-                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
-                            <IonIcon icon={codeWorkingOutline} size="large" />
-                          </SpaceBetween>
-                        )}
-
-                        <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
-                          <IonIcon icon={wifiOutline} size="large" />
-                          <span style={{ marginLeft: "7px" }}>
-                            {home.has_wifi} Wifi
-                          </span>
-                        </SpaceBetween>
-
-                        <div className="bg-warning d-flex justify-content-center align-items-center p-1 rounded-1">
-                          <IonIcon icon={chevronForwardOutline} />
-                        </div>
+                        {
+                          home.has_wifi && (
+                            <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                              <IonIcon icon={wifiOutline} size="small" />
+                              <span className="ms-1">Wifi</span>
+                            </SpaceBetween>
+                          )
+                        }
+                        {
+                          home.has_tv_cable && (
+                            <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                              <IonIcon icon={tvOutline} size="small" />
+                              <span className="ms-1">TV</span>
+                            </SpaceBetween>
+                          )
+                        }
+                        {
+                          home.has_security && (
+                            <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                              <IonIcon icon={shieldOutline} size="small" />
+                              <span className="ms-1">Security</span>
+                            </SpaceBetween>
+                          )
+                        }
+                        {
+                          home.has_gym && (
+                            <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                              <IonIcon icon={scaleOutline} size="small" />
+                              <span className="ms-1">Gym</span>
+                            </SpaceBetween>
+                          )
+                        }
+                      </div>
+                      <div className="bg-warning mt-3 p-1 rounded-1 text-center">
+                        <IonIcon icon={chevronForwardOutline} />
                       </div>
                     </IonCardContent>
                   </IonCard>

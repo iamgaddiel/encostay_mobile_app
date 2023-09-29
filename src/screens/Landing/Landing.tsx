@@ -1,5 +1,5 @@
 import { IonButton, IonContent, IonImg, IonPage } from '@ionic/react'
-import React, { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 
 // import { showTabs } from "../../atoms/settingsAtom"
 import { useRecoilState } from "recoil"
@@ -16,12 +16,22 @@ import { utilsAtom } from '../../atoms/utilityAtom'
 import useAppLaunched from '../../hooks/useAppLaunched'
 import Login from '../Login'
 import { useHistory } from 'react-router'
+import Home from '../Home'
+import useAuth from '../../hooks/useAuth'
+
 
 
 const Landing = () => {
   const history = useHistory()
+
+  const { appLaunched } = useAppLaunched()
+
+
+  const { record: user} = useAuth();
+
   const [utils, setUtilValue] = useRecoilState(utilsAtom)
-  const { appLauned } = useAppLaunched()
+
+
 
 
 
@@ -33,9 +43,16 @@ const Landing = () => {
   useEffect(() => {
     setUtilValue({ ...utils, showTabs: false })
   }, [])
-  
-  if (appLauned) return <Login key={'login'} />;
-  
+
+
+
+
+  if (appLaunched){
+    if (user?.id !== '') return <Home />;
+    return <Login />
+  }
+
+
   return (
     <IonPage>
       <IonContent className=''>

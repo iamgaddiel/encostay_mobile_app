@@ -56,8 +56,23 @@ import Routes from "./Routes";
 import { RecoilRoot } from "recoil";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Capacitor } from "@capacitor/core";
+import { Stripe } from '@capacitor-community/stripe'
+import Settings from "./helpers/settings";
 
 setupIonicReact();
+
+const settings = Settings()
+
+const {DEBUG} = settings
+
+// const publishableKey = DEBUG ? process.env.REACT_STRIPE_TEST_PK as string : process.env.REACT_STRIPE_LIVE_PK as string
+const publishableKey = process.env.REACT_APP_STRIPE_TEST_PK as string
+
+
+if (Capacitor.isPluginAvailable('Strip')) {
+  Stripe.initialize({ publishableKey })
+}
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();

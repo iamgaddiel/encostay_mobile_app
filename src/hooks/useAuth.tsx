@@ -9,14 +9,14 @@ export default function useAuth() {
     const [record, setRecord] = useState<UserCollectionType | null>(null)
     console.log("🚀 ~ file: useAuth.tsx:10 ~ useAuth ~ record:", record)
 
-
+ 
 
     useEffect(() => {
         getUser()
     }, [])
 
     async function getUser() {
-        const { record, token }: StoredUser = await getSaveData(USER)
+        const { record, token } = await getSaveData(USER) as StoredUser
         setToken(token)
         setRecord(record)
     }

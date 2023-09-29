@@ -56,6 +56,7 @@ export interface BookingFields {
     transaction_charge: number
     duration_of_stay: number
     guest_phone: string
+    is_pending: boolean
 }
 
 // used in BookingPreview for collecting guest booking details

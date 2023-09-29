@@ -54,7 +54,7 @@ const SideMenu: React.FC<Props> = ({ userImage, user }) => {
                             <IonIcon icon={personOutline} slot="start" />
                             <IonLabel>My Profile</IonLabel>
                         </IonItem>
-                        <IonItem routerDirection='forward' routerLink='/appartments' className="mt-3">
+                        <IonItem routerDirection='forward' routerLink='/apartments' className="mt-3">
                             <IonIcon icon={homeOutline} slot="start" />
                             <IonLabel>Apartmetns</IonLabel>
                         </IonItem>

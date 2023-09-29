@@ -1,5 +1,5 @@
-import { IonButton, IonContent, IonIcon, IonPage, IonSearchbar, IonSkeletonText, IonText } from '@ionic/react'
-import { useState } from 'react'
+import { IonButton, IonContent, IonDatetime, IonIcon, IonModal, IonPage, IonSearchbar, IonSkeletonText, IonText } from '@ionic/react'
+import { useEffect, useState } from 'react'
 import BackHeaderWithAvater from '../../components/BackHeaderWithAvater/BackHeaderWithAvater'
 
 
@@ -13,10 +13,11 @@ import { listApiCollection } from '../../helpers/apiHelpers'
 import { TRANSACTIONS_COLLECTION } from '../../helpers/keys'
 import { useRecoilValue } from 'recoil'
 import { userAtom } from '../../atoms/appAtom'
-import { EarningModalType, TransactionList, WithdrawModalType } from '../../@types/transactions'
+import { EarningModalType, TransactionItem, TransactionList, WithdrawModalType } from '../../@types/transactions'
 import NotFound from '../../components/NotFound/NotFound'
 import TransactionCard from '../../components/TransactionCard/TransactionCard'
-import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
+import { getMonth } from 'date-fns'
+import { getHumanReadableDate } from '../../helpers/utils'
 
 
 
@@ -31,7 +32,15 @@ const Transactions = () => {
 
     const { data: transactions, isLoading, isError, error } = useQuery({
         queryKey: ['hostTransactions'],
-        queryFn: getHostTransactions
+        queryFn: async () => {
+            const date = new Date()
+            const currentYear = date.getFullYear()
+            const { monthIndexString: currentMonth } = getHumanReadableDate(date)
+            const dateString = `${currentYear}-${currentMonth}-01`
+
+            const hostTransactions: TransactionList = await getHostTransactions(dateString)
+            return hostTransactions
+        }
     })
 
     const [earningModal, setEarningModal] = useState<EarningModalType>({
@@ -57,23 +66,88 @@ const Transactions = () => {
         }
     })
 
+    const [transactionToTal, setTransactionTotal] = useState({
+        incomes: 0,
+        expenses: 0
+    })
+
+    const [currentMonth, setCurrentMonth] = useState('')
+
+    const [showCalender, setShowCalender] = useState(false)
+
+    const [selectedDate, setSelectedDate] = useState('')
+
+
+
+
+    // [UseEffects]-------------------------------------------------------------------------
+    useEffect(() => {
+        if (!isLoading) {
+            const { totalExpense, totalIncome } = getTotalIncomeAndExpenses(transactions!)
+            setTransactionTotal({
+                incomes: parseInt(totalIncome!),
+                expenses: parseInt(totalExpense!)
+            })
+        }
+    }, [transactions])
+
+
+    useEffect(() => {
+        const { monthAbbreviation, monthIndexString } = getHumanReadableDate(new Date())
+        setCurrentMonth(monthAbbreviation)
+    }, [])
+
 
 
     // [Function]-------------------------------------------------------------------------
-    async function getHostTransactions(): Promise<TransactionList> {
+    async function getHostTransactions(selectedDate: string): Promise<TransactionList> {
+        console.log("🚀 ~ file: Transactions.tsx:104 ~ getHostTransactions ~ selectedDate:", selectedDate)
         try {
+            // get transactions for the current month and sorted from new to old
             const params = {
-                filter: `host="${user.id}"`,
+                // filter: `host="${user.id}" && created >= " 00:00:00"`,
+                filter: `host="${user.id}" && created >= "${selectedDate} 00:00:00"`,
                 expand: 'apartment,booking',
                 sort: '-created'
             }
             const { data } = await listApiCollection(TRANSACTIONS_COLLECTION, token, params) as { data: TransactionList }
-            console.log("🚀 ~ file: Transactions.tsx:69 ~ getHostTransactions ~ data:", data)
             return data
         }
         catch (error: any) {
             throw new Error(error)
         }
+    }
+
+
+    function getTotalIncomeAndExpenses(transactions: TransactionList) {
+        const totalIncome = transactions?.items?.
+            filter(transaction => transaction.is_in === true)
+            .map(transaction => transaction.amount)
+            .reduce((prev, next) => prev += next, 0)
+            .toFixed(2)
+
+        const totalExpense = transactions?.items?.
+            filter(transaction => transaction.is_out === true)
+            .map(transaction => transaction.amount)
+            .reduce((prev, next) => prev += next, 0)
+            .toFixed(2)
+
+        return {
+            totalIncome,
+            totalExpense
+        }
+    }
+
+
+    function filterTransactionByDate(dateTime: string){
+        const date = dateTime.split("T")[0];
+
+        // update month on UI
+        const {monthAbbreviation, monthIndexString} = getHumanReadableDate(new Date(date))
+        setCurrentMonth(monthAbbreviation)
+
+        // get transaction by selected date`
+        getHostTransactions(date)
     }
 
 
@@ -88,7 +162,26 @@ const Transactions = () => {
             />
 
             <IonContent fullscreen className='ion-padding'>
-
+                {/* =========================== Calendar Modal Start ======================== */}
+                <IonModal
+                    // ref={checkInCalanderModal}
+                    className="birthday_modal"
+                    isOpen={showCalender}
+                    onDidDismiss={() => setShowCalender(false)}
+                >
+                    <IonContent>
+                        <IonDatetime
+                            // onIonChange={e => setSelectedBirthday(e.detail?.value as string)}
+                            onIonChange={(e) =>
+                                filterTransactionByDate(e.detail?.value as string)
+                            }
+                            color={"warning"}
+                            presentation="date"
+                            showDefaultButtons
+                        ></IonDatetime>
+                    </IonContent>
+                </IonModal>
+                {/* =========================== Calendar Modal Ends ======================== */}
 
                 {
                     earningModal.is_enabled ? <EarningModal modal={earningModal} isOpen={earningModal.is_enabled} setModal={setEarningModal} /> : null
@@ -113,14 +206,14 @@ const Transactions = () => {
                         <>
                             {/* Transaction History Summation */}
                             <section className='ion-padding'>
-                                <div>
-                                    <IonText>Sep <IonIcon icon={chevronDown} /> </IonText>
+                                <div onClick={() => setShowCalender(true)}>
+                                    <IonText>{currentMonth} <IonIcon icon={chevronDown} /> </IonText>
                                 </div>
                                 {
                                     transactions.totalItems >= 1 ? (
                                         <div className='mt-2 text-sm'>
-                                            <IonText><span className="text-muted">In: </span>1232434,34</IonText>
-                                            <IonText className='ms-4'><span className="text-muted">Out: </span>1232434,34</IonText>
+                                            <IonText><span className="text-muted">In: </span>{transactionToTal.incomes}</IonText>
+                                            <IonText className='ms-4'><span className="text-muted">Out: </span>{transactionToTal.expenses}</IonText>
                                         </div>
                                     ) : (
                                         <div className='mt-2 text-sm'>

@@ -16,6 +16,12 @@ const LOCALHOST = "http://127.0.0.1:8090/api"
 
 const REMOTE_URL = "https://encostay-app.pockethost.io/api"
 
+const REMOTE_SERVER_URL = ''
+
+const LOCAL_SERVER_URL = 'http://localhost:3000'
+
+const serverBaseUrl = DEBUG ? LOCAL_SERVER_URL : REMOTE_SERVER_URL
+
 const pocketbaseUrl = DEBUG ? LOCALHOST  : REMOTE_URL
 
 const pb = new PocketBase(pocketbaseUrl)
@@ -40,7 +46,8 @@ export default function Settings () {
         storage,
         pb,
         DEBUG,
-        pocketbaseUrl
+        pocketbaseUrl,
+        serverBaseUrl
     }
 }
 

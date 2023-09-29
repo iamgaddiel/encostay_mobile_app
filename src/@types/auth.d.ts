@@ -8,6 +8,7 @@ export interface RegistrationInputs{
     account_type: 'guest' | 'host'
     birthday: string
     phone: string
+    preferred_currency: 'NGN' | 'USD'
 }
 
 

@@ -1,17 +1,23 @@
 import { IonContent, IonImg, IonPage, IonProgressBar, IonText, IonTitle } from '@ionic/react'
+
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
 
 import Plane from "../../assets/images/plane.svg"
 
 //css
 import "./PaymentProcessing.css"
-import { useHistory } from 'react-router'
+
 import { createApiCollection } from '../../helpers/apiHelpers'
 import { BOOKINGS_COLLECTION } from '../../helpers/keys'
+
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+
 import { bookingAtom } from '../../atoms/bookingAtom'
 import { userAtom } from '../../atoms/appAtom'
 import { utilsAtom } from '../../atoms/utilityAtom'
+
+
 
 const PaymentProcessing = () => {
     const history = useHistory()
@@ -21,7 +27,6 @@ const PaymentProcessing = () => {
     const setUtility = useSetRecoilState(utilsAtom)
 
     const { token: userToken } = useRecoilValue(userAtom)
-
 
 
     useEffect(() => {

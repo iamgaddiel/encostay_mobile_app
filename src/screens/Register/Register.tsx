@@ -8,6 +8,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { RegistrationInputs } from '../../@types/auth'
 import { useRecoilState } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
+import { PRIVACY_POLICY, TERMS_AND_CONDITIONS } from '../../legal_bindings'
 
 
 
@@ -19,11 +20,15 @@ const Register = () => {
 
   //hooks
   const history = useHistory()
-  const [regFormData, setRegFormData] = useRecoilState(registrationAtom) 
+  const [regFormData, setRegFormData] = useRecoilState(registrationAtom)
 
   // states
   const [selectedBirthday, setSelectedBirthday] = useState("")
   const [openModal, setOpenModal] = useState(false)
+  const [showLegalBinding, setShowLegalBinding] = useState({
+    enabled: false,
+    message: ''
+  })
 
 
   // refs
@@ -33,12 +38,11 @@ const Register = () => {
 
 
 
-
   const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
-    const formData = { 
-      ...regFormData, 
-      ...data, 
-      name: `${data.first_name} ${data.last_name}` 
+    const formData = {
+      ...regFormData,
+      ...data,
+      name: `${data.first_name} ${data.last_name}`
     }
     setRegFormData(formData)
     history.push('/passwords')
@@ -54,8 +58,23 @@ const Register = () => {
 
 
   return (
+
     <IonPage>
       <IonContent>
+
+        {/* ======================== T&C Modal Start ========================  */}
+        <IonModal isOpen={showLegalBinding.enabled} onDidDismiss={() => setShowLegalBinding({
+          enabled: false,
+          message: ''
+        })} initialBreakpoint={.5} breakpoints={[.5, 7, .9]}>
+          <IonContent className='ion-padding'>
+            <h4 className="text-muted fw-bold mt-4">Terms and Conditions</h4>
+            <div className="text-muted mt-3 text-justify text-wrap" style={{ overflowY: 'auto' }}>
+              {showLegalBinding.message}
+            </div>
+          </IonContent>
+        </IonModal>
+        {/* ======================== T&C Modal Ends ========================  */}
 
 
 
@@ -100,7 +119,7 @@ const Register = () => {
             </div>
 
             <div className='ion-text-center  mt-4'>
-              <small className='text-muted'>Make sure it matches your name on your government ID</small>
+              <small className='text-muted'>Make sure your name matches your name on bank account</small>
               <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
             </div>
 
@@ -138,6 +157,7 @@ const Register = () => {
                 onClick={() => setOpenModal(true)}
                 value={selectedBirthday as string}
                 {...register("birthday", { required: true })}
+                readonly
               />
               {errors.email && <small className='text-danger'>This field is required</small>}
 
@@ -165,12 +185,27 @@ const Register = () => {
 
             {/* Type */}
             <div className='form_inputs my-4 mt-4  mx-0'>
-              <IonLabel className="ion-margin-bottom">Acount type</IonLabel>
+              <IonLabel className="ion-margin-bottom">Account type</IonLabel>
               <IonSelect placeholder='I am guest' className='ion-margin-top' {...register("account_type", { required: true })}>
                 <IonSelectOption value={"guest"}>Guest</IonSelectOption>
                 <IonSelectOption value={"host"}>Host</IonSelectOption>
               </IonSelect>
               {errors.account_type && <small className='text-danger'>This field is required</small>}
+            </div>
+
+
+            {/* Currency */}
+            <div className='form_inputs my-4 mt-4  mx-0'>
+              <IonLabel className="ion-margin-bottom">Preferred Payment</IonLabel>
+              <IonSelect placeholder='Select Currency' className='ion-margin-top' {...register('preferred_currency', { required: true })}>
+                <IonSelectOption value={"NGN"}>Naira (NGN)</IonSelectOption>
+                <IonSelectOption value={"USD"}>Dollar (USD)</IonSelectOption>
+              </IonSelect>
+              {errors.preferred_currency && <small className='text-danger'>This field is required</small>}
+            </div>
+            <div className='ion-text-center  mt-4'>
+              <small className='text-muted'>Notice! your chosen currency will be used for payments, this can only be updated by contacting customer service.</small>
+              <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
             </div>
 
 
@@ -181,8 +216,14 @@ const Register = () => {
             <section className="mt-4 ion-text-center text-muted" style={{ padding: ".5rem" }}>
               <small>
                 By selecting Agree and continue below, I agree to Encostay's
-                Terms of Service, Payments Terms of Service, Privacy Policy,
-                and Nondiscrimination Policy.
+                <span className='text-warning ms-2' onClick={() => setShowLegalBinding({
+                  enabled: true,
+                  message: TERMS_AND_CONDITIONS
+                })}>Terms of Service</span>, Payments Terms of Service, <span className="text-warning ms-2" onClick={() => setShowLegalBinding({
+                  enabled: true,
+                  message: PRIVACY_POLICY
+                })}>Privacy Policy</span>,
+                and Non discrimination Policy.
               </small>
             </section>
             {/* 

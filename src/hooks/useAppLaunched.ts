@@ -3,7 +3,7 @@ import { getSaveData, saveData } from '../helpers/storageSDKs'
 import { LAUNCH_STATUS } from '../helpers/keys'
 
 const useAppLaunched = () => {
-    const [appLauned, setAppLaunched] = useState(false)
+    const [appLaunched, setAppLaunched] = useState(false)
 
 
     useEffect(() => {
@@ -22,7 +22,7 @@ const useAppLaunched = () => {
         }
     }
 
-    return { appLauned }
+    return { appLaunched }
 }
 
 export default useAppLaunched

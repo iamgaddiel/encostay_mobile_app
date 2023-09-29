@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText } from "@ionic/react";
+import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText, IonChip, IonText } from "@ionic/react";
 import { heart, bedOutline, wifiOutline, chevronForwardOutline } from "ionicons/icons";
 import Slider from "react-slick";
 import { demoRoomsAtom } from "../../atoms/demoAtoms";
@@ -6,6 +6,13 @@ import SpaceBetween from "../style/SpaceBetween";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { utilsAtom } from "../../atoms/utilityAtom";
+import { userAtom } from "../../atoms/appAtom";
+import { useQuery } from "@tanstack/react-query";
+import { listApartments } from "../../helpers/utils";
+import { ApartementItem } from "../../@types/apartments";
+import HomeListCard from "../HomeListCard/HomeListCard";
+import RoomLnd from "../../assets/images/room-ld.png";
+
 
 
 
@@ -54,28 +61,88 @@ const GuestsAccount: React.FC<Props> = ({
 
 
     // ----------------- State -------------------------
+    const { token: authToken, record: user } = useRecoilValue(userAtom);
     const rooms = useRecoilValue(demoRoomsAtom)
     const [loading, setLoading] = useState(false)
     const updateShowTabs = useSetRecoilState(utilsAtom)
+    const [pageNumber, setPageNumber] = useState(1)
+
+    const { data } = useQuery({
+        queryKey: ['guestAccountHome'],
+        queryFn: featuredApartments
+    })
+
+
+    const { data: apartmentList, isLoading } = useQuery({
+        queryKey: ['favoriteApartments', pageNumber],
+        queryFn: () => fetchAllApartments(pageNumber)
+    })
+
 
 
 
     useEffect(() => {
         updateShowTabs({ showTabs: true })
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000)
     }, [])
 
 
 
 
 
+
+
+
     // ----------------- functions -----------------------
+    async function fetchAllApartments(page: number) {
+        try {
+            const options = {
+                perPage: 5,
+                page
+            }
+            return await listApartments(authToken, options);
+        } catch (error: any) {
+            throw new Error('error getting favorite apartments')
+        }
+    }
+
     async function featuredApartments() { }
 
 
     async function favoriteApartments() { }
+
+
+    if (isLoading) {
+        return (
+            <div className="ion-padding">
+                <IonSkeletonText
+                    animated
+                    className="w-100 rounded-4"
+                    style={{ height: "20px" }}
+                />
+                <IonSkeletonText
+                    animated
+                    className="w-100 my-3 rounded-3"
+                    style={{ height: "200px" }}
+                />
+                <IonSkeletonText
+                    animated
+                    className="w-100 my-3 rounded-3"
+                    style={{ height: "200px" }}
+                />
+                <IonSkeletonText
+                    animated
+                    className="w-100 my-3 rounded-3"
+                    style={{ height: "200px" }}
+                />
+                <IonSkeletonText
+                    animated
+                    className="w-100 my-3 rounded-3"
+                    style={{ height: "200px" }}
+                />
+            </div>
+        )
+    }
+
 
 
     return (
@@ -84,7 +151,7 @@ const GuestsAccount: React.FC<Props> = ({
                 <section className="hero mt-3">
                     <SpaceBetween>
                         <div>
-                            <h4 className='text-muted'>Hey Gaddiel!</h4>
+                            <h4 className='text-muted'>Hey {user.name}!</h4>
                             <span className="mt-4" style={{ display: "block" }}>Let's find your best residence!</span>
                         </div>
                         <IonAvatar>
@@ -99,17 +166,15 @@ const GuestsAccount: React.FC<Props> = ({
                 <section className="apartment_types mt-3">
                     <Slider {...homeCategoryCarouselSettings}>
                         {/* <OwlCarousel options={options}> */}
-                        <IonButton className='brown_fill'>All</IonButton>
-                        <IonButton className='brown_fill_outline'>Apartment</IonButton>
-                        <IonButton className='brown_fill_outline'>Loft</IonButton>
-                        <IonButton className='brown_fill_outline'>Condo</IonButton>
-                        <IonButton className='brown_fill_outline'>House</IonButton>
-                        <IonButton className='brown_fill_outline'>Studio</IonButton>
-                        <IonButton className='brown_fill_outline'>Duplex</IonButton>
-                        {/* </OwlCarousel> */}
+                        <IonChip outline color={'warning'} className='brown_fill'>All</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>Apartment</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>Loft</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>Condo</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>House</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>Studio</IonChip>
+                        <IonChip outline color={'warning'} className='brown_fill_outline'>Duplex</IonChip>
                     </Slider>
                 </section>
-
                 {/* 
             -----------------------------------------------------------
             ------------------ [Featured Places] ------------------------
@@ -218,6 +283,88 @@ const GuestsAccount: React.FC<Props> = ({
 
                         </Slider>
                     </section>
+                </section>
+
+                <section className=" mt-5 s">
+                    <SpaceBetween className='my-3'>
+                        <span> Trending Apartments</span>
+                        <IonRouterLink className="ion-warning">All</IonRouterLink>
+                    </SpaceBetween>
+
+                    <div className="mt-4">
+                        {apartmentList &&
+                            apartmentList?.totalItems >= 1 &&
+                            apartmentList.items.map((home: ApartementItem) =>
+                            (
+                                <HomeListCard
+                                    has_wifi={home.has_wifi}
+                                    // is_favourite={home.isFavourite}
+                                    location={{
+                                        country: home.country,
+                                        state: home.state_location,
+                                    }}
+                                    imageUri={RoomLnd}
+                                    numberOfBedrooms={home.bedrooms}
+                                    price={home.price}
+                                    ratings={4}
+                                    showRattings={true}
+                                    title={home.title}
+                                    homeId={home.id!}
+                                    key={home?.id!}
+                                />
+                            )
+                            )}
+                    </div>
+                </section>
+
+
+                {/* 
+            -----------------------------------------------------------
+            ------------------ [Pagination] ------------------------
+            -----------------------------------------------------------
+             */}
+                <section className="my-4">
+                    <div className="d-flex align-items-center justify-content-center">
+                        <IonButton
+                            fill={'solid'}
+                            color={'warning'}
+                            disabled={apartmentList?.page === 1}
+                            onClick={() => setPageNumber((pgN) => 1)}
+
+                        >
+                            {'First'}
+                        </IonButton>
+                        <IonButton
+                            fill={'solid'}
+                            color={'warning'}
+                            disabled={apartmentList?.page === 1}
+                            onClick={() => setPageNumber((pgN) => pgN - 1)}
+                        >
+                            {'Prev'}
+                        </IonButton>
+                        <IonText
+                            color={'warning'}
+                            className="ion-margin-horizontal fw-bold"
+                        >
+                            {apartmentList?.page}
+                        </IonText>
+                        <IonButton
+                            fill={'solid'}
+                            color={'warning'}
+                            disabled={apartmentList?.page === apartmentList?.totalPages}
+                            onClick={() => setPageNumber((pgN) => pgN + 1)}
+                        >
+                            {'Next'}
+                        </IonButton>
+                        <IonButton
+                            fill={'solid'}
+                            color={'warning'}
+                            disabled={apartmentList?.page === apartmentList?.totalPages}
+                            onClick={() => setPageNumber((pgN) => apartmentList?.totalPages!)}
+                        >
+                            {'Last'}
+                        </IonButton>
+                    </div>
                 </section>
             </IonContent>
         </IonPage >

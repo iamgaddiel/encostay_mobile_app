@@ -11,22 +11,28 @@ interface HumanReadableDate {
   day: number;
   weekday: string;
   monthAbbreviation: string;
+  monthIndexString: string
 }
 
 export function getHumanReadableDate(date: Date): HumanReadableDate {
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthNumbers = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 
   const day = date.getDate();
   const weekday = daysOfWeek[date.getDay()];
   const monthAbbreviation = monthAbbreviations[date.getMonth()];
+  const monthIndexString = monthNumbers[date.getMonth()];
 
   return {
     day,
     weekday,
-    monthAbbreviation
+    monthAbbreviation,
+    monthIndexString
   };
 }
+
+
 /**
  * 
  * @param date1 
@@ -126,17 +132,19 @@ export async function getApartmentDetail(apartmentId: string, authToken: string)
 export async function getBookings(userId: string, authToken: string, accountType: 'guest' | 'host'): Promise<BookingList> {
   let params = {}
 
-  if (accountType === 'guest'){
+  if (accountType === 'guest') {
     params = {
       filter: `(guest="${userId}")`,
-      expand: `apartment`
+      expand: `apartment`,
+      sort: '-created'
     };
   }
 
-  if (accountType === 'host'){
+  if (accountType === 'host') {
     params = {
       filter: `(host="${userId}")`,
-      expand: `apartment`
+      expand: `apartment`,
+      sort: '-created'
     };
   }
 
@@ -178,11 +186,12 @@ export async function getBookingDetail(bookingId: string, authToken: string): Pr
 
 // ========================== Apatments =================================
 
-export async function listApartments(authToken: string): Promise<ApartementList> { //
+export async function listApartments(authToken: string, params?: {}): Promise<ApartementList> { //
 
   const { data } = await listApiCollection(
     APARTMENTS_COLLECTION,
     authToken,
+    params
   );
   const aprtments = data as ApartementList;
   console.log("🚀 ~ file: utils.ts:123 ~ listApartments ~ aprtments:", aprtments)

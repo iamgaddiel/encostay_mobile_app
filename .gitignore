@@ -265,3 +265,4 @@ sketch
 pb_data
 pocketbase
 pocketbase_bin
+.env 2

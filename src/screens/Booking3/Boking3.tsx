@@ -1,22 +1,65 @@
-import { IonAccordion, IonAccordionGroup, IonButton, IonContent, IonIcon, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonText, IonTextarea, IonThumbnail, IonToast } from '@ionic/react'
+import { IonButton, IonContent, IonImg, IonInput, IonLabel, IonPage, IonText, IonToast } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 
 import "../Booking1/Booking1.css"
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle'
 import Image from "../../assets/images/twemoji_flag-for-flag-nigeria.svg"
 
-// css
 import "./Booking3.css"
-import { useRecoilState } from 'recoil'
+
+
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { bookingAtom } from '../../atoms/bookingAtom'
 import { useHistory } from 'react-router'
 
+import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
+import { getSaveData } from '../../helpers/storageSDKs'
+import { APP_CONFIG } from '../../helpers/keys'
+import { AppConfig } from '../../@types/appConfig'
+import { flutterwaveConfig } from '../../flutterwave'
+import Settings from '../../helpers/settings'
+import { userAtom } from '../../atoms/appAtom'
+import { _post } from '../../helpers/api'
+import { Stripe } from '@capacitor-community/stripe'
+
+
+
 const Booking1 = () => {
+    const { record: user } = useRecoilValue(userAtom)
+
+    const [flutterwavePaymentConfig, setFlutterwavePaymentConfig] = useState<typeof flutterwaveConfig>({
+        public_key: '',
+        tx_ref: '0',
+        amount: 0,
+        currency: '',
+        payment_options: '',
+        customer: {
+            email: '',
+            phone_number: '',
+            name: '',
+        },
+        customizations: {
+            title: '',
+            description: '',
+            logo: '',
+        },
+    })
+
+//    let handleFlutterwavePayment: any;
+
+    const handleFlutterwavePayment = user.preferred_currency === 'NGN' ? useFlutterwave(flutterwavePaymentConfig) : null
+
+
+    const { DEBUG, serverBaseUrl } = Settings()
+
     const history = useHistory()
 
     const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
 
+
     const [phone, setPhone] = useState('')
+
+    const [isLoading, setLoading] = useState(false)
 
     const [showToast, setShowToast] = useState({
         enabled: false,
@@ -24,16 +67,55 @@ const Booking1 = () => {
     })
 
 
+
     useEffect(() => {
         processPhoneNumber()
+        loadFlutterwaveConfig()
     }, [phone])
 
 
-    function processPhoneNumber(){
-        setBookingDetail({ ...bookingDetail, guest_phone: phone })
+
+    async function loadFlutterwaveConfig() {
+        const { flw_live_pk, flw_live_sk, flw_test_pk, flw_test_sk } = await getSaveData(APP_CONFIG) as AppConfig
+
+        const FLW_SK = DEBUG ? flw_test_sk : flw_live_sk
+        const FLW_PK = DEBUG ? flw_test_pk : flw_live_pk
+
+        const config = {
+            public_key: FLW_PK,
+            tx_ref: Date.now().toString(),
+            amount: bookingDetail.price,
+            currency: 'NGN',
+            payment_options: 'card',
+            customer: {
+                email: user.email,
+                phone_number: phone,
+                name: user.name,
+            },
+            customizations: {
+                title: `Payment for booking an apartment`,
+                description: 'N/A',
+                logo: 'https://ik.imagekit.io/encostayapp/logo.png?updatedAt=1695141855051',
+            },
+        };
+        console.log("🚀 ~ file: Boking3.tsx:95 ~ loadFlutterwaveConfig ~ config:", config)
+        setFlutterwavePaymentConfig(config)
     }
 
-    function finishBookProcess() {
+
+    function processPhoneNumber() {
+        setBookingDetail({
+            ...bookingDetail,
+            is_pending: true,
+            guest_phone: phone,
+            is_paid: true
+        })
+    }
+
+
+    async function finishBookProcess() {
+        setLoading(() => true)
+
         if (phone === '') {
             setShowToast({
                 enabled: true,
@@ -42,7 +124,52 @@ const Booking1 = () => {
             return
         }
 
-        history.push('/payment_prcessing')
+//       Load Flutterwave
+        if (user.preferred_currency === 'NGN' && handleFlutterwavePayment !== null) {
+            handleFlutterwavePayment({
+                callback: (response) => {
+                    console.log(response);
+                    closePaymentModal() // this will close the modal programmatically
+                },
+                onClose: () => {
+                    console.log('payment done')
+                },
+            });
+        }
+
+//        Load Strip
+        if (user.preferred_currency === 'USD') {
+            try{
+                const payload = {
+                    amount: Number(bookingDetail.price).toFixed(0),
+                    currency: 'usd'
+                }
+
+                const URL = `${serverBaseUrl}/stripe_payment/`
+
+                const headers = {'Content-Type': 'application/json'}
+
+                const { data } = await _post(URL, payload, headers)
+                console.log("🚀 ~ file: Boking3.tsx:150 ~ finishBookProcess ~ data:", data)
+
+                const clientSecret = data.clientSecret
+
+                await Stripe.createPaymentSheet({
+                    paymentIntentClientSecret: clientSecret,
+                    merchantDisplayName: 'Encostay'
+                })
+
+                const { paymentResult } = await Stripe.presentPaymentSheet()
+                console.log("🚀 ~ file: Boking3.tsx:155 ~ finishBookProcess ~ paymentResult:", paymentResult)
+
+            }
+            catch(error: any){
+                console.error('Payment failed', error)
+            }
+        }
+
+        setLoading(() => false)
+        // history.push('/payment_prcessing')
 
     }
 
@@ -98,8 +225,9 @@ const Booking1 = () => {
                     onClick={finishBookProcess}
                     expand='block'
                     mode='ios'
+                    disabled={isLoading}
                 >
-                    Confrim
+                    {isLoading ? 'Processing...' : 'Confirm' }
                 </IonButton>
 
             </IonContent>

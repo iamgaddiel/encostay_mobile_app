@@ -16,6 +16,7 @@ export interface UserCollectionType {
     account_type: AccountType
     is_disabled: boolean
     report_count: number
+    preferred_currency: 'NGN' | 'USD'
     phone: string
 }
 

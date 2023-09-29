@@ -77,6 +77,8 @@ const Login = () => {
   } = useForm<LoginInputs>();
 
   // states
+  const { record } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [toast, setToast] = useState({ isOpen: false, message: "" });
@@ -90,7 +92,7 @@ const Login = () => {
   const slides = useRecoilValue(slidesAtom);
   const setPasswordResetSwipe = useSetRecoilState(passwordResetSwipeAtom);
   const setAppConfig = useSetRecoilState(appConfigAtom)
-  const { record } = useAuth();
+
 
 
   // FETCH APP CONFIG FROM DB
@@ -98,9 +100,6 @@ const Login = () => {
     getAppConfig();
   });
 
-  
-  // redirect to home if user is loged in already
-  if (record?.id) return <Home key={"home"} />;
 
   async function getAppConfig() {
     const { response } = await getApiCollectionItem(
@@ -138,6 +137,10 @@ const Login = () => {
     setToast({ message: responseMessage!, isOpen: true });
     setLoading(false);
   };
+
+
+  // redirect to home if user is loged in already
+  // if (record?.id) return <Home key={"home"} />;
 
   return (
     <IonPage>

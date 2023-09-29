@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonThumbnail, IonTitle } from '@ionic/react'
+import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, IonTitle } from '@ionic/react'
 import React from 'react'
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle/BackHeaderNoTitle'
 import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
@@ -7,9 +7,9 @@ import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
 import Person from "../../assets/images/man.png"
 
 import "./Me.css"
-import { ellipse, logOut } from 'ionicons/icons'
+import { buildOutline, ellipse, heart, heartOutline, lockClosed, lockOpenOutline, logOut, person, personOutline } from 'ionicons/icons'
 import { clearData } from '../../helpers/storageSDKs'
-import { USER } from '../../helpers/keys'
+import { APP_CONFIG, IMAGEKIT_CONFIG, SELECTED_BOOKING_FOR_CANCELATION, USER } from '../../helpers/keys'
 import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { utilsAtom } from '../../atoms/utilityAtom'
@@ -22,13 +22,16 @@ const Me = () => {
   const history = useHistory()
 
   const setShowTabs = useSetRecoilState(utilsAtom)
-  const {record: user} = useRecoilValue(userAtom)
+  const { record: user } = useRecoilValue(userAtom)
 
 
 
   async function logOutUser() {
     clearData(USER)
-    setShowTabs({ showTabs: false})
+    clearData(SELECTED_BOOKING_FOR_CANCELATION)
+    clearData(APP_CONFIG)
+    clearData(IMAGEKIT_CONFIG)
+    setShowTabs({ showTabs: false })
     history.push('/login')
   }
 
@@ -48,45 +51,40 @@ const Me = () => {
 
         <section className="mt-4">
           <IonList lines='none'>
-            <IonItem className="ion-no-padding ion-no-margin">
-              <IonCard className='w-100 rounded-4' mode="ios" routerDirection='forward' routerLink='/edit_profile'>
-                <IonCardContent>
-                  <div className="d-flex align-items-center">
-                    <IonIcon icon={ellipse} color='warning' />
-                    <IonLabel className='fs-5 ml-5'>Edit Profile</IonLabel>
-                  </div>
-                </IonCardContent>
-              </IonCard>
+            <IonItem className="ion-no-margin d-flex align-items-center" mode="ios" routerDirection='forward' routerLink='/edit_profile'>
+              <div className="d-flex align-items-center">
+                <IonIcon icon={person} color='warning' size='large' />
+                <IonText className='ml-5'>Edit Profile</IonText>
+              </div>
             </IonItem>
-            <IonItem className="ion-no-padding ion-no-margin">
-              <IonCard className='w-100 rounded-4' mode="ios" routerDirection='forward' routerLink='/change_password'>
-                <IonCardContent>
-                  <div className="d-flex align-items-center">
-                    <IonIcon icon={ellipse} color='warning' />
-                    <IonLabel className='fs-5 ml-5'>Change Password</IonLabel>
-                  </div>
-                </IonCardContent>
-              </IonCard>
+            <IonItem className="ion-no-margin" mode='ios' routerDirection='forward' routerLink='/favorites'>
+              <div className="d-flex align-items-center">
+                <IonIcon icon={heart} color='warning' size='large' />
+                <IonText className='ml-5'>Favorites</IonText>
+              </div>
             </IonItem>
-            <IonItem className="ion-no-padding ion-no-margin">
-              <IonCard className='w-100 rounded-4' mode="ios" routerDirection='forward' routerLink='/bank_account'>
-                <IonCardContent>
-                  <div className="d-flex align-items-center">
-                    <IonIcon icon={ellipse} color='warning' />
-                    <IonLabel className='fs-5 ml-5'>Bank Account</IonLabel>
-                  </div>
-                </IonCardContent>
-              </IonCard>
+            <IonItem className="ion-no-margin" mode="ios" routerDirection='forward' routerLink='/change_password'>
+              <div className="d-flex align-items-center">
+                <IonIcon icon={lockClosed} color='warning' size='large' />
+                <IonLabel className='ml-5'>Change Password</IonLabel>
+              </div>
             </IonItem>
-            <IonItem className="ion-no-padding ion-no-margin">
-              <IonCard className='w-100 rounded-4' mode="ios" routerDirection='forward' routerLink='/contact_support'>
-                <IonCardContent>
+            {
+              user.account_type === 'host' && (
+                <IonItem className="ion-no-margin" mode="ios" routerDirection='forward' routerLink='/bank_account'>
                   <div className="d-flex align-items-center">
-                    <IonIcon icon={ellipse} color='warning' />
-                    <IonLabel className='fs-5 ml-5'>Contact Support</IonLabel>
+                    <IonIcon icon={buildOutline} color='warning' />
+                    <IonLabel className='ml-5'>Bank Account</IonLabel>
                   </div>
-                </IonCardContent>
-              </IonCard>
+
+                </IonItem>
+              )
+            }
+            <IonItem className="ion-no-margin" mode="ios" routerDirection='forward' routerLink='/contact_support'>
+              <div className="d-flex align-items-center">
+                <IonIcon icon={ellipse} color='warning' />
+                <IonLabel className='ml-5'>Contact Support</IonLabel>
+              </div>
             </IonItem>
             <IonItem className="ion-no-padding ion-no-margin">
               <IonCard className='w-100 rounded-4' mode="ios" color={"danger"} onClick={logOutUser}>

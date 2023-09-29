@@ -1,7 +1,8 @@
 import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { homeOutline, bookOutline, searchOutline, personOutline } from 'ionicons/icons'
-import React from 'react'
+import { Network } from '@capacitor/network';
+import React, { useEffect } from 'react'
 import { Route } from 'react-router'
 import AddPaymentMethod from './screens/AddBankAccount'
 import AppartmentSearch from './screens/AppartmentSearch'
@@ -33,7 +34,7 @@ import Transactions from './screens/Transactions'
 import WithdrawConfirm from './screens/WithdrawConfirm'
 import WithdrawReceiving from './screens/WithdrawReceiving'
 import Withdrawal from './screens/Withdraw'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { utilsAtom } from './atoms/utilityAtom'
 import Appartments from './screens/Appartments/Appartments'
 import AddApartments from './screens/AddApartments/AddApartments'
@@ -41,14 +42,36 @@ import HostApartmentDetail from './screens/HostApartmentDetail/HostApartmentDeta
 import ApartmentUpdate from './screens/ApartmentUpdate/ApartmentUpdate'
 import HostAcceptOrDecline from './screens/HostAcceptOrDecline/HostAcceptOrDecline'
 import AddBankAccount from './screens/AddBankAccount'
+import { networkErrorAtom } from './atoms/networkErrorAtom'
+import NetworkError from './screens/NetworkError'
+import Favorites from './screens/Favorties/Favorites';
+
+
+
+
 
 const Routes = () => {
     const { showTabs } = useRecoilValue(utilsAtom)
+    const [networkNotFound, setNetworkNotFound] = useRecoilState(networkErrorAtom)
     //FIXME: correct apartment spelling
+
+
+    useEffect(() => {
+        Network.addListener('networkStatusChange', status => {
+            if (status.connectionType === 'none') {
+                setNetworkNotFound(true)
+            }
+            console.log('Network status changed', status.connectionType);
+        });
+    }, [networkNotFound])
+
+
+    if (networkNotFound) {
+        return <NetworkError />
+    }
 
     return (
         <IonReactRouter>
-
             <Route exact path="/" render={() => <Landing />} />
             <Route exact path="/login" render={() => <Login />} />
             <Route exact path="/register" render={() => <Register />} />
@@ -79,21 +102,23 @@ const Routes = () => {
             <Route exact path="/withdraw" render={() => <Withdrawal />} />
             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
-            <Route exact path="/appartments" render={() => <Appartments />} />
+            <Route exact path="/apartments" render={() => <Appartments />} />
             <Route exact path="/add_apartment" render={() => <AddApartments />} />
             <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
+            <Route exact path="/favorites" render={() => <Favorites />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/favorites" render={() => <Favorites />} />
                             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
                             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
                             <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
                             <Route exact path="/add_apartment" render={() => <AddApartments />} />
-                            <Route exact path="/appartments" render={() => <Appartments />} />
+                            <Route exact path="/apartments" render={() => <Appartments />} />
                             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
                             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
                             <Route exact path="/withdraw" render={() => <Withdrawal />} />

@@ -14,6 +14,7 @@
     "ionic:serve": "npm run dev"
   },
   "dependencies": {
+    "@capacitor-community/stripe": "^5.2.0",
     "@capacitor/app": "5.0.2",
     "@capacitor/assets": "^2.0.4",
     "@capacitor/camera": "^5.0.5",
@@ -21,7 +22,9 @@
     "@capacitor/core": "5.0.3",
     "@capacitor/haptics": "5.0.2",
     "@capacitor/keyboard": "5.0.2",
+    "@capacitor/network": "^5.0.6",
     "@capacitor/preferences": "^4.0.2",
+    "@capacitor/share": "^5.0.6",
     "@capacitor/status-bar": "5.0.2",
     "@egjs/react-flicking": "^4.10.9",
     "@ionic/pwa-elements": "^3.2.2",
@@ -29,6 +32,8 @@
     "@ionic/react-router": "^7.0.0",
     "@ionic/storage": "^3.0.6",
     "@splidejs/react-splide": "^0.7.12",
+    "@stripe/react-stripe-js": "^2.3.0",
+    "@stripe/stripe-js": "^2.1.6",
     "@tanstack/react-query": "^4.32.6",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
@@ -37,6 +42,7 @@
     "cordova-sqlite-storage": "^6.1.0",
     "date-fns": "2.30.0",
     "dicebear": "^6.0.2",
+    "flutterwave-node-v3": "^1.1.6",
     "flutterwave-react-v3": "^1.3.0",
     "imagekit": "^4.1.3",
     "ionicons": "^7.0.0",
@@ -52,6 +58,7 @@
     "react-slick": "^0.29.0",
     "recoil": "^0.7.7",
     "slick-carousel": "^1.8.1",
+    "stripe": "^13.6.0",
     "swiper": "^9.2.0"
   },
   "devDependencies": {

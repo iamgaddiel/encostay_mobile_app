@@ -198,7 +198,7 @@ const Withdraw = () => {
         setAmount(0)
         
         setIsLoading(false)
-        // history.push('/withdraw_receiving')
+        history.push('/withdraw_receiving')
     }
 
 

@@ -23,7 +23,11 @@ import {
   bedOutline,
   chevronForwardOutline,
   heart,
+  lockClosedOutline,
   pencil,
+  scaleOutline,
+  shieldOutline,
+  tvOutline,
   wifiOutline,
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
@@ -43,6 +47,7 @@ import { ApartementList } from "../../@types/apartments";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
 import { useHistory } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   userImage: string;
@@ -71,26 +76,37 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
   const setShowTabs = useSetRecoilState(utilsAtom);
   const { record: user, token } = useRecoilValue<StoredUser>(userAtom);
 
-  const [apartmentList, setApartmentList] = useState<ApartementList | null>(
-    null
-  );
+  // const [apartmentList, setApartmentList] = useState<ApartementList | null>(
+  //   null
+  // );
+
+  const { data: apartmentList, isLoading } = useQuery({
+    queryKey: ['hostHomeListing'],
+    queryFn: getHostApartments
+  })
+
+
 
   useEffect(() => {
     setShowTabs({ showTabs: true });
   }, []);
 
-  useEffect(() => {
-    getHostApartments();
-  }, []);
+  // useEffect(() => {
+  //   getHostApartments();
+  // }, []);
+
+
+
+
 
   async function getHostApartments() {
 
     const params = {
-      filter : `host="${user.id}"`
+      filter: `host="${user.id}"`
     }
     const { data } = await listApiCollection(APARTMENTS_COLLECTION, token, params);
-    const appartments = data as ApartementList;
-    setApartmentList(appartments);
+    const apartments = data as ApartementList;
+    return apartments
   }
 
   return (
@@ -147,7 +163,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
             mode="ios"
             style={{ backgroundColor: "var(--white-4)" }}
             routerDirection="forward"
-            routerLink="/add_card"
+            routerLink="/add_apartment"
           >
             <IonCardContent className="p-3">
               <SpaceBetween>
@@ -165,7 +181,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
                 <div className="ml-4">
                   <strong>Add New Listing</strong>
                   <small className="block mt-1 text-muted">
-                    Lorem ipsum dolor sit amet consectetur adipisicing
+                    Add new listing to accommodate more guests
                   </small>
                 </div>
               </SpaceBetween>
@@ -208,33 +224,37 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
           {/* Most Rated Listing */}
           <section className="home_list">
             <section className="mt-4">
-              {}
+              { }
               <SpaceBetween>
-                <big>Most Rated Listing</big>
-                <IonButton
-                  shape="round"
-                  className="brown_fill_outline"
-                  fill="outline"
-                  size="small"
-                >
-                  View all
-                </IonButton>
+                <big>Recent Listing</big>
+
+                <div className='d-flex align-items-center text-muted'>
+                  <IonRouterLink
+                    size="small"
+                    routerDirection="forward"
+                    routerLink="/apartments"
+                    className="text-muted"
+                  >
+                    View all
+                  </IonRouterLink>
+                  <IonIcon icon={chevronForwardOutline} slot='end' />
+                </div>
               </SpaceBetween>
             </section>
             <Slider {...cardCarouselSettings}>
-              {rooms.map((home, indx) => (
+              {apartmentList?.items.slice(0, 4).map((home, indx) => (
                 <IonCard
                   color={"light"}
                   className="p-2 home_list_card p-3"
                   key={indx}
                 >
-                  <IonIcon
+                  {/* <IonIcon
                     icon={heart}
                     className={`home_list_card_fav_icon text-${
                       home.isFavourite ? "warning" : "light"
                     }`}
                     size="large"
-                  />
+                  /> */}
                   <div
                     className="home_list_item_img_wrapper"
                     style={{ backgroundImage: `url(${home.img})` }}
@@ -244,7 +264,13 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
                     <div className="home_list_card_hero_section">
                       <div>
                         <big>{home.title}</big> <br />
-                        <span className="text-muted">{home.location}</span>
+                        <span className="text-muted">{home.state_location}, {home.country}</span>
+                        <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold mt-2">
+                          <IonIcon icon={bedOutline} size="small" />
+                          <span style={{ marginLeft: "7px" }}>
+                            {home.bedrooms} Rooms
+                          </span>
+                        </SpaceBetween>
                       </div>
                       <div>
                         <span className="text-muted">
@@ -254,23 +280,41 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
                     </div>
 
                     <div className="home_list_card_info mt-3">
-                      <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
-                        <IonIcon icon={bedOutline} size="large" />
-                        <span style={{ marginLeft: "7px" }}>
-                          {home.bedroom_nuber} Bedroom
-                        </span>
-                      </SpaceBetween>
-
-                      <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
-                        <IonIcon icon={wifiOutline} size="large" />
-                        <span style={{ marginLeft: "7px" }}>
-                          {home.bedroom_nuber} Wifi
-                        </span>
-                      </SpaceBetween>
-
-                      <div className="bg-warning d-flex justify-content-center align-items-center p-1 rounded-1">
-                        <IonIcon icon={chevronForwardOutline} />
-                      </div>
+                      {
+                        home.has_wifi && (
+                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                            <IonIcon icon={wifiOutline} size="small" />
+                            <span className="ms-1">Wifi</span>
+                          </SpaceBetween>
+                        )
+                      }
+                      {
+                        home.has_tv_cable && (
+                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                            <IonIcon icon={tvOutline} size="small" />
+                            <span className="ms-1">TV</span>
+                          </SpaceBetween>
+                        )
+                      }
+                      {
+                        home.has_security && (
+                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                            <IonIcon icon={shieldOutline} size="small" />
+                            <span className="ms-1">Secuirty</span>
+                          </SpaceBetween>
+                        )
+                      }
+                      {
+                        home.has_gym && (
+                          <SpaceBetween className="muted-outline px-2 py-1 rounded-4 fw-bold">
+                            <IonIcon icon={scaleOutline} size="small" />
+                            <span className="ms-1">Gym</span>
+                          </SpaceBetween>
+                        )
+                      }
+                    </div>
+                    <div className="bg-warning mt-3 p-1 rounded-1 text-center">
+                      <IonIcon icon={chevronForwardOutline} />
                     </div>
                   </IonCardContent>
                 </IonCard>

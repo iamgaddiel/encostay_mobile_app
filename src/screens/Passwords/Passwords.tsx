@@ -1,4 +1,4 @@
-import { IonAlert, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonLabel, IonLoading, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react'
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonLabel, IonLoading, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { RegistrationInputs } from '../../@types/auth'
@@ -7,6 +7,8 @@ import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
 import { USRS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
+import SpaceBetween from '../../components/style/SpaceBetween'
+import { eyeOffOutline, eyeOutline } from 'ionicons/icons'
 
 
 
@@ -21,6 +23,8 @@ const Passwords = () => {
     const [toastMessage, setToastMessage] = useState("")
     const [toastIsOpen, setToastIsOpen] = useState(false)
     const [showAlert, setShowAleart] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
 
     const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
@@ -63,10 +67,10 @@ const Passwords = () => {
             return;
         }
 
-        if (regFormData.account_type === 'host'){
-            const walletDetails = { host: response?.id!}
+        if (regFormData.account_type === 'host') {
+            const walletDetails = { host: response?.id! }
             const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletDetails)
-            if(!walletIsCreated){
+            if (!walletIsCreated) {
                 // TODO: check if wallet is not created
                 console.log(error)
                 return
@@ -128,24 +132,33 @@ const Passwords = () => {
 
                 <form action="" onSubmit={handleSubmit(onSubmitForm)}>
                     <section className='mt-3 ion-padding'>
+
                         {/* password */}
                         <div className='form_inputs my-4  mt-4'>
                             <IonLabel>Password</IonLabel>
-                            <IonInput
-                                type='password'
-                                placeholder='..............' className='mt-2 p-2 mx-0'
-                                {...register("password", { required: true })}
-                            />
+                            <SpaceBetween>
+                                <IonInput
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder='..............' className='mt-2 p-2 me-3'
+                                    {...register("password", { required: true })}
+                                />
+                                <IonIcon icon={showPassword ? eyeOutline : eyeOffOutline} size='large' onClick={() => setShowPassword((showPassword) => !showPassword)} />
+                            </SpaceBetween>
                             {errors.password && <small className='text-danger'>This field is required</small>}
                         </div>
+
                         {/* confirm password */}
                         <div className='form_inputs my-4  mt-4'>
                             <IonLabel>Confirm Password</IonLabel>
-                            <IonInput
-                                type='password'
-                                placeholder='..............' className='mt-2 p-2 mx-0'
-                                {...register("passwordConfirm", { required: true })}
-                            />
+                            <SpaceBetween>
+                                <IonInput
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    placeholder='..............' className='mt-2 p-2 me-3'
+                                    {...register("passwordConfirm", { required: true })}
+                                />
+                                <IonIcon icon={showPassword ? eyeOutline : eyeOffOutline} size='large' onClick={() => setShowConfirmPassword((showConfirmPassword) => !showConfirmPassword)} />
+
+                            </SpaceBetween>
                             {errors.passwordConfirm && <small className='text-danger'>This field is required</small>}
                         </div>
                         <div className='text-muted'>
