@@ -8,10 +8,11 @@ import {
   IonPage,
   IonSearchbar,
   IonSkeletonText,
+  IonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { optionsOutline } from "ionicons/icons";
+import { chevronBack, chevronForward, optionsOutline } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import SpaceBetween from "../../components/style/SpaceBetween";
 import { demoRoomsAtom } from "../../atoms/demoAtoms";
@@ -21,26 +22,78 @@ import { ApartementList } from "../../@types/apartments";
 import { userAtom } from "../../atoms/appAtom";
 import { listApartments } from "../../helpers/utils";
 import RoomLnd from "../../assets/images/room-ld.png";
+import { useQuery } from "@tanstack/react-query";
 
 const AppartmentSearch = () => {
   const rooms = useRecoilValue(demoRoomsAtom);
   const { token: authToken } = useRecoilValue(userAtom);
-  const [apartmentList, setApartmentList] = useState<ApartementList | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  // const [apartmentList, setApartmentList] = useState<ApartementList | null>(
+  //   null
+  // );
+  // const [isLoading, setIsLoading] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1)
+
 
   //TODO: use ReactQuery
+  const { data: apartmentList, isLoading } = useQuery({
+    queryKey: ['searchApartmentList', pageNumber],
+    queryFn: () => loadApartments(pageNumber)
+  })
 
-  useEffect(() => {
-    loadApatments();
-  }, []);
+  // useEffect(() => {
+  //   loadApatments();
+  // }, []);
 
-  async function loadApatments() {
-    const response = await listApartments(authToken);
-    setApartmentList(response);
-    setIsLoading(false);
+
+  async function loadApartments(page: number) {
+    try {
+      const options = { perPage: 5, page }
+      const response = await listApartments(authToken, options);
+      return response
+    }
+    catch (err: any) {
+      throw new Error('There was an error getting apartments')
+    }
   }
+
+
+  if (isLoading) {
+    return (
+      <>
+        <IonSkeletonText
+          animated
+          className="w-100 rounded-4"
+          style={{ height: "20px" }}
+        />
+        <IonSkeletonText
+          animated
+          className="w-100 my-3 rounded-3"
+          style={{ height: "270px" }}
+        />
+        <IonSkeletonText
+          animated
+          className="w-100 my-3 rounded-3"
+          style={{ height: "270px" }}
+        />
+        <IonSkeletonText
+          animated
+          className="w-100 my-3 rounded-3"
+          style={{ height: "270px" }}
+        />
+        <IonSkeletonText
+          animated
+          className="w-100 my-3 rounded-3"
+          style={{ height: "270px" }}
+        />
+        <IonSkeletonText
+          animated
+          className="w-100 my-3 rounded-3"
+          style={{ height: "270px" }}
+        />
+      </>
+    )
+  }
+
 
   return (
     <IonPage>
@@ -77,63 +130,76 @@ const AppartmentSearch = () => {
           </div>
 
           <div className="mt-4">
-            {!isLoading ? (
-              <>
-                {apartmentList &&
-                  apartmentList?.totalItems >= 1 &&
-                  apartmentList.items.map((home) => (
-                    <HomeListCard
-                      has_wifi={home.has_wifi}
-                      // is_favourite={home.isFavourite}
-                      location={{
-                        country: home.country,
-                        state: home.state_location,
-                      }}
-                      imageUri={RoomLnd}
-                      numberOfBedrooms={home.bedrooms}
-                      price={home.price}
-                      ratings={4}
-                      showRattings={true}
-                      title={home.title}
-                      homeId={home.id!}
-                      key={home?.id!}
-                    />
-                  ))}
-              </>
-            ) : (
-              <>
-                <IonSkeletonText
-                  animated
-                  className="w-100 rounded-4"
-                  style={{ height: "20px" }}
+            {apartmentList &&
+              apartmentList?.totalItems >= 1 &&
+              apartmentList.items.map((home) => (
+                <HomeListCard
+                  has_wifi={home.has_wifi}
+                  // is_favourite={home.isFavourite}
+                  location={{
+                    country: home.country,
+                    state: home.state_location,
+                  }}
+                  imageUri={RoomLnd}
+                  numberOfBedrooms={home.bedrooms}
+                  price={home.price}
+                  ratings={4}
+                  showRattings={true}
+                  title={home.title}
+                  homeId={home.id!}
+                  key={home?.id!}
                 />
-                <IonSkeletonText
-                  animated
-                  className="w-100 my-3 rounded-3"
-                  style={{ height: "270px" }}
-                />
-                <IonSkeletonText
-                  animated
-                  className="w-100 my-3 rounded-3"
-                  style={{ height: "270px" }}
-                />
-                <IonSkeletonText
-                  animated
-                  className="w-100 my-3 rounded-3"
-                  style={{ height: "270px" }}
-                />
-                <IonSkeletonText
-                  animated
-                  className="w-100 my-3 rounded-3"
-                  style={{ height: "270px" }}
-                />
-                <IonSkeletonText
-                  animated
-                  className="w-100 my-3 rounded-3"
-                  style={{ height: "270px" }}
-                />
-              </>
-            )}
+              ))}
+          </div>
+        </section>
+
+
+        {/* 
+            -----------------------------------------------------------
+            ------------------ [Pagination] ------------------------
+            -----------------------------------------------------------
+             */}
+        <section className="my-4">
+          <div className="d-flex align-items-center justify-content-center">
+            <IonButton
+              fill={'solid'}
+              color={'warning'}
+              disabled={apartmentList?.page === 1}
+              onClick={() => setPageNumber((pgN) => 1)}
+
+            >
+              {'First'}
+            </IonButton>
+            <IonButton
+              fill={'solid'}
+              color={'warning'}
+              disabled={apartmentList?.page === 1}
+              onClick={() => setPageNumber((pgN) => pgN - 1)}
+            >
+              <IonIcon icon={chevronBack} />
+            </IonButton>
+            <IonText
+              color={'warning'}
+              className="ion-margin-horizontal fw-bold"
+            >
+              {apartmentList?.page}
+            </IonText>
+            <IonButton
+              fill={'solid'}
+              color={'warning'}
+              disabled={apartmentList?.page === apartmentList?.totalPages}
+              onClick={() => setPageNumber((pgN) => pgN + 1)}
+            >
+              <IonIcon icon={chevronForward} />
+            </IonButton>
+            <IonButton
+              fill={'solid'}
+              color={'warning'}
+              disabled={apartmentList?.page === apartmentList?.totalPages}
+              onClick={() => setPageNumber((pgN) => apartmentList?.totalPages!)}
+            >
+              {'Last'}
+            </IonButton>
           </div>
         </section>
       </IonContent>

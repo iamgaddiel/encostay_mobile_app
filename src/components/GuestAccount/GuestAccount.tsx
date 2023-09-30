@@ -12,6 +12,7 @@ import { listApartments } from "../../helpers/utils";
 import { ApartementItem } from "../../@types/apartments";
 import HomeListCard from "../HomeListCard/HomeListCard";
 import RoomLnd from "../../assets/images/room-ld.png";
+import NotFound from "../NotFound";
 
 
 
@@ -73,7 +74,7 @@ const GuestsAccount: React.FC<Props> = ({
     })
 
 
-    const { data: apartmentList, isLoading } = useQuery({
+    const { data: apartmentList, isLoading, isError, error } = useQuery({
         queryKey: ['favoriteApartments', pageNumber],
         queryFn: () => fetchAllApartments(pageNumber)
     })
@@ -109,6 +110,14 @@ const GuestsAccount: React.FC<Props> = ({
 
 
     async function favoriteApartments() { }
+
+
+
+
+
+    if (isError){
+        return <NotFound heading="Error Getting Apartments" subheading={error as string} />
+    }
 
 
     if (isLoading) {
