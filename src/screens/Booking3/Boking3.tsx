@@ -1,5 +1,6 @@
 import { IonButton, IonContent, IonImg, IonInput, IonLabel, IonPage, IonText, IonToast } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
+import { Browser } from '@capacitor/browser';
 
 import "../Booking1/Booking1.css"
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle'
@@ -8,24 +9,29 @@ import Image from "../../assets/images/twemoji_flag-for-flag-nigeria.svg"
 import "./Booking3.css"
 
 
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { bookingAtom } from '../../atoms/bookingAtom'
 import { useHistory } from 'react-router'
 
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { getSaveData } from '../../helpers/storageSDKs'
-import { APP_CONFIG } from '../../helpers/keys'
+import { APP_CONFIG, FLUTTERWAVE_COLLECTION } from '../../helpers/keys'
 import { AppConfig } from '../../@types/appConfig'
 import { flutterwaveConfig } from '../../flutterwave'
 import Settings from '../../helpers/settings'
 import { userAtom } from '../../atoms/appAtom'
 import { _post } from '../../helpers/api'
 import { Stripe } from '@capacitor-community/stripe'
+import { getRandomString } from '../../helpers/utils';
+import { createApiCollection } from '../../helpers/apiHelpers';
+import TransactionCard from '../../components/TransactionCard';
+import { FlutterwaveTransactionItem } from '../../@types/flutterwave_transactions';
+import { flutterwaveTransactionIDAtom } from '../../atoms/transactionAtoms';
 
 
 
 const Booking1 = () => {
-    const { record: user } = useRecoilValue(userAtom)
+    const { record: user, token: authToken } = useRecoilValue(userAtom)
 
     const [flutterwavePaymentConfig, setFlutterwavePaymentConfig] = useState<typeof flutterwaveConfig>({
         public_key: '',
@@ -45,7 +51,7 @@ const Booking1 = () => {
         },
     })
 
-//    let handleFlutterwavePayment: any;
+    // let handleFlutterwavePayment: any;
 
     const handleFlutterwavePayment = user.preferred_currency === 'NGN' ? useFlutterwave(flutterwavePaymentConfig) : null
 
@@ -56,6 +62,7 @@ const Booking1 = () => {
 
     const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
 
+    const setFlutterwaveTransactionId = useSetRecoilState(flutterwaveTransactionIDAtom)
 
     const [phone, setPhone] = useState('')
 
@@ -66,6 +73,8 @@ const Booking1 = () => {
         message: ''
     })
 
+    const [flutterwaveSecret, setFlutterwaveSecret] = useState('')
+
 
 
     useEffect(() => {
@@ -74,12 +83,21 @@ const Booking1 = () => {
     }, [phone])
 
 
+    Browser.addListener('browserFinished', () => {
+        // history.push('/get_card_details') 
+        setLoading(() => false)
+        history.push('/payment_prcessing')
+    })
+
 
     async function loadFlutterwaveConfig() {
         const { flw_live_pk, flw_live_sk, flw_test_pk, flw_test_sk } = await getSaveData(APP_CONFIG) as AppConfig
 
         const FLW_SK = DEBUG ? flw_test_sk : flw_live_sk
         const FLW_PK = DEBUG ? flw_test_pk : flw_live_pk
+
+
+        setFlutterwaveSecret(() => FLW_SK)
 
         const config = {
             public_key: FLW_PK,
@@ -117,6 +135,7 @@ const Booking1 = () => {
         setLoading(() => true)
 
         if (phone === '') {
+            setLoading(() => false)
             setShowToast({
                 enabled: true,
                 message: 'Your phone number is required'
@@ -124,52 +143,50 @@ const Booking1 = () => {
             return
         }
 
-//       Load Flutterwave
+
         if (user.preferred_currency === 'NGN' && handleFlutterwavePayment !== null) {
             handleFlutterwavePayment({
-                callback: (response) => {
+                callback: async (response) => {
                     console.log(response);
                     closePaymentModal() // this will close the modal programmatically
+                    setLoading(() => false)
+
+
+                    const transactionPayload: FlutterwaveTransactionItem = {
+                        account_type: 'guest',
+                        user: user.id,
+                        transaction_id: response.transaction_id,
+                        ref_id: response.tx_ref,
+                        transaction_type: 'payment',
+                    }
+
+                    const { isCreated, response: fluTrx } = await createApiCollection(
+                        FLUTTERWAVE_COLLECTION,
+                        transactionPayload,
+                        authToken
+                    )
+                    console.log("🚀 ~ file: Boking3.tsx:164 ~ callback: ~ fluTrx:", fluTrx)
+                    if (isCreated) {
+                        // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
+                        setFlutterwaveTransactionId({
+                            transactionId: response.transaction_id,
+                            collectionId: fluTrx?.id!
+                        })
+                        history.push('/payment_prcessing')
+                    }
                 },
                 onClose: () => {
-                    console.log('payment done')
+
                 },
             });
+            return
         }
 
-//        Load Strip
         if (user.preferred_currency === 'USD') {
-            try{
-                const payload = {
-                    amount: Number(bookingDetail.price).toFixed(0),
-                    currency: 'usd'
-                }
-
-                const URL = `${serverBaseUrl}/stripe_payment/`
-
-                const headers = {'Content-Type': 'application/json'}
-
-                const { data } = await _post(URL, payload, headers)
-                console.log("🚀 ~ file: Boking3.tsx:150 ~ finishBookProcess ~ data:", data)
-
-                const clientSecret = data.clientSecret
-
-                await Stripe.createPaymentSheet({
-                    paymentIntentClientSecret: clientSecret,
-                    merchantDisplayName: 'Encostay'
-                })
-
-                const { paymentResult } = await Stripe.presentPaymentSheet()
-                console.log("🚀 ~ file: Boking3.tsx:155 ~ finishBookProcess ~ paymentResult:", paymentResult)
-
-            }
-            catch(error: any){
-                console.error('Payment failed', error)
-            }
+            // use stripe here
         }
 
-        setLoading(() => false)
-        // history.push('/payment_prcessing')
+
 
     }
 
@@ -212,7 +229,7 @@ const Booking1 = () => {
                             placeholder="070x xxxx xxx"
                             className='border-bottom ml-2'
                             inputMode='numeric'
-                            onIonChange={(e) => setPhone(e.detail.value as string)}
+                            onIonChange={(e) => setPhone(() => e.detail.value as string)}
                         />
                     </div>
 
@@ -227,7 +244,7 @@ const Booking1 = () => {
                     mode='ios'
                     disabled={isLoading}
                 >
-                    {isLoading ? 'Processing...' : 'Confirm' }
+                    {isLoading ? 'Processing...' : 'Confirm'}
                 </IonButton>
 
             </IonContent>

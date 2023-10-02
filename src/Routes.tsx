@@ -45,6 +45,10 @@ import AddBankAccount from './screens/AddBankAccount'
 import { networkErrorAtom } from './atoms/networkErrorAtom'
 import NetworkError from './screens/NetworkError'
 import Favorites from './screens/Favorties/Favorites';
+import GetCardDetails from './screens/GetCardDetails';
+import GetCardPin from './screens/GetCardPin/GetCardPin';
+import BookingPaymentOtp from './screens/BookingPaymentOtpVerification';
+import BookingPaymentOtpVerification from './screens/BookingPaymentOtpVerification';
 
 
 
@@ -108,11 +112,17 @@ const Routes = () => {
             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
             <Route exact path="/favorites" render={() => <Favorites />} />
+            <Route exact path="/get_card_details" render={() => <GetCardDetails />} />
+            <Route exact path="/get_card_pin" render={() => <GetCardPin />} />
+            <Route exact path="/verify_booking_transaction_otp" render={() => <BookingPaymentOtpVerification />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/verify_booking_transaction_otp" render={() => <BookingPaymentOtpVerification />} />
+                            <Route exact path="/get_card_pin" render={() => <GetCardPin />} />
+                            <Route exact path="/get_card_details" render={() => <GetCardDetails />} />
                             <Route exact path="/favorites" render={() => <Favorites />} />
                             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
                             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />

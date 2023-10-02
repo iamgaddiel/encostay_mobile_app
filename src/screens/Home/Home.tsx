@@ -48,7 +48,6 @@ const Home = () => {
     setUesrRecrod(record); // set user component level state to get user account type
     getImageKitConfig(token);
     setAppUserObject({ token, record }); // set app levle user state
-    // setLoading(false);
   }
 
   async function getImageKitConfig(userToken: string) {
@@ -70,104 +69,6 @@ const Home = () => {
     setImageKitAtomConfig(imageKit) // set imageKit object globally
   }
 
-  // if (loading) {
-  //   return (
-  //     <div className="ion-padding">
-  //       <div>
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "100%", height: "200px" }}
-  //           className="rounded-4"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "95%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "80%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "90%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "80%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "90%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <SpaceBetween className="mt-4">
-  //           <IonSkeletonText
-  //             animated
-  //             style={{ width: "40%", height: "60px" }}
-  //             className="rounded-4"
-  //           />
-  //           <IonSkeletonText
-  //             animated
-  //             style={{ width: "40%", height: "60px" }}
-  //             className="rounded-4"
-  //           />
-  //         </SpaceBetween>
-  //       </div>
-  //       <div className="mt-5">
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "100%", height: "200px" }}
-  //           className="rounded-4"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "95%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "80%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "90%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "80%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <IonSkeletonText
-  //           animated
-  //           style={{ width: "90%", height: "10px" }}
-  //           className="mt-3"
-  //         />
-  //         <SpaceBetween className="mt-4">
-  //           <IonSkeletonText
-  //             animated
-  //             style={{ width: "40%", height: "60px" }}
-  //             className="rounded-4"
-  //           />
-  //           <IonSkeletonText
-  //             animated
-  //             style={{ width: "40%", height: "60px" }}
-  //             className="rounded-4"
-  //           />
-  //         </SpaceBetween>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  // if (!userRecord!.id){
-  //   history.push('/login')
-  // }
 
   if (userRecord?.account_type === "host") {
     return <HostAccount userImage={Man} />;

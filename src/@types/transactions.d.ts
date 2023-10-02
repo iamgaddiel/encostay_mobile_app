@@ -70,3 +70,5 @@ export type Bank = {
     account_number: string
 }
 
+export type OTP = string
+

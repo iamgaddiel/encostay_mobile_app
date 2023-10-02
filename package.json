@@ -17,6 +17,7 @@
     "@capacitor-community/stripe": "^5.2.0",
     "@capacitor/app": "5.0.2",
     "@capacitor/assets": "^2.0.4",
+    "@capacitor/browser": "^5.1.0",
     "@capacitor/camera": "^5.0.5",
     "@capacitor/cli": "5.0.3",
     "@capacitor/core": "5.0.3",

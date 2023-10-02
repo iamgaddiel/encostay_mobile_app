@@ -75,3 +75,19 @@ export interface BookingPreviewInputs {
     durationOfStay?: number
     appServiceChargePercentage: number
 }
+
+
+// Card Details
+export interface BookingPaymentCardDetails{
+    card_number: string,
+    cvv: string,
+    expiry_month: string,
+    expiry_year: string,
+    amount?: number,
+    fullname: string,
+    currency?: string,
+    email?: string,
+    phone_number?: string,
+    tx_ref?: string,
+    pin?: string
+}

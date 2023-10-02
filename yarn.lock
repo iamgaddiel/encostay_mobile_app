@@ -262,6 +262,11 @@
     tslib "^2.0.3"
     yargs "^17.3.1"
 
+"@capacitor/browser@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@capacitor/browser/-/browser-5.1.0.tgz#2389638c09716d815765f9622b5f3c71e21d7b6f"
+  integrity sha512-7togqchk2Tvq4SmLaWhcrd4x48ES/GEZsceM+29aun7WhxQEVcDU0cJsVdSU2LNFwNhWgPV2GW90etVd1B3OdQ==
+
 "@capacitor/camera@^5.0.5":
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@capacitor/camera/-/camera-5.0.5.tgz#1cd683c1b9232451a9de3f660425b97c0d70a493"

@@ -54,7 +54,7 @@ export function getDateDiffInDays(date1: Date, date2: Date): number {
  * @returns 
  */
 export function getRandomString(length: number) {
-  return (Math.random() + 1).toString(36).substring(length);
+  return Math.random().toString(36).substring(2, 2 + length);
 }
 
 /**

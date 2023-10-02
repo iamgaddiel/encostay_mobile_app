@@ -47,6 +47,7 @@ const Me = () => {
           <div className="me_thumbnail" style={{ backgroundImage: `url(${Person})` }}></div>
 
           <IonTitle className='mt-3 fs-2'>{user.name}</IonTitle>
+          <small className="text-center text-muted">{user.email}</small>
         </section>
 
         <section className="mt-4">
