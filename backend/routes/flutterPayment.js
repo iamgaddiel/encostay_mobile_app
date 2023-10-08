@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 const Flutterwave = require("flutterwave-node-v3");
-const open = require("open");
+// const open = require("open");
 require("dotenv").config();
 
 const DEBUG = process.env.DEBUG;
