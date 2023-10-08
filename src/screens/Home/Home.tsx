@@ -50,6 +50,7 @@ const Home = () => {
     setAppUserObject({ token, record }); // set app levle user state
   }
 
+
   async function getImageKitConfig(userToken: string) {
     const collectionId = "xhc7u3mxyfmg1f4"
     const { response, error } = await getApiCollectionItem(

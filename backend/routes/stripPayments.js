@@ -1,4 +1,5 @@
-// const express = require('express')
+const express = require("express");
+const router = express.Router();
 require("dotenv").config();
 
 const DEBUG = false;
@@ -8,31 +9,34 @@ const SK = DEBUG ? TEST_SK : LIVE_SK;
 
 const stripe = require("stripe")(SK);
 
-// const stripPaymentRouter = express.Router()
 
-function getStripeApiIsAlive(req, res) {
+
+router.get("/", (req, res) => {
   return res.json({ status: "stripe is working" });
-}
+});
 
-async function getPaymentIntent(req, res) {
-  const { currency, amount } = req.body;
 
-  stripe.paymentIntents
-    .create({
+router.post("/payments", async (req, res) => {
+  const { amount, id } = req.body;
+  try {
+    const payment = await stripe.paymentIntents.create({
       amount,
-      currency,
-      metadata: { integration_check: "accept_a_payment" },
-    })
-    .then((response) => res.json({ clientSecret: response.client_secret }))
-    .catch((error) => {
-      console.log(error, "<---- Error");
-      res
-        .status(500)
-        .send({ error: "An error occurred while creating payment intent" });
+      currency: "USD",
+      description: "Spatula company",
+      payment_method: id,
+      confirm: true,
     });
-}
+    res.json({
+      message: "Payment successful",
+      success: true,
+    });
+  } catch (error) {
+    console.log("Error", error);
+    res.json({
+      message: "Payment failed",
+      success: false,
+    });
+  }
+});
 
-module.exports = {
-  getStripeApiIsAlive,
-  getPaymentIntent,
-};
+module.exports = router;

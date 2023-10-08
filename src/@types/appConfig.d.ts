@@ -20,3 +20,12 @@ export interface AppConfig{
     strp_live_pk: string
     strp_live_sk: string
 }
+
+
+export interface AppConfigList{
+    page: number
+    perPage: number
+    totalPages: number
+    totalItems: number
+    items: AppConfig[]
+  }

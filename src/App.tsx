@@ -1,25 +1,6 @@
-import { Route } from "react-router-dom";
 import {
-  IonApp,
-  IonIcon,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs,
   setupIonicReact,
 } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
-import {
-  book,
-  bookOutline,
-  chatbubbles,
-  home,
-  homeOutline,
-  person,
-  personOutline,
-  searchOutline,
-  sendOutline,
-} from "ionicons/icons";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -56,30 +37,19 @@ import Routes from "./Routes";
 import { RecoilRoot } from "recoil";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Capacitor } from "@capacitor/core";
-import { Stripe } from '@capacitor-community/stripe'
-import Settings from "./helpers/settings";
+
+
 
 setupIonicReact();
 
-const settings = Settings()
-
-const {DEBUG} = settings
-
-// const publishableKey = DEBUG ? process.env.REACT_STRIPE_TEST_PK as string : process.env.REACT_STRIPE_LIVE_PK as string
-const publishableKey = process.env.REACT_APP_STRIPE_TEST_PK as string
-
-
-if (Capacitor.isPluginAvailable('Strip')) {
-  Stripe.initialize({ publishableKey })
-}
-
 const App: React.FC = () => {
+
   const queryClient = new QueryClient();
+
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
-        <Routes />
+          <Routes />
       </QueryClientProvider>
     </RecoilRoot>
   );
@@ -90,4 +60,4 @@ export default App;
 
 //TODO: request of location to be always active (if location is not turned on the app wouldn't work)
 //TODO: same applies for network
-//TODO: 
+//TODO: protect pocketbase ListAppConfig endpoint

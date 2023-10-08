@@ -19,10 +19,12 @@ const brevoApiKey = brevoDefaultClient.authentications["api-key"];
 brevoApiKey.apiKey = BREVO_API_KEY;
 
 // Stripe Payment Routes
-const {
-  getPaymentIntent,
-  getStripeApiIsAlive,
-} = require("./routes/stripPayments");
+// const {
+//   getPaymentIntent,
+//   getStripeApiIsAlive,
+// } = require("./routes/stripPayments");
+
+const stripePayments = require('./routes/stripPayments')
 
 const { chargeDebitCard, paymentCallback } = require("./routes/flutterPayment");
 
@@ -35,15 +37,15 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// app.use('/stripe', stripePayments)
+app.use('/stripe', stripePayments)
 
 // [Stripe] ---------------------------------------------------------------
-app.get("/test_stripe", getStripeApiIsAlive);
-app.post("/stripe_payment", getPaymentIntent);
+// app.get("/test_stripe", getStripeApiIsAlive);
+// app.post("/stripe_payment", getPaymentIntent);
 
-// [Flutterwave] ---------------------------------------------------------------
-app.post("/flw/payment", chargeDebitCard);
-app.post("/payment_callback", paymentCallback);
+// // [Flutterwave] ---------------------------------------------------------------
+// app.post("/flw/payment", chargeDebitCard);
+// app.post("flw/payment_callback", paymentCallback);
 
 
 app.get("/", (req, res) => {
