@@ -12,10 +12,10 @@ const pocketbaseUrl =
     ? "http://127.0.0.1:8090/api/"
     : "https://encostay-app.pockethost.io/api";
 
-const FLW_PUBLIC_KEY = DEBUG === "true" ? process.env.FLW_TEST_PK : FLW_LIVE_PK;
-const FLW_SECRET_KEY = DEBUG === "true" ? process.env.FLW_TEST_SK : FLW_LIVE_SK;
+const FLW_PUBLIC_KEY = DEBUG === "true" ? process.env.FLW_TEST_PK : process.env.FLW_LIVE_PK;
+const FLW_SECRET_KEY = DEBUG === "true" ? process.env.FLW_TEST_SK : process.env.FLW_LIVE_SK;
 const FLW_ENCRYPTION_KEY =
-  DEBUG === "true" ? process.env.FLW_TEST_EK : FLW_LIVE_EK;
+  DEBUG === "true" ? process.env.FLW_TEST_EK : process.env.FLW_LIVE_EK;
 
 const flw = new Flutterwave(FLW_PUBLIC_KEY, FLW_SECRET_KEY);
 
