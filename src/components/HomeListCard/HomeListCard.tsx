@@ -21,9 +21,9 @@ interface Props {
     numberOfBedrooms: number
     has_wifi: boolean
     ratings: number
-    is_favourite?: boolean
+    is_favorite?: boolean
     imageUri: string
-    showRattings: boolean
+    showRatings: boolean
     homeId: string
 }
 
@@ -35,14 +35,14 @@ const HomeListCard: React.FC<Props> = ({
     numberOfBedrooms,
     has_wifi,
     ratings,
-    is_favourite,
+    is_favorite,
     imageUri,
-    showRattings,
+    showRatings,
     homeId,
 }) => {
     const history = useHistory()
 
-    const [ratingsArray, setRattingsArray] = useState<number[]>([])
+    const [ratingsArray, setRatingsArray] = useState<number[]>([])
 
     const setSelectedApartmentId = useSetRecoilState(selectedApartmentIdAtom)
 
@@ -50,7 +50,7 @@ const HomeListCard: React.FC<Props> = ({
     useEffect(() => {
         // const arr = [...new Array(ratings).map((_, i) => ++i)]
         const arr = [...new Array(ratings).keys()]
-        setRattingsArray(arr)
+        setRatingsArray(arr)
     }, [])
 
 
@@ -62,7 +62,7 @@ const HomeListCard: React.FC<Props> = ({
 
     return (
         <IonCard color={"light"} className='home_list_card' mode='ios' onClick={(() => viewApartment(homeId))}>
-            <IonIcon icon={heart} className={`home_list_card_fav_icon text-${is_favourite ? "warning" : "light"}`} size='large' />
+            <IonIcon icon={heart} className={`home_list_card_fav_icon text-${is_favorite ? "warning" : "light"}`} size='large' />
             <div className="home_list_item_img_wrapper" style={{ backgroundImage: `url(${imageUri})` }}></div >
 
             <IonCardContent>
@@ -96,7 +96,7 @@ const HomeListCard: React.FC<Props> = ({
                 </div>
 
                 {
-                    showRattings ? (
+                    showRatings ? (
                         <div className="mt-2 px-2">
                             <div className="d-flex align-items-center justify-content-between">
                                 <div className='text-muted'>

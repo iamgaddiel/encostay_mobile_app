@@ -26,7 +26,7 @@ brevoApiKey.apiKey = BREVO_API_KEY;
 
 const stripePayments = require('./routes/stripPayments')
 
-const { chargeDebitCard, paymentCallback } = require("./routes/flutterPayment");
+const flutterPayments = require("./routes/flutterPayment");
 
 // Flutterwave Payment Routes
 
@@ -38,6 +38,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.use('/stripe', stripePayments)
+app.use('/flw', flutterPayments)
 
 // [Stripe] ---------------------------------------------------------------
 // app.get("/test_stripe", getStripeApiIsAlive);

@@ -77,7 +77,7 @@ const Login = () => {
   } = useForm<LoginInputs>();
 
   // states
-  const { record } = useAuth();
+  // const { record } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
 

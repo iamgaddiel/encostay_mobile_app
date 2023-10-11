@@ -1,7 +1,5 @@
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -13,24 +11,18 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { chevronBack, chevronForward, optionsOutline } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import SpaceBetween from "../../components/style/SpaceBetween";
-import { demoRoomsAtom } from "../../atoms/demoAtoms";
 import HomeListCard from "../../components/HomeListCard/HomeListCard";
 import { useRecoilValue } from "recoil";
-import { ApartementList } from "../../@types/apartments";
 import { userAtom } from "../../atoms/appAtom";
 import { listApartments } from "../../helpers/utils";
 import RoomLnd from "../../assets/images/room-ld.png";
 import { useQuery } from "@tanstack/react-query";
+import NotFound from "../../components/NotFound";
 
 const AppartmentSearch = () => {
-  const rooms = useRecoilValue(demoRoomsAtom);
   const { token: authToken } = useRecoilValue(userAtom);
-  // const [apartmentList, setApartmentList] = useState<ApartementList | null>(
-  //   null
-  // );
-  // const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1)
 
 
@@ -40,9 +32,7 @@ const AppartmentSearch = () => {
     queryFn: () => loadApartments(pageNumber)
   })
 
-  // useEffect(() => {
-  //   loadApatments();
-  // }, []);
+
 
 
   async function loadApartments(page: number) {
@@ -131,11 +121,10 @@ const AppartmentSearch = () => {
 
           <div className="mt-4">
             {apartmentList &&
-              apartmentList?.totalItems >= 1 &&
+              apartmentList?.totalItems >= 1 ?
               apartmentList.items.map((home) => (
                 <HomeListCard
                   has_wifi={home.has_wifi}
-                  // is_favourite={home.isFavourite}
                   location={{
                     country: home.country,
                     state: home.state_location,
@@ -144,12 +133,13 @@ const AppartmentSearch = () => {
                   numberOfBedrooms={home.bedrooms}
                   price={home.price}
                   ratings={4}
-                  showRattings={true}
+                  showRatings={true}
                   title={home.title}
                   homeId={home.id!}
                   key={home?.id!}
                 />
-              ))}
+              )) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
+            }
           </div>
         </section>
 
@@ -161,7 +151,7 @@ const AppartmentSearch = () => {
              */}
         <section className="my-4">
           <div className="d-flex align-items-center justify-content-center">
-            <IonButton
+            {/* <IonButton
               fill={'solid'}
               color={'warning'}
               disabled={apartmentList?.page === 1}
@@ -169,7 +159,9 @@ const AppartmentSearch = () => {
 
             >
               {'First'}
-            </IonButton>
+            </IonButton> */}
+
+            {/* Back Button */}
             <IonButton
               fill={'solid'}
               color={'warning'}
@@ -178,12 +170,9 @@ const AppartmentSearch = () => {
             >
               <IonIcon icon={chevronBack} />
             </IonButton>
-            <IonText
-              color={'warning'}
-              className="ion-margin-horizontal fw-bold"
-            >
-              {apartmentList?.page}
-            </IonText>
+
+
+            {/* Forward Button */}
             <IonButton
               fill={'solid'}
               color={'warning'}
@@ -192,14 +181,19 @@ const AppartmentSearch = () => {
             >
               <IonIcon icon={chevronForward} />
             </IonButton>
-            <IonButton
+            
+            {/* <IonButton
               fill={'solid'}
               color={'warning'}
               disabled={apartmentList?.page === apartmentList?.totalPages}
               onClick={() => setPageNumber((pgN) => apartmentList?.totalPages!)}
             >
               {'Last'}
-            </IonButton>
+            </IonButton> */}
+          </div>
+          {/* Diisplay current page and total number of paginated pages */}
+          <div className="text-center text-muted">
+            <IonText>{apartmentList?.page} of {apartmentList?.totalPages}</IonText>
           </div>
         </section>
       </IonContent>

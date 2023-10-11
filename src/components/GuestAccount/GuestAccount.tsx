@@ -73,22 +73,14 @@ const GuestsAccount: React.FC<Props> = ({
         queryFn: featuredApartments
     })
 
-
     const { data: apartmentList, isLoading, isError, error } = useQuery({
         queryKey: ['favoriteApartments', pageNumber],
         queryFn: () => fetchAllApartments(pageNumber)
     })
 
-
-
-
     useEffect(() => {
         updateShowTabs({ showTabs: true })
     }, [])
-
-
-
-
 
 
 
@@ -307,7 +299,6 @@ const GuestsAccount: React.FC<Props> = ({
                             (
                                 <HomeListCard
                                     has_wifi={home.has_wifi}
-                                    // is_favourite={home.isFavourite}
                                     location={{
                                         country: home.country,
                                         state: home.state_location,
@@ -316,7 +307,7 @@ const GuestsAccount: React.FC<Props> = ({
                                     numberOfBedrooms={home.bedrooms}
                                     price={home.price}
                                     ratings={4}
-                                    showRattings={true}
+                                    showRatings={true}
                                     title={home.title}
                                     homeId={home.id!}
                                     key={home?.id!}

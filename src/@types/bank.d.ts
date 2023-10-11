@@ -7,7 +7,7 @@ export interface BankItem {
     collectionName: string
     created: string
     updated: string
-    host: string
+    user: string
     bank_name: string
     account_number: string
     account_name: string

@@ -5,7 +5,11 @@ require("dotenv").config();
 const DEBUG = false;
 const LIVE_SK = process.env.STRIPE_LIVE_SK;
 const TEST_SK = process.env.STRIPE_TEST_SK;
+const TEST_PK = process.env.STRIPE_TEST_PK;
+const LIVE_PK = process.env.STRIPE_LIVE_PK;
+
 const SK = DEBUG ? TEST_SK : LIVE_SK;
+const PK = DEBUG ? TEST_PK : LIVE_PK;
 
 const stripe = require("stripe")(SK);
 
@@ -18,6 +22,7 @@ router.get("/", (req, res) => {
 
 router.post("/payments", async (req, res) => {
   const { amount, id } = req.body;
+  console.log("🚀 ~ file: stripPayments.js:21 ~ router.post ~ { amount, id }:", { amount, id })
   try {
     const payment = await stripe.paymentIntents.create({
       amount,
@@ -26,6 +31,7 @@ router.post("/payments", async (req, res) => {
       payment_method: id,
       confirm: true,
     });
+    console.log("🚀 ~ file: stripPayments.js:29 ~ router.post ~ payment:", payment)
     res.json({
       message: "Payment successful",
       success: true,
@@ -38,5 +44,13 @@ router.post("/payments", async (req, res) => {
     });
   }
 });
+
+
+router.get('/config', (req, res) => {
+  return res.json({
+    publishableKey: PK,
+    secretKey: SK
+  })
+})
 
 module.exports = router;

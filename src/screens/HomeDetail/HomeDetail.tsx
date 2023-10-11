@@ -1,6 +1,7 @@
 import {
   IonAccordion,
   IonAccordionGroup,
+  IonAlert,
   IonButton,
   IonCard,
   IonCardContent,
@@ -47,15 +48,21 @@ import { getApartmentDetail } from "../../helpers/utils";
 import { bookingAtom, selectedApartmentIdAtom } from "../../atoms/bookingAtom";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
 import { getSaveData } from "../../helpers/storageSDKs";
-import { USER } from "../../helpers/keys";
-import { StoredUser } from "../../@types/users";
+import { BANKS_COLLECTION, USER } from "../../helpers/keys";
+import { StoredUser, UserCollectionType } from "../../@types/users";
 import { get } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { listApiCollection } from "../../helpers/apiHelpers";
+import { BankList } from "../../@types/bank";
+
+
+
 
 const HomeDetail = () => {
 
   const apartmentId = useRecoilValue(selectedApartmentIdAtom)
 
-  const { token: authToken } = useRecoilValue(userAtom);
+  const { token: authToken, record: user } = useRecoilValue(userAtom);
 
   // TODO: check if apartment is available
 
@@ -71,60 +78,101 @@ const HomeDetail = () => {
 
   const [isAvailable, setAvailable] = useState(true)
 
-  const [apartment, setApartment] = useState<ApartementItem | null>(null);
+  // const [apartment, setApartment] = useState<ApartementItem | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom);
 
-  // const { record: user } = useRecoilValue(userAtom); // FIXME: Remove this line, Ref: line 95
-
   const setSelectedApartment = useSetRecoilState(apartmentAtom)
 
   const history = useHistory();
 
+  const [showAlert, setShowAlert] = useState({
+    enabled: false,
+    message: ''
+  })
 
 
 
+  const { data: bankList } = useQuery({
+    queryKey: ['apartmentDetaiBankCheck',],
+    queryFn: fetchUserBankDetails
+  })
 
-  useEffect(() => {
-    setIsLoading(true);
-    async function getApartment () {
-      console.log("🚀 ~ file: HomeDetail.tsx:92 ~ apartmentId:", apartmentId)
-      console.log("🚀 ~ file: HomeDetail.tsx:93 ~ authToken:", authToken)
-
-      try {
-        const selectedApartment = await getApartmentDetail(apartmentId, authToken) as ApartementItem;
-
-        setApartment(selectedApartment); // set component state
-
-        const { record: user } = await getSaveData(USER) as StoredUser
-
-        // set app level booking state
-        setBookingDetail({
-          ...bookingDetail,
-          apartment: selectedApartment?.id!,
-          guest: user.id,
-          host: apartment?.host!
-        });
-
-        setSelectedApartment(selectedApartment) // set app level selected apartment for booking
-        setIsLoading(false)
-
-      } catch (e: any) {
-        console.warn(e)
-      }
+  const { data: apartment, isLoading: apartmentDetailLoading } = useQuery({
+    queryKey: ['apartmentDetail', user],
+    queryFn: () => getApartment(user)
+  })
 
 
+
+  async function getApartment(user: UserCollectionType) {
+    try {
+      const selectedApartment = await getApartmentDetail(apartmentId, authToken) as ApartementItem;
+
+      setSelectedApartment(selectedApartment)
+
+      setBookingDetail({
+        ...bookingDetail,
+        apartment: selectedApartment?.id!,
+        guest: user.id,
+        host: apartment?.host!
+      });
+
+      return selectedApartment
+
+    } catch (e: any) {
+      console.warn(e)
     }
+  }
 
-    getApartment()
-  }, []);
+
+
+
+  function displayError(message: string) {
+    setShowAlert({
+      enabled: true,
+      message
+    })
+    return
+  }
+
+
+  async function fetchUserBankDetails() {
+    try {
+      const filterOptions = {
+        filter: `user='${user.id}'`
+      }
+      const { data } = await listApiCollection(
+        BANKS_COLLECTION,
+        authToken,
+        filterOptions
+      ) as { data: BankList }
+      return data
+    } catch (error) {
+      throw new Error('Unable to fetch bank details')
+    }
+  }
+
+
+  function checkForBankDetails() {
+    if (bankList?.items.length === 0) displayError("You haven't added a bank account. Go to Me > Bank > Add Account");
+    history.push(`/apartment_preview/${apartment?.id}`)
+  }
+
+
 
 
   return (
     <IonPage>
       <IonContent fullscreen className="">
+        <IonAlert
+          isOpen={showAlert.enabled}
+          onDidDismiss={() => setShowAlert({ enabled: false, message: '' })}
+          message={showAlert.message}
+        />
+
         {/* Floating Buttons */}
         <IonFab horizontal="start" vertical="top" className="mt-3">
           <IonFabButton
@@ -497,11 +545,13 @@ const HomeDetail = () => {
               <big>
                 <IonText>${apartment?.price}/night</IonText>
               </big>
+
+              {/* Stop reservation if bank details is not found */}
               <IonButton
                 className="brown_fill"
                 size="large"
                 shape="round"
-                onClick={() => history.push(`/apartment_preview/${apartment?.id}`)}
+                onClick={() => checkForBankDetails()}
               >
                 Reserve
               </IonButton>

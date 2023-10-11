@@ -118,7 +118,7 @@ const Favorites = () => {
                                     numberOfBedrooms={home.bedrooms}
                                     price={home.price}
                                     ratings={4}
-                                    showRattings={true}
+                                    showRatings={true}
                                     title={home.title}
                                     homeId={home.id!}
                                     key={home?.id!}

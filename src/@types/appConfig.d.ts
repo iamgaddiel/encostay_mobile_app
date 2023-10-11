@@ -19,6 +19,9 @@ export interface AppConfig{
     strp_test_sk: string
     strp_live_pk: string
     strp_live_sk: string
+    imgkit_pk: string
+    imgkit_sk: string
+    imgkit_url: string
 }
 
 
