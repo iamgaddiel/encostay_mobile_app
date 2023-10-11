@@ -10,7 +10,7 @@ import {
   IonRouterLink,
   IonToast,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OrSeperator from "../../components/OrSeperator/OrSeperator";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
@@ -31,29 +31,18 @@ import GoogleLogo from "../../assets/images/search.png";
 import SpaceBetween from "../../components/style/SpaceBetween";
 import RenderPasswordResetModal from "../../components/RenderPasswordResetModal/RenderPasswordResetModal";
 import { useHistory } from "react-router";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   passwordResetSwipeAtom,
   slidesAtom,
 } from "../../atoms/passwordResetAtom";
 import { LoginInputs } from "../../@types/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  createApiCollection,
-  getApiCollectionItem,
-} from "../../helpers/apiHelpers"; //TODO: remove this
 import { authenticate } from "../../helpers/authSDK";
 import { saveData } from "../../helpers/storageSDKs";
 import {
-  APP_CONFIG,
-  APP_CONFIG_COLLECTION,
-  APP_CONFIG_RECORD_ID,
   USER,
 } from "../../helpers/keys";
-import Home from "../Home/Home";
-import useAuth from "../../hooks/useAuth";
-import { AppConfig } from "../../@types/appConfig";
-import { appConfigAtom } from "../../atoms/appConfigAtom";
 
 
 
@@ -91,24 +80,10 @@ const Login = () => {
 
   const slides = useRecoilValue(slidesAtom);
   const setPasswordResetSwipe = useSetRecoilState(passwordResetSwipeAtom);
-  const setAppConfig = useSetRecoilState(appConfigAtom)
 
 
 
-  // FETCH APP CONFIG FROM DB
-  useEffect(() => {
-    getAppConfig();
-  });
 
-
-  async function getAppConfig() {
-    const { response } = await getApiCollectionItem(
-      APP_CONFIG_COLLECTION,
-      APP_CONFIG_RECORD_ID
-    );
-    saveData(APP_CONFIG, response);
-    setAppConfig(response as AppConfig)
-  }
 
   function dismissModal(): void {
     setSlideCount(0);
