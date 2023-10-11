@@ -14,7 +14,7 @@ const DEBUG = false
 
 const LOCALHOST = "http://127.0.0.1:8090/api"
 
-const REMOTE_URL = 'https://encostay-mobile.pockethost.io'
+const REMOTE_URL = 'https://encostay-mobile.pockethost.io/api'
 
 const REMOTE_SERVER_URL = 'https://encostay-saver.onrender.com'
 
