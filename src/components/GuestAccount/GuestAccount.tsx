@@ -68,10 +68,10 @@ const GuestsAccount: React.FC<Props> = ({
     const updateShowTabs = useSetRecoilState(utilsAtom)
     const [pageNumber, setPageNumber] = useState(1)
 
-    const { data } = useQuery({
-        queryKey: ['guestAccountHome'],
-        queryFn: featuredApartments
-    })
+    // const { data } = useQuery({
+    //     queryKey: ['guestAccountFeaturedHome'],
+    //     queryFn: featuredApartments
+    // })
 
     const { data: apartmentList, isLoading, isError, error } = useQuery({
         queryKey: ['favoriteApartments', pageNumber],
@@ -98,9 +98,10 @@ const GuestsAccount: React.FC<Props> = ({
         }
     }
 
+    //TODO: fetch featured apartments
     async function featuredApartments() { }
 
-
+    //TODO: fetch users favorites apartmns
     async function favoriteApartments() { }
 
 

@@ -44,7 +44,7 @@ const Home = () => {
 
 
   async function getUserDetails() {
-    const { record, token } = (await getSaveData(USER)) as StoredUser;
+    const { record, token } = await getSaveData(USER) as StoredUser;
 
     setUesrRecrod(record); // set user component level state to get user account type
     getAppConfig(token);
@@ -54,7 +54,7 @@ const Home = () => {
 
   async function getAppConfig(userToken: string) {
     const { data: configList } = await listApiCollection(APP_CONFIG_COLLECTION, userToken) as { data: AppConfigList }
-    const appConfig = configList.items[0]
+    const appConfig = configList?.items[0]
 
     saveData(APP_CONFIG, appConfig);
     setAppConfig(appConfig)

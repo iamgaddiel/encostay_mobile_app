@@ -65,8 +65,7 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginInputs>();
 
-  // states
-  // const { record } = useAuth();
+
 
   const [showPassword, setShowPassword] = useState(false);
 
