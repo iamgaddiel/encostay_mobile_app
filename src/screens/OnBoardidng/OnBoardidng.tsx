@@ -18,12 +18,13 @@ import View from "../../assets/images/view.png"
 import P1 from "../../assets/images/1.svg"
 import P2 from "../../assets/images/2.svg"
 import P3 from "../../assets/images/3.svg"
+import { getSaveData, saveData } from '../../helpers/storageSDKs';
+import { LAUNCH_STATUS } from '../../helpers/keys';
 
 
 
 
 const OnBoardidng = () => {
-
     const slides = [
         {
             image: Map,
@@ -53,19 +54,34 @@ const OnBoardidng = () => {
 
     // 3party hooks
     const history = useHistory()
-    const { appLauned } = useAppLaunched()
+    // const { appLauned } = useAppLaunched()
+
 
 
     // states
     const [nextBtnText, setNextBtnText] = useState("Next")
     const [paginationImage, setPaginationImage] = useState(P1)
     const [onBoardingSwipe, setOnBoardingSwip] = useState<any | null>(null)
-
-
+    const [appLaunchedBefore, setAppLaunchedBefore] = useState('')
 
 
     // Redirect
-    if (appLauned) return <Login />
+    if (appLaunchedBefore) return <Login />
+
+
+
+
+    // check if app has been launched before
+    useEffect(() => {
+        (async () => {
+            const appIsLaunchedStatus  = await getSaveData(LAUNCH_STATUS) as string
+            if (appIsLaunchedStatus === null){
+                saveData(LAUNCH_STATUS, 'true')
+                return
+            }
+            setAppLaunchedBefore(() => appIsLaunchedStatus)
+        })()
+    }, [])
 
 
     // functions
@@ -86,6 +102,7 @@ const OnBoardidng = () => {
 
         history.push("/login")
     }
+
 
     function handleSlideChange() {
         // switch (swiper.value?.activeIndex) {
@@ -111,7 +128,6 @@ const OnBoardidng = () => {
     return (
         <IonPage>
             <IonContent>
-
                 <Swiper
                     spaceBetween={50}
                     slidesPerView={1}
@@ -127,14 +143,11 @@ const OnBoardidng = () => {
                                     <div className="hero_image" style={{ backgroundImage: `url(${slide.image})` }}>
                                         {/* <IonImg src={slide.image} /> */}
                                     </div>
-
                                     <div className="hero_heading">
                                         <h2 className='hero_heading_text'>{slide.heading}</h2>
                                         <p className="mt-4 text-muted hero_heading_sub_text">{slide.subText}</p>
                                     </div>
                                 </section>
-
-
                             </SwiperSlide>
                         ))
                     }

@@ -50,7 +50,6 @@ const StripeForm = () => {
 
     const elements = useElements();
 
-    const [stripePublishableKey, setStripePublishableKey] = useState('')
 
     const [isLoading, setLoading] = useState(false)
 
@@ -66,21 +65,6 @@ const StripeForm = () => {
     const bookingDetail = useRecoilValue(bookingAtom)
 
 
-
-    useEffect(() => {
-        loadStripeConfig()
-    }, [])
-
-
-
-    /**
- * Get Stripe Configs
- */
-    async function loadStripeConfig() {
-        const { strp_live_pk, strp_test_pk } = await getSaveData(APP_CONFIG) as AppConfig
-        const stripePublicKey = DEBUG ? strp_test_pk : strp_live_pk
-        setStripePublishableKey(() => stripePublicKey)
-    }
 
 
 
@@ -99,16 +83,16 @@ const StripeForm = () => {
 
         setLoading(() => true)
 
-        const { error, paymentMethod } = await stripe?.createPaymentMethod({
-            type: 'card',
-            card: elements?.getElement(CardElement)!
-        })!
-
-        if (error) handleError('Unable to load stripe card form. Try again');
-
         try {
+            const { error, paymentMethod } = await stripe?.createPaymentMethod({
+                type: 'card',
+                card: elements?.getElement(CardElement)!
+            })!
+
+            if (error) handleError('Unable to load stripe card form. Try again');
+
             const { id } = paymentMethod!
-            const serverUrl = `${serverBaseUrl}/stripe/payment`
+            const serverUrl = `${serverBaseUrl}/stripe/payments`
             // const serverUrl = `${serverBaseUrl}/stripe_payment`
             const payload = {
                 amount: bookingDetail.price,
@@ -135,22 +119,23 @@ const StripeForm = () => {
 
 
     return (
-        <form onSubmit={handleStripePayment}>
-            <fieldset className="FormGroup">
-                <div className="FormRow">
-                    <CardElement options={STRIPE_CARD_OPTIONS!} />
-                </div>
-            </fieldset>
-            <IonButton
-                className='mt-4 yellow_fill'
-                type={'submit'}
-                shape={'round'}
-                expand='block'
-                size='large'
-            >
-                pay
-            </IonButton>
-        </form >
+        // <form onSubmit={handleStripePayment}>
+        //     <fieldset className="FormGroup">
+        //         <div className="FormRow">
+        //             <CardElement options={STRIPE_CARD_OPTIONS!} />
+        //         </div>
+        //     </fieldset>
+        //     <IonButton
+        //         className='mt-4 yellow_fill'
+        //         type={'submit'}
+        //         shape={'round'}
+        //         expand='block'
+        //         size='large'
+        //     >
+        //         pay
+        //     </IonButton>
+        // </form >
+        <CardElement />
     )
 }
 

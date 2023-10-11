@@ -17,7 +17,7 @@ export interface BankItem {
     routing_number: string
 }
 
-export type AddBankFields = 
+// export type AddBankFields 
 
 // export interface AddBankFields Omit{
 //     bank_name: string
@@ -25,7 +25,7 @@ export type AddBankFields =
 //     account_name: string
 // }
 
-export interface NairaBankFields extends AddBankFields{
+export interface NairaBankFields {
     bvn: string
 }
 

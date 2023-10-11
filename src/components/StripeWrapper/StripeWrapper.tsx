@@ -1,7 +1,3 @@
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import { options } from 'ionicons/icons';
-import { stripeKeys } from '../../stripeConfig';
 import StripeForm from '../StripeForm';
 import { IonModal, IonContent, IonList, IonItem, IonLabel } from '@ionic/react';
 import { useRecoilValue } from 'recoil';
@@ -12,12 +8,6 @@ import { useEffect, useState } from 'react';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
-
-const { stripePublishableKey, stripeSecretKey } = stripeKeys
-
-const stripePromise = loadStripe(stripePublishableKey!);
-
-
 
 
 type Props = {
@@ -47,33 +37,31 @@ const StripeWrapper = ({ isOpen, setCloseModal }: Props) => {
     }, [isOpen])
 
     return (
-        <Elements stripe={stripePromise}>
 
-            <IonModal
-                initialBreakpoint={.3}
-                breakpoints={[.3, .5, .7]}
-                onDidDismiss={() => setCloseModal(false)}
-                isOpen={isOpen}
-            >
-                <IonContent className='ion-padding'>
-                    <IonList lines='none'>
-                        <IonItem>
-                            <IonLabel className='text-muted'>Price: </IonLabel>
-                            <IonLabel className='text-muted' slot='end'>{price}</IonLabel>
-                        </IonItem>
-                        <IonItem>
-                            <IonLabel className='text-muted'>Check In: </IonLabel>
-                            <IonLabel className='text-muted' slot='end'>{date.checkin}</IonLabel>
-                        </IonItem>
-                        <IonItem>
-                            <IonLabel className='text-muted'>Check Out: </IonLabel>
-                            <IonLabel className='text-muted' slot='end'>{date.checkout}</IonLabel>
-                        </IonItem>
-                    </IonList>
-                    <StripeForm />
-                </IonContent>
-            </IonModal>
-        </Elements>
+        <IonModal
+            initialBreakpoint={.3}
+            breakpoints={[.3, .5, .7]}
+            onDidDismiss={() => setCloseModal(false)}
+            isOpen={isOpen}
+        >
+            <IonContent className='ion-padding'>
+                <IonList lines='none'>
+                    <IonItem>
+                        <IonLabel className='text-muted'>Price: </IonLabel>
+                        <IonLabel className='text-muted' slot='end'>{price}</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel className='text-muted'>Check In: </IonLabel>
+                        <IonLabel className='text-muted' slot='end'>{date.checkin}</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                        <IonLabel className='text-muted'>Check Out: </IonLabel>
+                        <IonLabel className='text-muted' slot='end'>{date.checkout}</IonLabel>
+                    </IonItem>
+                </IonList>
+                <StripeForm />
+            </IonContent>
+        </IonModal>
     )
 }
 

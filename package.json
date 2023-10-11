@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@capacitor-community/stripe": "^5.2.0",
+    "@capacitor/android": "5.0.3",
     "@capacitor/app": "5.0.2",
     "@capacitor/assets": "^2.0.4",
     "@capacitor/browser": "^5.1.0",
