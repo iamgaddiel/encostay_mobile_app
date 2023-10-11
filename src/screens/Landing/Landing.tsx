@@ -1,5 +1,5 @@
 import { IonButton, IonContent, IonImg, IonPage } from '@ionic/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // import { showTabs } from "../../atoms/settingsAtom"
 import { useRecoilState } from "recoil"
@@ -13,44 +13,49 @@ import Overlay from "../../assets/images/Oval.png"
 // style
 import "./Landidng.css"
 import { utilsAtom } from '../../atoms/utilityAtom'
-import useAppLaunched from '../../hooks/useAppLaunched'
-import Login from '../Login'
-import { useHistory } from 'react-router'
-import Home from '../Home'
-import useAuth from '../../hooks/useAuth'
+import { LAUNCH_STATUS, USER } from '../../helpers/keys'
+import { getSaveData, saveData } from '../../helpers/storageSDKs'
+import { StoredUser } from '../../@types/users'
 
 
 
 const Landing = () => {
-  const history = useHistory()
-
-  const { appLaunched } = useAppLaunched()
-
-
-  const { record: user} = useAuth();
 
   const [utils, setUtilValue] = useRecoilState(utilsAtom)
 
+  const [appLaunchedBefore, setAppLaunchedBefore] = useState(false)
+
+  const [userIsFound, setUserIsFound] = useState(false)
 
 
 
-
-
-  
-  // Redirect
-  
-  
   useEffect(() => {
     setUtilValue({ ...utils, showTabs: false })
   }, [])
 
 
+  // check if app has been launched before
+  useEffect(() => {
+    (async () => {
+      const appIsLaunchedStatus = await getSaveData(LAUNCH_STATUS) as string
+      if (appIsLaunchedStatus === null) {
+        saveData(LAUNCH_STATUS, 'true')
+        return
+      }
+      setAppLaunchedBefore(() => true)
+    })()
+  }, [])
 
 
-  if (appLaunched){
-    if (user?.id !== '') return <Home />;
-    return <Login />
-  }
+  useEffect(() => {
+    (async () => {
+      const user = await getSaveData(USER) as StoredUser
+      if (user !== null) setUserIsFound(() => true)
+    }
+    )()
+  }, [])
+
+
 
 
   return (
@@ -68,14 +73,44 @@ const Landing = () => {
               <p className="landing_sub_title landing_texts">Enjoy convient stay</p>
             </div>
 
-            <IonButton
-              className='fill brown_fill nm_btn mt-5'
-              shape='round'
-              routerLink='/onboarding'
-              routerDirection='forward'
-            >
-              Get started
-            </IonButton>
+            {
+              userIsFound && appLaunchedBefore && (
+                <IonButton
+                  className='fill brown_fill nm_btn mt-5'
+                  shape='round'
+                  routerLink='/home'
+                  routerDirection='forward'
+                >
+                  Continue
+                </IonButton>
+              )
+            }
+            
+            {
+              !userIsFound && appLaunchedBefore && (
+                <IonButton
+                  className='fill brown_fill nm_btn mt-5'
+                  shape='round'
+                  routerLink='/login'
+                  routerDirection='forward'
+                >
+                  Login
+                </IonButton>
+              )
+            }
+
+            {
+              !userIsFound && !appLaunchedBefore && (
+                <IonButton
+                  className='fill brown_fill nm_btn mt-5'
+                  shape='round'
+                  routerLink='/onboarding'
+                  routerDirection='forward'
+                >
+                  Get started
+                </IonButton>
+              )
+            }
 
           </div>
 

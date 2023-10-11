@@ -1,10 +1,8 @@
 import { IonPage, IonContent, IonImg, IonButton } from '@ionic/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useHistory } from 'react-router';
-import useAppLaunched from '../../hooks/useAppLaunched';
-import Login from '../Login/Login';
 
 
 // styles
@@ -18,8 +16,6 @@ import View from "../../assets/images/view.png"
 import P1 from "../../assets/images/1.svg"
 import P2 from "../../assets/images/2.svg"
 import P3 from "../../assets/images/3.svg"
-import { getSaveData, saveData } from '../../helpers/storageSDKs';
-import { LAUNCH_STATUS } from '../../helpers/keys';
 
 
 
@@ -52,9 +48,7 @@ const OnBoardidng = () => {
         },
     ]
 
-    // 3party hooks
     const history = useHistory()
-    // const { appLauned } = useAppLaunched()
 
 
 
@@ -62,29 +56,9 @@ const OnBoardidng = () => {
     const [nextBtnText, setNextBtnText] = useState("Next")
     const [paginationImage, setPaginationImage] = useState(P1)
     const [onBoardingSwipe, setOnBoardingSwip] = useState<any | null>(null)
-    const [appLaunchedBefore, setAppLaunchedBefore] = useState('')
-
-
-    // Redirect
-    if (appLaunchedBefore) return <Login />
 
 
 
-
-    // check if app has been launched before
-    useEffect(() => {
-        (async () => {
-            const appIsLaunchedStatus  = await getSaveData(LAUNCH_STATUS) as string
-            if (appIsLaunchedStatus === null){
-                saveData(LAUNCH_STATUS, 'true')
-                return
-            }
-            setAppLaunchedBefore(() => appIsLaunchedStatus)
-        })()
-    }, [])
-
-
-    // functions
     function handleSlide() {
         // if (swipeRef.current !== null) {
         //     if (!swipeRef.current.swiper?.isEnd){
@@ -105,7 +79,6 @@ const OnBoardidng = () => {
 
 
     function handleSlideChange() {
-        // switch (swiper.value?.activeIndex) {
         switch (onBoardingSwipe?.activeIndex) {
             case 0:
                 setPaginationImage(P1)
