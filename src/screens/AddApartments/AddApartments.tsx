@@ -112,7 +112,7 @@ const AddApartments = () => {
   });
 
   const [toastParam, setToastParam] = useState<Toast>({
-    isVisible: false,
+    enabled: false,
     message: "",
     type: "warning",
   });
@@ -268,7 +268,7 @@ const AddApartments = () => {
   function displayToastMessage(message: string, isVisible: boolean): void {
     if (message === "") return;
     setToastParam({
-      isVisible,
+      enabled: isVisible,
       message,
       type: "warning",
     });
@@ -337,7 +337,7 @@ const AddApartments = () => {
         />
         <IonToast
           message={toastParam.message}
-          isOpen={toastParam.isVisible}
+          isOpen={toastParam.enabled}
           color={toastParam.type}
           duration={3000}
           position="top"
@@ -345,7 +345,7 @@ const AddApartments = () => {
           onDidDismiss={() =>
             setToastParam({
               ...toastParam,
-              isVisible: false,
+              enabled: false,
             })
           }
         />

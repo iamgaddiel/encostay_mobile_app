@@ -16,6 +16,7 @@ export const registrationAtom = atom<RegistrationInputs>({
         first_name: "",
         last_name: "",
         name: "",
+        preferred_currency: 'NGN'
     }
 })
 

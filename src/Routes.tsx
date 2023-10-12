@@ -2,9 +2,8 @@ import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } 
 import { IonReactRouter } from '@ionic/react-router'
 import { homeOutline, bookOutline, searchOutline, personOutline } from 'ionicons/icons'
 import { Network } from '@capacitor/network';
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Route } from 'react-router'
-import AddPaymentMethod from './screens/AddBankAccount'
 import AppartmentSearch from './screens/AppartmentSearch'
 import BankAccount from './screens/BankAccount'
 import Booking1 from './screens/Booking1'
@@ -47,7 +46,6 @@ import NetworkError from './screens/NetworkError'
 import Favorites from './screens/Favorties/Favorites';
 import GetCardDetails from './screens/GetCardDetails';
 import GetCardPin from './screens/GetCardPin/GetCardPin';
-import BookingPaymentOtp from './screens/BookingPaymentOtpVerification';
 import BookingPaymentOtpVerification from './screens/BookingPaymentOtpVerification';
 
 

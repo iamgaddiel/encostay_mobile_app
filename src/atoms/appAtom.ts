@@ -24,6 +24,7 @@ export const userAtom = atom<StoredUser>({
             is_disabled: false,
             report_count: 0,
             phone: "",
+            preferred_currency: 'NGN'
         }
     }
 })

@@ -67,7 +67,7 @@ import {
 import { APARTMENTS_COLLECTION, IMAGEKIT_CONFIG } from "../../helpers/keys";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { ApartementItem } from "../../@types/apartments";
-import { getApartmentDetai } from "../../helpers/utils";
+import { getApartmentDetail } from "../../helpers/utils";
 
 
 
@@ -111,7 +111,7 @@ const ApartmentUpdate = () => {
     has_security: false,
     pets_allowed: false,
     party_allowed: false,
-    additional_rules: false,
+    additional_rules: '',
     price: 0,
     images: [],
   });
@@ -121,7 +121,7 @@ const ApartmentUpdate = () => {
 
 
   const [toastParam, setToastParam] = useState<Toast>({
-    isVisible: false,
+    enabled: false,
     message: "",
     type: "warning",
   });
@@ -286,7 +286,7 @@ async function getApartmentDetail(): Promise<void> {
   function displayToastMessage(message: string, isVisible: boolean): void {
     if (message === "") return;
     setToastParam({
-      isVisible,
+      enabled: isVisible,
       message,
       type: "warning",
     });
@@ -353,7 +353,7 @@ async function getApartmentDetail(): Promise<void> {
         />
         <IonToast
           message={toastParam.message}
-          isOpen={toastParam.isVisible}
+          isOpen={toastParam.enabled}
           color={toastParam.type}
           duration={3000}
           position="top"
@@ -361,7 +361,7 @@ async function getApartmentDetail(): Promise<void> {
           onDidDismiss={() =>
             setToastParam({
               ...toastParam,
-              isVisible: false,
+              enabled: false,
             })
           }
         />

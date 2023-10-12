@@ -20,18 +20,18 @@ const REMOTE_SERVER_URL = 'https://encostay-saver.onrender.com'
 
 const LOCAL_SERVER_URL = 'http://localhost:3000'
 
-const serverBaseUrl = LOCAL_SERVER_URL 
+// const serverBaseUrl = LOCAL_SERVER_URL
 
-// const serverBaseUrl = DEBUG ? LOCAL_SERVER_URL : REMOTE_SERVER_URL
+const serverBaseUrl = DEBUG ? LOCAL_SERVER_URL : REMOTE_SERVER_URL
 
-const pocketbaseUrl = DEBUG ? LOCALHOST  : REMOTE_URL
+const pocketbaseUrl = DEBUG ? LOCALHOST : REMOTE_URL
 
 const pb = new PocketBase(pocketbaseUrl)
 
 
 // store data locally to db, indexDB or localstorage
 const storage = new Storage({
-    name:  `__${appName}`,
+    name: `__${appName}`,
     driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]
 })
 
@@ -42,7 +42,7 @@ storage.create()
 
 
 
-export default function Settings () {
+export default function Settings() {
     return {
         appName,
         storage,

@@ -86,10 +86,10 @@ const EditProfile = () => {
       account_type: user.account_type
     }
     
-    const { isUPdated, response } = await updateApiCollectionItem(USRS_COLLECTION, user.id, formData, token)
+    const { isUpdated, response } = await updateApiCollectionItem(USRS_COLLECTION, user.id, formData, token)
     console.log("🚀 ~ file: EditProfile.tsx:83 ~ EditProfile ~ response:", response)
 
-    if (!isUPdated) {
+    if (!isUpdated) {
       setShowToast({
         enabled: true,
         message: "There was an error updating your profile, try again"

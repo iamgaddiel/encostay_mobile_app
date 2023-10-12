@@ -1,4 +1,4 @@
-import { CreateUserType, StoredUser } from "../@types/users"
+import {  StoredUser } from "../@types/users"
 import { _post } from "./api"
 import { USRS_COLLECTION, USER } from "./keys"
 import Settings from "./settings"
@@ -59,7 +59,8 @@ export async function authenticate(email: string, password: string): Promise<Aut
 }
 
 
-export async function createUser(data: CreateUserType) {
+//TODO: give "data" params a type of CreateUser *FYI this type does not exist
+export async function createUser(data: any) {
     try {
         const user = await pb.collection(USRS_COLLECTION).create(data)
         return user
@@ -73,7 +74,7 @@ export async function createUser(data: CreateUserType) {
 
 
 export async function getStoredUser() {
-    const user: StoredUser = await getSaveData(USER)
+    const user = await getSaveData(USER) as StoredUser
     return user
 }
 

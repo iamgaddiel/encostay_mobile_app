@@ -26,7 +26,7 @@ const WithdrawModal: React.FC<WithdrawModalProp> = ({ isOpen, setModal, modal })
             onDidDismiss={() => setModal({
                 amountWithdrew: 0,
                 is_enabled: false,
-                price: 0,
+                amount: 0,
                 bank: {
                     account_name: '',
                     account_number: '',

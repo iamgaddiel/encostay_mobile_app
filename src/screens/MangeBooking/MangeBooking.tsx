@@ -1,6 +1,5 @@
-import { IonContent, IonHeader, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react'
-import React, { useEffect, useState } from 'react'
-import BackHeaderNoTitle from '../../components/BackHeaderNoTitle/BackHeaderNoTitle'
+import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react'
+import { useEffect, useState } from 'react'
 
 // css
 import "./ManageBookings.css"
@@ -68,7 +67,7 @@ const MangeBooking = () => {
 
     async function loadBookings(): Promise<BookingList> {
         try {
-            let response;
+            let response: BookingList;
 
             if (user.account_type === 'guest') {
                 response = await getBookings(user?.id!, authToken, 'guest')
@@ -77,7 +76,7 @@ const MangeBooking = () => {
                 response = await getBookings(user?.id!, authToken, 'host')
             }
 
-            return response! as BookingList
+            return response!
         }
         catch (e: any) {
             console.error(e)

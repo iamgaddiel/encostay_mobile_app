@@ -1,18 +1,13 @@
 import {
   IonAvatar,
-  IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
-  IonCardHeader,
   IonContent,
   IonHeader,
   IonIcon,
   IonImg,
-  IonItem,
   IonLabel,
-  IonList,
-  IonListHeader,
   IonMenuButton,
   IonPage,
   IonRouterLink,
@@ -22,15 +17,13 @@ import {
 import {
   bedOutline,
   chevronForwardOutline,
-  heart,
-  lockClosedOutline,
   pencil,
   scaleOutline,
   shieldOutline,
   tvOutline,
   wifiOutline,
 } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import SideMenu from "../SideMenu/SideMenu";
 import SpaceBetween from "../style/SpaceBetween";
 import Slider from "react-slick";
@@ -41,7 +34,7 @@ import Card from "../../assets/images/view_ernings.svg";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { demoRoomsAtom } from "../../atoms/demoAtoms";
 import { utilsAtom } from "../../atoms/utilityAtom";
-import { StoredUser, UserCollectionType } from "../../@types/users";
+import { StoredUser } from "../../@types/users";
 import { userAtom } from "../../atoms/appAtom";
 import { ApartementList } from "../../@types/apartments";
 import { listApiCollection } from "../../helpers/apiHelpers";
@@ -63,22 +56,16 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
     centerMode: false,
     slidesToShow: 1,
     slidesToScroll: 1,
-    variableWidth: false,
     // dots: true,
     speed: 2000,
     rtl: false,
     autoplay: false,
-    // autoplaySpeed: 2000,
-    // cssEase: "linear",
   };
 
   const rooms = useRecoilValue(demoRoomsAtom);
   const setShowTabs = useSetRecoilState(utilsAtom);
   const { record: user, token } = useRecoilValue<StoredUser>(userAtom);
 
-  // const [apartmentList, setApartmentList] = useState<ApartementList | null>(
-  //   null
-  // );
 
   const { data: apartmentList, isLoading } = useQuery({
     queryKey: ['hostHomeListing'],
@@ -90,10 +77,6 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
   useEffect(() => {
     setShowTabs({ showTabs: true });
   }, []);
-
-  // useEffect(() => {
-  //   getHostApartments();
-  // }, []);
 
 
 
@@ -230,7 +213,6 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
 
                 <div className='d-flex align-items-center text-muted'>
                   <IonRouterLink
-                    size="small"
                     routerDirection="forward"
                     routerLink="/apartments"
                     className="text-muted"
@@ -257,7 +239,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
                   /> */}
                   <div
                     className="home_list_item_img_wrapper"
-                    style={{ backgroundImage: `url(${home.img})` }}
+                    // style={{ backgroundImage: `url(${home.img})` }}
                   ></div>
 
                   <IonCardContent>
