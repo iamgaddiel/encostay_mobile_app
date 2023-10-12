@@ -70,7 +70,6 @@ const Home = () => {
 
     } catch (error) {
       serverLog({
-        timestamp: new Date(),
         file: 'Home.tsx',
         errorMessage: error,
         lineNumber: '72'

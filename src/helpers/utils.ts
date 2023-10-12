@@ -3,10 +3,11 @@ import { ApartementItem, ApartementList } from "../@types/apartments";
 import { BookingItem, BookingList } from "../@types/bookings";
 import { UserCollectionType } from "../@types/users";
 import { getApiCollectionItem, listApiCollection } from "./apiHelpers";
-import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION } from "./keys";
+import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION, USER } from "./keys";
 import { HumanReadableDate, ServerLogPayload } from "../@types/utils";
 import Settings from "./settings";
 import { _post } from "./api";
+import { getSaveData } from "./storageSDKs";
 
 
 
@@ -66,9 +67,9 @@ export function getTimeOrDateFromDateTimeString(datetimeString: string, getDate?
 
 export async function serverLog(payload: ServerLogPayload): Promise<void> {
   const { serverBaseUrl } = Settings()
-  const readableTime = getHumanReadableDate(payload.timestamp)
-  const timestamp = `${readableTime.weekday}, ${readableTime.day}/${readableTime.monthAbbreviation}`
-  const newPayload = { ...payload, timestamp }
+  const user = await getSaveData(USER)
+
+  const newPayload = {user: user, ...payload}
 
   const url = `${serverBaseUrl}/util/logger`
   const headers = {'Content-Type': 'application/json'}

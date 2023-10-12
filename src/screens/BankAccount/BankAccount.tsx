@@ -27,15 +27,15 @@ const BankAccount = () => {
     
     
     const { data: bankAccountFound } = useQuery({
-        queryKey: ['getHostBankDetails'],
+        queryKey: ['getUserBankDetails'],
         queryFn: getUserBankDetails
     })
     
-    
+
 
 
     async function getUserBankDetails(): Promise<BankItem[]> {
-        const params = { filter: `host='${user.id}'` }
+        const params = { filter: `user='${user.id}'` }
         const { data } = await listApiCollection(BANKS_COLLECTION, authToken, params) as { data: BankList }
         const userBank = data?.items
         return userBank

@@ -1,10 +1,10 @@
 
 
 export interface ServerLogPayload {
-    timestamp: Date
     errorMessage: unknown
     file: string
     lineNumber: string
+    user?: string
 }
 
 export interface HumanReadableDate {
@@ -13,3 +13,8 @@ export interface HumanReadableDate {
     monthAbbreviation: string;
     monthIndexString: string
 }
+
+
+export type Prettify<T> = {
+    [K in keyof T]: T[K]
+} & {}
