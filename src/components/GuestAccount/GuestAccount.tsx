@@ -1,5 +1,5 @@
 import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText, IonChip, IonText } from "@ionic/react";
-import { heart, bedOutline, wifiOutline, chevronForwardOutline } from "ionicons/icons";
+import { heart, bedOutline, wifiOutline, chevronForwardOutline, chevronBack, chevronForward } from "ionicons/icons";
 import Slider from "react-slick";
 import { demoRoomsAtom } from "../../atoms/demoAtoms";
 import SpaceBetween from "../style/SpaceBetween";
@@ -108,7 +108,7 @@ const GuestsAccount: React.FC<Props> = ({
 
 
 
-    if (isError){
+    if (isError) {
         return <NotFound heading="Error Getting Apartments" subheading={error as string} />
     }
 
@@ -326,45 +326,35 @@ const GuestsAccount: React.FC<Props> = ({
              */}
                 <section className="my-4">
                     <div className="d-flex align-items-center justify-content-center">
-                        <IonButton
-                            fill={'solid'}
-                            color={'warning'}
-                            disabled={apartmentList?.page === 1}
-                            onClick={() => setPageNumber((pgN) => 1)}
 
-                        >
-                            {'First'}
-                        </IonButton>
+                        {/* Back Button */}
                         <IonButton
                             fill={'solid'}
                             color={'warning'}
                             disabled={apartmentList?.page === 1}
                             onClick={() => setPageNumber((pgN) => pgN - 1)}
                         >
-                            {'Prev'}
+                            <IonIcon icon={chevronBack} />
                         </IonButton>
-                        <IonText
-                            color={'warning'}
-                            className="ion-margin-horizontal fw-bold"
-                        >
-                            {apartmentList?.page}
-                        </IonText>
+
+
+                        {/* Forward Button */}
                         <IonButton
                             fill={'solid'}
                             color={'warning'}
                             disabled={apartmentList?.page === apartmentList?.totalPages}
                             onClick={() => setPageNumber((pgN) => pgN + 1)}
                         >
-                            {'Next'}
+                            <IonIcon icon={chevronForward} />
                         </IonButton>
-                        <IonButton
-                            fill={'solid'}
-                            color={'warning'}
-                            disabled={apartmentList?.page === apartmentList?.totalPages}
-                            onClick={() => setPageNumber((pgN) => apartmentList?.totalPages!)}
-                        >
-                            {'Last'}
-                        </IonButton>
+
+                    </div>
+                    {/* Diisplay current page and total number of paginated pages */}
+                    <div className="text-center text-muted">
+                        {
+                            apartmentList.items.length === 0 ? <IonText> page 0 of 0</IonText>
+                            : <IonText>page {apartmentList?.page} of {apartmentList?.totalPages}</IonText>
+                        }
                     </div>
                 </section>
             </IonContent>

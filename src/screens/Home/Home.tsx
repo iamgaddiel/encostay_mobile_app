@@ -53,17 +53,23 @@ const Home = () => {
 
 
   async function getAppConfig(userToken: string) {
-    const { data: configList } = await listApiCollection(APP_CONFIG_COLLECTION, userToken) as { data: AppConfigList }
-    const appConfig = configList?.items[0]
-
-    saveData(APP_CONFIG, appConfig);
-    setAppConfig(appConfig)
-
-    setImageKitConfig(appConfig)
+    try {
+      const { data: configList } = await listApiCollection(APP_CONFIG_COLLECTION, userToken) as { data: AppConfigList }
+      console.log("🚀 ~ file: Home.tsx:58 ~ getAppConfig ~ configList:", configList)
+      const appConfig = configList?.items[0]
+  
+      saveData(APP_CONFIG, appConfig);
+      setAppConfig(appConfig)
+  
+      initializeImageKitConfig(appConfig)
+      
+    } catch (error) {
+      
+    }
   }
 
 
-  async function setImageKitConfig(appConfig: AppConfig) {
+  async function initializeImageKitConfig(appConfig: AppConfig) {
 
     const { imgkit_pk, imgkit_sk, imgkit_url } = appConfig
 

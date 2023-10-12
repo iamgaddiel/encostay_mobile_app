@@ -28,6 +28,8 @@ const stripePayments = require('./routes/stripPayments')
 
 const flutterPayments = require("./routes/flutterPayment");
 
+const util = require('./routes/util')
+
 // Flutterwave Payment Routes
 
 const app = express();
@@ -39,6 +41,7 @@ app.use(bodyParser.json());
 
 app.use('/stripe', stripePayments)
 app.use('/flw', flutterPayments)
+app.use('/util', util)
 
 // [Stripe] ---------------------------------------------------------------
 // app.get("/test_stripe", getStripeApiIsAlive);
