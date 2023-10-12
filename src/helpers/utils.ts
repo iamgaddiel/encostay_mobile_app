@@ -4,15 +4,13 @@ import { BookingItem, BookingList } from "../@types/bookings";
 import { UserCollectionType } from "../@types/users";
 import { getApiCollectionItem, listApiCollection } from "./apiHelpers";
 import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION } from "./keys";
+import { HumanReadableDate, ServerLogPayload } from "../@types/utils";
+import Settings from "./settings";
+import { _post } from "./api";
 
 
 
-interface HumanReadableDate {
-  day: number;
-  weekday: string;
-  monthAbbreviation: string;
-  monthIndexString: string
-}
+
 
 export function getHumanReadableDate(date: Date): HumanReadableDate {
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -33,12 +31,7 @@ export function getHumanReadableDate(date: Date): HumanReadableDate {
 }
 
 
-/**
- * 
- * @param date1 
- * @param date2 
- * @returns the difference between date1 and date2 in number of days 
- */
+
 export function getDateDiffInDays(date1: Date, date2: Date): number {
   const oneDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
 
@@ -48,34 +41,18 @@ export function getDateDiffInDays(date1: Date, date2: Date): number {
   return diffInDays;
 }
 
-/**
- * 
- * @param length 
- * @returns 
- */
+
 export function getRandomString(length: number) {
   return Math.random().toString(36).substring(2, 2 + length);
 }
 
-/**
- * 
- * @param date 
- * @description returns formated date in this format <Month> <Day of the Month> E.g Aug 02 
- * @returns 
- */
+
 export function formatDate(date: string) {
   const formatedDated = format(new Date(date), 'LLL dd') // Month 01
   return formatedDated
 }
 
-/**
- * 
- * @param datetimeString: string
- * @param getTime: string
- * @param getDate: string
- * @description returns time string by default except getDate parameter is set to true
- * @returns 
- */
+
 export function getTimeOrDateFromDateTimeString(datetimeString: string, getDate?: boolean): string {
   const splitedDateTime = datetimeString.split('T')
   const date = splitedDateTime[0]
@@ -83,6 +60,19 @@ export function getTimeOrDateFromDateTimeString(datetimeString: string, getDate?
 
   if (getDate) return date;
   return time
+}
+
+
+
+export async function serverLog(payload: ServerLogPayload): Promise<void> {
+  const { serverBaseUrl } = Settings()
+  const readableTime = getHumanReadableDate(payload.timestamp)
+  const timestamp = `${readableTime.weekday}, ${readableTime.day}/${readableTime.monthAbbreviation}`
+  const newPayload = { ...payload, timestamp }
+
+  const url = `${serverBaseUrl}/util/logger`
+  const headers = {'Content-Type': 'application/json'}
+  await _post(url, newPayload, headers)
 }
 
 

@@ -177,6 +177,92 @@ const GuestsAccount: React.FC<Props> = ({
                         <IonChip outline color={'warning'} className='brown_fill_outline'>Duplex</IonChip>
                     </Slider>
                 </section>
+
+
+
+
+                {/* 
+            -----------------------------------------------------------
+            ------------------ [Apartment List] ------------------------
+            -----------------------------------------------------------
+             */}
+                <section className=" mt-5 s">
+                    <SpaceBetween className='my-3'>
+                        <span> Trending Apartments</span>
+                        {
+                            apartmentList.items.length >= 1 && <IonRouterLink className="ion-warning">All</IonRouterLink>
+                        }
+                    </SpaceBetween>
+
+                    <div className="mt-4">
+                        {apartmentList &&
+                            apartmentList?.totalItems >= 1 ?
+                            apartmentList.items.map((home: ApartementItem) =>
+                            (
+                                <HomeListCard
+                                    has_wifi={home.has_wifi}
+                                    location={{
+                                        country: home.country,
+                                        state: home.state_location,
+                                    }}
+                                    imageUri={RoomLnd}
+                                    numberOfBedrooms={home.bedrooms}
+                                    price={home.price}
+                                    ratings={4}
+                                    showRatings={true}
+                                    title={home.title}
+                                    homeId={home.id!}
+                                    key={home?.id!}
+                                />
+                            )
+                            ) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
+                        }
+                    </div>
+                </section>
+
+
+                {/* 
+            -----------------------------------------------------------
+            ------------------ [Pagination] ------------------------
+            -----------------------------------------------------------
+             */}
+                {
+                    /* Display current page and total number of paginated pages */
+                    apartmentList.items.length >= 1 && (
+                        <section className="my-4">
+                            <div className="d-flex align-items-center justify-content-center">
+
+                                {/* Back Button */}
+                                <IonButton
+                                    fill={'solid'}
+                                    color={'warning'}
+                                    disabled={apartmentList?.page === 1}
+                                    onClick={() => setPageNumber((pgN) => pgN - 1)}
+                                >
+                                    <IonIcon icon={chevronBack} />
+                                </IonButton>
+
+
+                                {/* Forward Button */}
+                                <IonButton
+                                    fill={'solid'}
+                                    color={'warning'}
+                                    disabled={apartmentList?.page === apartmentList?.totalPages || apartmentList?.totalPages! < 1}
+                                    onClick={() => setPageNumber((pgN) => pgN + 1)}
+                                >
+                                    <IonIcon icon={chevronForward} />
+                                </IonButton>
+
+                            </div>
+
+                            <div className="text-center text-muted">
+                                <IonText>page {apartmentList?.page} of {apartmentList?.totalPages}</IonText>
+                            </div>
+                        </section>
+                    )
+                }
+
+
                 {/* 
             -----------------------------------------------------------
             ------------------ [Featured Places] ------------------------
@@ -287,76 +373,6 @@ const GuestsAccount: React.FC<Props> = ({
                     </section>
                 </section>
 
-                <section className=" mt-5 s">
-                    <SpaceBetween className='my-3'>
-                        <span> Trending Apartments</span>
-                        <IonRouterLink className="ion-warning">All</IonRouterLink>
-                    </SpaceBetween>
-
-                    <div className="mt-4">
-                        {apartmentList &&
-                            apartmentList?.totalItems >= 1 &&
-                            apartmentList.items.map((home: ApartementItem) =>
-                            (
-                                <HomeListCard
-                                    has_wifi={home.has_wifi}
-                                    location={{
-                                        country: home.country,
-                                        state: home.state_location,
-                                    }}
-                                    imageUri={RoomLnd}
-                                    numberOfBedrooms={home.bedrooms}
-                                    price={home.price}
-                                    ratings={4}
-                                    showRatings={true}
-                                    title={home.title}
-                                    homeId={home.id!}
-                                    key={home?.id!}
-                                />
-                            )
-                            )}
-                    </div>
-                </section>
-
-
-                {/* 
-            -----------------------------------------------------------
-            ------------------ [Pagination] ------------------------
-            -----------------------------------------------------------
-             */}
-                <section className="my-4">
-                    <div className="d-flex align-items-center justify-content-center">
-
-                        {/* Back Button */}
-                        <IonButton
-                            fill={'solid'}
-                            color={'warning'}
-                            disabled={apartmentList?.page === 1}
-                            onClick={() => setPageNumber((pgN) => pgN - 1)}
-                        >
-                            <IonIcon icon={chevronBack} />
-                        </IonButton>
-
-
-                        {/* Forward Button */}
-                        <IonButton
-                            fill={'solid'}
-                            color={'warning'}
-                            disabled={apartmentList?.page === apartmentList?.totalPages}
-                            onClick={() => setPageNumber((pgN) => pgN + 1)}
-                        >
-                            <IonIcon icon={chevronForward} />
-                        </IonButton>
-
-                    </div>
-                    {/* Diisplay current page and total number of paginated pages */}
-                    <div className="text-center text-muted">
-                        {
-                            apartmentList.items.length === 0 ? <IonText> page 0 of 0</IonText>
-                            : <IonText>page {apartmentList?.page} of {apartmentList?.totalPages}</IonText>
-                        }
-                    </div>
-                </section>
             </IonContent>
         </IonPage >
     )

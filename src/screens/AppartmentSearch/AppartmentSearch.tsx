@@ -151,15 +151,6 @@ const AppartmentSearch = () => {
              */}
         <section className="my-4">
           <div className="d-flex align-items-center justify-content-center">
-            {/* <IonButton
-              fill={'solid'}
-              color={'warning'}
-              disabled={apartmentList?.page === 1}
-              onClick={() => setPageNumber((pgN) => 1)}
-
-            >
-              {'First'}
-            </IonButton> */}
 
             {/* Back Button */}
             <IonButton
@@ -176,24 +167,16 @@ const AppartmentSearch = () => {
             <IonButton
               fill={'solid'}
               color={'warning'}
-              disabled={apartmentList?.page === apartmentList?.totalPages}
+              disabled={apartmentList?.page === apartmentList?.totalPages || apartmentList?.totalPages! < 1}
               onClick={() => setPageNumber((pgN) => pgN + 1)}
             >
               <IonIcon icon={chevronForward} />
             </IonButton>
-            
-            {/* <IonButton
-              fill={'solid'}
-              color={'warning'}
-              disabled={apartmentList?.page === apartmentList?.totalPages}
-              onClick={() => setPageNumber((pgN) => apartmentList?.totalPages!)}
-            >
-              {'Last'}
-            </IonButton> */}
+
           </div>
-          {/* Diisplay current page and total number of paginated pages */}
+
           <div className="text-center text-muted">
-            <IonText>{apartmentList?.page} of {apartmentList?.totalPages}</IonText>
+            <IonText>page {apartmentList?.page} of {apartmentList?.totalPages}</IonText>
           </div>
         </section>
       </IonContent>

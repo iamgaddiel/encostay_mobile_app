@@ -25,9 +25,14 @@ import { imageKitAtom } from "../../atoms/imagekitAtom";
 import { useHistory } from "react-router";
 import { AppConfig, AppConfigList } from "../../@types/appConfig";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
+import Settings from "../../helpers/settings";
+import { _post } from "../../helpers/api";
+import { serverLog } from "../../helpers/utils";
+import { ServerLogPayload } from "../../@types/utils";
 
 const Home = () => {
   const history = useHistory()
+  const { serverBaseUrl } = Settings()
   // ----------------- States -----------------------
 
   // TODO: add palceholder while fetching user images
@@ -57,14 +62,19 @@ const Home = () => {
       const { data: configList } = await listApiCollection(APP_CONFIG_COLLECTION, userToken) as { data: AppConfigList }
       console.log("🚀 ~ file: Home.tsx:58 ~ getAppConfig ~ configList:", configList)
       const appConfig = configList?.items[0]
-  
+
       saveData(APP_CONFIG, appConfig);
       setAppConfig(appConfig)
-  
+
       initializeImageKitConfig(appConfig)
-      
+
     } catch (error) {
-      
+      serverLog({
+        timestamp: new Date(),
+        file: 'Home.tsx',
+        errorMessage: error,
+        lineNumber: '72'
+      })
     }
   }
 
