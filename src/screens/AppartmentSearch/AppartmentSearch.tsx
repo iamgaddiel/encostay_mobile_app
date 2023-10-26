@@ -1,14 +1,19 @@
 import {
   IonButton,
+  IonCol,
   IonContent,
+  IonGrid,
   IonHeader,
   IonIcon,
   IonPage,
+  IonRow,
   IonSearchbar,
   IonSkeletonText,
   IonText,
   IonTitle,
   IonToolbar,
+  useIonRouter,
+  useIonViewDidEnter,
 } from "@ionic/react";
 import { chevronBack, chevronForward, optionsOutline } from "ionicons/icons";
 import { useState } from "react";
@@ -20,26 +25,40 @@ import { listApartments } from "../../helpers/utils";
 import RoomLnd from "../../assets/images/room-ld.png";
 import { useQuery } from "@tanstack/react-query";
 import NotFound from "../../components/NotFound";
+import SekeletonLoadingFullWidth from "../../components/SekeletonLoadingFullWidth";
+
+
+
+interface ApartmentSearchOptions { perPage: number, page: number, filter?: string }
 
 const AppartmentSearch = () => {
   const { token: authToken } = useRecoilValue(userAtom);
+  const router = useIonRouter()
+
   const [pageNumber, setPageNumber] = useState(1)
+  const [apartmentTitle, setApartmentTitle] = useState('')
 
+  //TODO: look for a better way to handle searching
 
-  //TODO: use ReactQuery
   const { data: apartmentList, isLoading } = useQuery({
-    queryKey: ['searchApartmentList', pageNumber],
-    queryFn: () => loadApartments(pageNumber)
+    queryKey: ['searchApartmentList', pageNumber, apartmentTitle],
+    queryFn: () => fetchApartments(pageNumber, apartmentTitle)
   })
 
 
+  useIonViewDidEnter(() => {
+    setApartmentTitle('')
+  }, [])
 
 
-  async function loadApartments(page: number) {
+
+
+  async function fetchApartments(page: number, title: string) {
     try {
-      const options = { perPage: 5, page }
-      const response = await listApartments(authToken, options);
-      return response
+      let options: ApartmentSearchOptions = { perPage: 5, page }
+      if (title !== '') options = { perPage: 5, page, filter: `title="${title}"` };
+      console.log(options)
+      return await listApartments(authToken, options);
     }
     catch (err: any) {
       throw new Error('There was an error getting apartments')
@@ -47,42 +66,7 @@ const AppartmentSearch = () => {
   }
 
 
-  if (isLoading) {
-    return (
-      <>
-        <IonSkeletonText
-          animated
-          className="w-100 rounded-4"
-          style={{ height: "20px" }}
-        />
-        <IonSkeletonText
-          animated
-          className="w-100 my-3 rounded-3"
-          style={{ height: "270px" }}
-        />
-        <IonSkeletonText
-          animated
-          className="w-100 my-3 rounded-3"
-          style={{ height: "270px" }}
-        />
-        <IonSkeletonText
-          animated
-          className="w-100 my-3 rounded-3"
-          style={{ height: "270px" }}
-        />
-        <IonSkeletonText
-          animated
-          className="w-100 my-3 rounded-3"
-          style={{ height: "270px" }}
-        />
-        <IonSkeletonText
-          animated
-          className="w-100 my-3 rounded-3"
-          style={{ height: "270px" }}
-        />
-      </>
-    )
-  }
+
 
 
   return (
@@ -94,53 +78,51 @@ const AppartmentSearch = () => {
       </IonHeader>
 
       <IonContent fullscreen className="ion-padding">
-        <IonSearchbar className="ion-no-border home_search_bar" mode="ios" />
-        <section className="filter_section">
-          <SpaceBetween className="mt-2">
-            <div className="d-flex justify-content-equally">
-              <IonButton className="yellow_fill">Guests</IonButton>
-              <IonButton className="yellow" fill="outline">
-                Set date
-              </IonButton>
-            </div>
-            <IonButton
-              className="bg-dark"
-              size="default"
-              routerDirection="forward"
-              routerLink="/filter"
-            >
-              <IonIcon icon={optionsOutline} size="large" />
-            </IonButton>
-          </SpaceBetween>
-        </section>
+        <IonGrid>
+          <IonRow className="ion-align-items-center">
+            <IonCol size="10" sizeMd="11" sizeXs="10">
+              <IonSearchbar className="ion-no-border home_search_bar" mode="ios" onKeyUp={(e) => setApartmentTitle(e.currentTarget.value as string)} />
+            </IonCol>
+            <IonCol size="auto" >
+              <IonIcon color="warning" icon={optionsOutline} size="large" onClick={() => router.push('/apartment_search/filter')} />
+            </IonCol>
+          </IonRow>
+        </IonGrid>
 
+        {/* Apartment Count */}
         <section className="appartment_counter mt-3">
           <div className="my-3 text-muted">
             <span>{apartmentList?.totalItems}+ places to stay</span>
           </div>
 
-          <div className="mt-4">
-            {apartmentList &&
-              apartmentList?.totalItems >= 1 ?
-              apartmentList.items.map((home) => (
-                <HomeListCard
-                  has_wifi={home.has_wifi}
-                  location={{
-                    country: home.country,
-                    state: home.state_location,
-                  }}
-                  imageUri={RoomLnd}
-                  numberOfBedrooms={home.bedrooms}
-                  price={home.price}
-                  ratings={4}
-                  showRatings={true}
-                  title={home.title}
-                  homeId={home.id!}
-                  key={home?.id!}
-                />
-              )) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
-            }
-          </div>
+          {
+            isLoading ? (
+              <SekeletonLoadingFullWidth count={4} height={20} width={100} />
+            ) : (
+              <div className="mt-4">
+                {apartmentList &&
+                  apartmentList?.totalItems >= 1 ?
+                  apartmentList.items.map((home) => (
+                    <HomeListCard
+                      has_wifi={home.has_wifi}
+                      location={{
+                        country: home.country,
+                        state: home.state_location,
+                      }}
+                      imageUri={RoomLnd}
+                      numberOfBedrooms={home.bedrooms}
+                      price={home.price}
+                      ratings={4}
+                      showRatings={true}
+                      title={home.title}
+                      homeId={home.id!}
+                      key={home?.id!}
+                    />
+                  )) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
+                }
+              </div>
+            )
+          }
         </section>
 
 
