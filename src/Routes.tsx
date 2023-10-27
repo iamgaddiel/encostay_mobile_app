@@ -3,7 +3,7 @@ import { IonReactRouter } from '@ionic/react-router'
 import { homeOutline, bookOutline, searchOutline, personOutline } from 'ionicons/icons'
 import { Network } from '@capacitor/network';
 import { useEffect } from 'react'
-import { Route } from 'react-router'
+import { Redirect, Route } from 'react-router'
 import AppartmentSearch from './screens/AppartmentSearch'
 import BankAccount from './screens/BankAccount'
 import Booking1 from './screens/Booking1'
@@ -47,6 +47,14 @@ import Favorites from './screens/Favorties/Favorites';
 import GetCardDetails from './screens/GetCardDetails';
 import GetCardPin from './screens/GetCardPin/GetCardPin';
 import BookingPaymentOtpVerification from './screens/BookingPaymentOtpVerification';
+import AddApartmentImages from './screens/AddApartmentImages';
+import AddApartmentExtras from './screens/AddApartmentExtras';
+import AddApartmentTimeRules from './screens/AddApartmentTimeRules';
+import AddApartmentRules from './screens/AddApartmentRules';
+import AddApartmentItems from './screens/AddApartmentItems';
+import AddApartmentDetails from './screens/AddApartmentDetails';
+import AddApartmentLocation from './screens/AddApartmentLocation';
+import ApartmentSearchFilterResult from './screens/ApartmentSearchFilterResult';
 
 
 
@@ -82,7 +90,7 @@ const Routes = () => {
             <Route exact path="/me" render={() => <Me />} />
             <Route exact path="/onboarding" render={() => <OnBoardidng />} />
             <Route exact path="/passwords" render={() => <Passwords />} />
-            <Route exact path="/filter" render={() => <Filter />} />
+            <Route exact path="/apartment_search_filter" render={() => <Filter />} />
             <Route exact path="/apartment_search" render={() => <AppartmentSearch />} />
             <Route exact path="/apartment/:id" render={() => <HomeDetail />} />
             <Route exact path="/apartment_preview/:id" render={() => <BookingPreview />} />
@@ -105,7 +113,6 @@ const Routes = () => {
             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
             <Route exact path="/apartments" render={() => <Appartments />} />
-            <Route exact path="/add_apartment" render={() => <AddApartments />} />
             <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
@@ -114,10 +121,30 @@ const Routes = () => {
             <Route exact path="/get_card_pin" render={() => <GetCardPin />} />
             <Route exact path="/verify_booking_transaction_otp" render={() => <BookingPaymentOtpVerification />} />
 
+            {/* <Redirect from='/add_apartment' to={'/add_apartment_location'} exact /> */}
+            {/* <Route exact path="/add_apartment" render={() => <AddApartments />} /> */}
+            <Route exact path="/add_apartment" render={() => <AddApartmentLocation />} />
+            <Route exact path="/add_apartment_images" render={() => <AddApartmentImages />} />
+            <Route exact path="/add_apartment_extras" render={() => <AddApartmentExtras />} />
+            <Route exact path="/add_apartment_time_rules" render={() => <AddApartmentTimeRules />} />
+            <Route exact path="/add_apartment_rules" render={() => <AddApartmentRules />} />
+            <Route exact path="/add_apartment_items" render={() => <AddApartmentItems />} />
+            <Route exact path="/add_apartment_details" render={() => <AddApartmentDetails />} />
+            <Route exact path="/add_apartment_location" render={() => <AddApartmentLocation />} />
+            <Route exact path="/apartment_search_filter_result" render={() => <ApartmentSearchFilterResult />} />
+
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/apartment_search_filter_result" render={() => <ApartmentSearchFilterResult />} />
+                            <Route exact path="/add_apartment_images" render={() => <AddApartmentImages />} />
+                            <Route exact path="/add_apartment_extras" render={() => <AddApartmentExtras />} />
+                            <Route exact path="/add_apartment_time_rules" render={() => <AddApartmentTimeRules />} />
+                            <Route exact path="/add_apartment_rules" render={() => <AddApartmentRules />} />
+                            <Route exact path="/add_apartment_items" render={() => <AddApartmentItems />} />
+                            <Route exact path="/add_apartment_details" render={() => <AddApartmentDetails />} />
+                            <Route exact path="/add_apartment_location" render={() => <AddApartmentLocation />} />
                             <Route exact path="/verify_booking_transaction_otp" render={() => <BookingPaymentOtpVerification />} />
                             <Route exact path="/get_card_pin" render={() => <GetCardPin />} />
                             <Route exact path="/get_card_details" render={() => <GetCardDetails />} />
@@ -125,7 +152,8 @@ const Routes = () => {
                             <Route exact path="/host/booking/preview/:bookingId" render={() => <HostAcceptOrDecline />} />
                             <Route exact path="/host/apartment/update/:apartmentId" render={() => <ApartmentUpdate />} />
                             <Route exact path="/host/apartment/detail/:apartmentId" render={() => <HostApartmentDetail />} />
-                            <Route exact path="/add_apartment" render={() => <AddApartments />} />
+                            {/* <Route exact path="/add_apartment" render={() => <AddApartments />} /> */}
+                            <Route exact path="/add_apartment" render={() => <AddApartmentLocation />} />
                             <Route exact path="/apartments" render={() => <Appartments />} />
                             <Route exact path="/withdraw_confirm" render={() => <WithdrawConfirm />} />
                             <Route exact path="/withdraw_receiving" render={() => <WithdrawReceiving />} />
@@ -148,7 +176,7 @@ const Routes = () => {
                             <Route exact path="/apartment_preview/:id" render={() => <BookingPreview />} />
                             <Route exact path="/apartment/:apartmentId" render={() => <HomeDetail />} />
                             <Route exact path="/apartment_search" render={() => <AppartmentSearch />} />
-                            <Route exact path="/filter" render={() => <Filter />} />
+                            <Route exact path="/apartment_search_filter" render={() => <Filter />} />
                             <Route exact path="/login" render={() => <Login />} />
                             <Route exact path="/register" render={() => <Register />} />
                             <Route exact path="/dashboard" render={() => <Dashboard />} />
@@ -156,6 +184,8 @@ const Routes = () => {
                             <Route exact path="/me" render={() => <Me />} />
                             <Route exact path="/onboarding" render={() => <OnBoardidng />} />
                             <Route exact path="/passwords" render={() => <Passwords />} />
+                            {/* <Redirect from='/add_apartment' to={'/add_apartment_location'} exact /> */}
+
                         </IonRouterOutlet>
 
                         <IonTabBar slot="bottom" className='ion-padding-vertical'>
