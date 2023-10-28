@@ -13,6 +13,7 @@ import {
   IonRouterLink,
   IonTitle,
   IonToolbar,
+  useIonViewDidEnter,
 } from "@ionic/react";
 import {
   bedOutline,
@@ -23,7 +24,7 @@ import {
   tvOutline,
   wifiOutline,
 } from "ionicons/icons";
-import React, { useEffect } from "react";
+import React from "react";
 import SideMenu from "../SideMenu/SideMenu";
 import SpaceBetween from "../style/SpaceBetween";
 import Slider from "react-slick";
@@ -41,6 +42,9 @@ import { listApiCollection } from "../../helpers/apiHelpers";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
 import { useHistory } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import ProfileImage from "../ProfileImage";
+
+
 
 interface Props {
   userImage: string;
@@ -74,7 +78,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
 
 
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     setShowTabs({ showTabs: true });
   }, []);
 
@@ -109,9 +113,8 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
             <IonTitle>
               <small>Welcome, {user?.name}</small>
             </IonTitle>
-            <IonAvatar slot="end" style={{ width: "", height: "45px" }}>
-              <IonImg src={userImage} />
-            </IonAvatar>
+            
+            <ProfileImage slot={'end'} height={50} width={50} />
           </IonToolbar>
         </IonHeader>
 

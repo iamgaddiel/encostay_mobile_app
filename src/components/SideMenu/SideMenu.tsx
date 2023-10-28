@@ -3,6 +3,7 @@ import { personOutline, briefcaseOutline, notificationsOutline, settingsOutline,
 import React from 'react'
 import { useHistory } from 'react-router'
 import { UserCollectionType } from '../../@types/users'
+import ProfileImage from '../ProfileImage'
 
 
 interface Props {
@@ -16,9 +17,9 @@ const SideMenu: React.FC<Props> = ({ userImage, user }) => {
 
 
     // ----------------------- functions --------------------
-    
-    function logUserOut(){
-        
+
+    function logUserOut() {
+
     }
 
 
@@ -27,7 +28,7 @@ const SideMenu: React.FC<Props> = ({ userImage, user }) => {
             <IonHeader className='ion-no-border px-3'>
                 <IonToolbar>
                     <IonMenuToggle slot="end">
-                        <IonButton className='yellow_fill' fill='clear' size='small' style={{ width: "50px", height: "50px"}}>
+                        <IonButton className='yellow_fill' fill='clear' size='small' style={{ width: "50px", height: "50px" }}>
                             <IonIcon icon={close} size='large' />
                         </IonButton>
                     </IonMenuToggle>
@@ -37,12 +38,10 @@ const SideMenu: React.FC<Props> = ({ userImage, user }) => {
 
                 {/* Profile Preview */}
                 <section className="ion-margin-horizontal">
-                    <IonAvatar>
-                        <IonImg src={userImage} />
-                    </IonAvatar>
+                    <ProfileImage/>
 
                     <div className='mt-3'>
-                        <big className='fw-bold-sm'>{ user.name }</big>
+                        <big className='fw-bold-sm'>{user.name}</big>
                     </div>
                 </section>
 

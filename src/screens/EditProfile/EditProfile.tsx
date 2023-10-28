@@ -22,6 +22,7 @@ import { Action } from "../../@types/action";
 import { set } from "react-hook-form";
 import { updateApiCollectionItem } from "../../helpers/apiHelpers";
 import { USRS_COLLECTION } from "../../helpers/keys";
+import ProfileImage from "../../components/ProfileImage";
 
 // types
 interface UpdateFields {
@@ -119,10 +120,8 @@ const EditProfile = () => {
         />
         {/* Profile Preview */}
         <section className="ion-text-center mt-3">
-          <div
-            className="me_thumbnail"
-            style={{ backgroundImage: `url(${Person})` }}
-          ></div>
+
+          <ProfileImage className="me_thumbnail" />
 
           <IonTitle className="mt-3 fs-2">{user.name}</IonTitle>
         </section>

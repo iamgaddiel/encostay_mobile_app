@@ -14,6 +14,7 @@ import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { utilsAtom } from '../../atoms/utilityAtom'
 import { userAtom } from '../../atoms/appAtom'
+import ProfileImage from '../../components/ProfileImage'
 
 
 
@@ -44,7 +45,8 @@ const Me = () => {
 
         {/* Profile Preview */}
         <section className="ion-text-center mt-3">
-          <div className="me_thumbnail" style={{ backgroundImage: `url(${Person})` }}></div>
+          {/* <div className="me_thumbnail" style={{ backgroundImage: `url(${Person})` }}></div> */}
+          <ProfileImage className="me_thumbnail"  />
 
           <IonTitle className='mt-3 fs-2'>{user.name}</IonTitle>
           <small className="text-center text-muted">{user.email}</small>

@@ -13,6 +13,7 @@ import { ApartementItem } from "../../@types/apartments";
 import HomeListCard from "../HomeListCard/HomeListCard";
 import RoomLnd from "../../assets/images/room-ld.png";
 import NotFound from "../NotFound";
+import ProfileImage from "../ProfileImage";
 
 
 
@@ -156,9 +157,7 @@ const GuestsAccount: React.FC<Props> = ({
                             <h4 className='text-muted'>Hey {user.name}!</h4>
                             <span className="mt-4" style={{ display: "block" }}>Let's find your best residence!</span>
                         </div>
-                        <IonAvatar>
-                            <IonImg src={userImage} />
-                        </IonAvatar>
+                        <ProfileImage width={50} height={50} slot={'end'} />
                     </SpaceBetween>
                 </section>
 
@@ -325,7 +324,7 @@ const GuestsAccount: React.FC<Props> = ({
             ------------------ [Favorite Places] ------------------------
             -----------------------------------------------------------
              */}
-                <section className="home_list_wrapper mt-5">
+                {/* <section className="home_list_wrapper mt-5">
                     <SpaceBetween className='my-3'>
                         <span>Favourite Places</span>
                         <IonRouterLink className="ion-warning">All</IonRouterLink>
@@ -371,7 +370,7 @@ const GuestsAccount: React.FC<Props> = ({
 
                         </Slider>
                     </section>
-                </section>
+                </section> */}
 
             </IonContent>
         </IonPage >
