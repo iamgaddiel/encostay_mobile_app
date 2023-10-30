@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { bookingAtom, selectedApartmentIdAtom } from '../../atoms/bookingAtom'
 import { userAtom } from '../../atoms/appAtom'
 import { useHistory } from 'react-router'
+import Currency from '../Currency'
 
 
 type Location = {
@@ -45,6 +46,8 @@ const HomeListCard: React.FC<Props> = ({
     const [ratingsArray, setRatingsArray] = useState<number[]>([])
 
     const setSelectedApartmentId = useSetRecoilState(selectedApartmentIdAtom)
+
+    const {record: user} = useRecoilValue(userAtom)
 
     // generate a dynamic array based on the number of ratings
     useEffect(() => {
@@ -100,7 +103,7 @@ const HomeListCard: React.FC<Props> = ({
                         <div className="mt-2 px-2">
                             <div className="d-flex align-items-center justify-content-between">
                                 <div className='text-muted'>
-                                    <big className='text-warning fs-2'>{price}</big>/ Day
+                                    <big className='text-warning fs-2'><Currency currency={user.preferred_currency} />{price}</big>/ Day
                                 </div>
 
                                 <div className='ion-text-center'>

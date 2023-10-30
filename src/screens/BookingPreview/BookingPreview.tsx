@@ -54,6 +54,8 @@ import { useHistory, useParams } from "react-router";
 import { AppConfig } from "../../@types/appConfig";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { APP_CONFIG } from "../../helpers/keys";
+import Currency from "../../components/Currency";
+import { userAtom } from "../../atoms/appAtom";
 
 
 
@@ -61,6 +63,8 @@ import { APP_CONFIG } from "../../helpers/keys";
 const BookingPreview = () => {
 
   const apartmentId = useRecoilValue(selectedApartmentIdAtom)
+
+  const {record: user} = useRecoilValue(userAtom)
 
   const history = useHistory();
 
@@ -329,7 +333,7 @@ const BookingPreview = () => {
           >
             <big>{selectedApartment.title}</big>
             <IonText className="fs-3 block">
-              ₦{selectedApartment.price}/night
+              <Currency currency={user.preferred_currency} />{selectedApartment.price}/night
             </IonText>
             <span className="d-flex align-items-center">
               <div className="fs-5">
@@ -463,14 +467,14 @@ const BookingPreview = () => {
           <div className="mt-5">
             <SpaceBetween className="my-3">
               <IonText className="text-muted">
-                ${selectedApartment.price} x {state?.durationOfStay} night
+                <Currency currency={user.preferred_currency} /> {selectedApartment.price} x {state?.durationOfStay} night
               </IonText>
               <IonText className="fw-bold-sm">${subTotal}</IonText>
             </SpaceBetween>
             <SpaceBetween className="my-3">
               <IonText className="text-muted">Services Charges</IonText>
               <IonText className="fw-bold-sm">
-                ${state.transaction_charge}
+              <Currency currency={user.preferred_currency} />{state.transaction_charge}
               </IonText>
             </SpaceBetween>
           </div>
@@ -485,7 +489,7 @@ const BookingPreview = () => {
               className="shadow-sm p-2 bg-light rounded-3 text-end w-75 mt-3"
               style={{ fontSize: "1.2rem" }}
             >
-              <IonText>${state.total}</IonText>
+              <IonText><Currency currency={user.preferred_currency} />{state.total}</IonText>
             </div>
           </SpaceBetween>
         </section>

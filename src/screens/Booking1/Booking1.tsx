@@ -24,9 +24,13 @@ import SpaceBetween from "../../components/style/SpaceBetween";
 import { useRecoilValue } from "recoil";
 import { bookingAtom } from "../../atoms/bookingAtom";
 import { getHumanReadableDate } from "../../helpers/utils";
+import Currency from "../../components/Currency";
+import { userAtom } from "../../atoms/appAtom";
 
 const Booking1 = () => {
   const bookingDetails = useRecoilValue(bookingAtom);
+
+  const { record: user } = useRecoilValue(userAtom)
 
   const [bookedDays, setBookedDays] = useState({
     checkInWeekDay: "",
@@ -49,13 +53,13 @@ const Booking1 = () => {
       new Date(bookingDetails.checkout_datetime)
     );
 
-    setBookedDays({ 
-        checkInWeekDay: checkIn.weekday,
-        checkInDay: checkIn.day,
-        checkInMonth: checkIn.monthAbbreviation,
-        checkOutWeekDay: checkOut.weekday,
-        checkOutDay: checkOut.day,
-        checkOutMonth: checkOut.monthAbbreviation,
+    setBookedDays({
+      checkInWeekDay: checkIn.weekday,
+      checkInDay: checkIn.day,
+      checkInMonth: checkIn.monthAbbreviation,
+      checkOutWeekDay: checkOut.weekday,
+      checkOutDay: checkOut.day,
+      checkOutMonth: checkOut.monthAbbreviation,
     });
   }
 
@@ -191,7 +195,7 @@ const Booking1 = () => {
           <div className="ion-padding shadow rounded-5">
             <SpaceBetween>
               <big>
-                <IonText>Total: ${bookingDetails.price}</IonText>
+                <IonText>Total: <Currency currency={user.preferred_currency} />{bookingDetails.price}</IonText>
               </big>
               <IonButton
                 className="brown_fill"

@@ -16,6 +16,7 @@ import Image from "../../assets/images/room-pt.png"
 import { Toast } from '../../@types/toast';
 import { TransactionCreateFields } from '../../@types/transactions';
 import { WalletItem, WalletList } from '../../@types/wallet';
+import Currency from '../../components/Currency';
 
 
 
@@ -293,7 +294,7 @@ const HostAcceptOrDecline = () => {
                     >
                         <big>{booking?.expand?.apartment?.title}</big>
                         <IonText className="fs-3 block">
-                            ₦{booking?.expand?.apartment?.price}/night
+                        <Currency currency={user.preferred_currency} />{booking?.expand?.apartment?.price}/night
                         </IonText>
                         <span className="d-flex align-items-center">
                             <div className="fs-5">
@@ -428,14 +429,14 @@ const HostAcceptOrDecline = () => {
                     <div className="mt-5">
                         <SpaceBetween className="my-3">
                             <IonText className="text-muted">
-                                ${booking?.price} x {booking?.duration_of_stay} night
+                                <Currency currency={user.preferred_currency} /> {booking?.price} x {booking?.duration_of_stay} night
                             </IonText>
                             <IonText className="fw-bold-sm">${booking?.price! * booking?.duration_of_stay!}</IonText>
                         </SpaceBetween>
                         <SpaceBetween className="my-3">
                             <IonText className="text-muted">Services Charges</IonText>
                             <IonText className="fw-bold-sm">
-                                ${booking?.transaction_charge}
+                            <Currency currency={user.preferred_currency} />{booking?.transaction_charge}
                             </IonText>
                         </SpaceBetween>
                     </div>
@@ -450,7 +451,7 @@ const HostAcceptOrDecline = () => {
                             className="shadow-sm p-2 bg-light rounded-3 text-end w-75 mt-3"
                             style={{ fontSize: "1.2rem" }}
                         >
-                            <IonText>${booking?.price}</IonText>
+                            <IonText><Currency currency={user.preferred_currency} />{booking?.price}</IonText>
                         </div>
                     </SpaceBetween>
                 </section>

@@ -54,6 +54,7 @@ import { get } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { BankList } from "../../@types/bank";
+import Currency from "../../components/Currency";
 
 
 
@@ -543,7 +544,7 @@ const HomeDetail = () => {
           <div className="ion-padding shadow rounded-5">
             <SpaceBetween>
               <big>
-                <IonText>${apartment?.price}/night</IonText>
+                <IonText><Currency currency={user.preferred_currency} /> {apartment?.price}/night</IonText>
               </big>
 
               {/* Stop reservation if bank details is not found */}

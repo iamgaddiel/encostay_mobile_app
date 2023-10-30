@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonTitle, IonToolbar, RefresherEventDetail } from '@ionic/react'
+import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonThumbnail, IonTitle, IonToolbar, RefresherEventDetail, useIonViewDidEnter } from '@ionic/react'
 import { useEffect, useState } from 'react'
 
 // css
@@ -17,6 +17,7 @@ import { getBookings } from '../../helpers/utils'
 import NotFound from '../../components/NotFound/NotFound'
 import { utilsAtom } from '../../atoms/utilityAtom'
 import { useQuery } from '@tanstack/react-query'
+import Currency from '../../components/Currency'
 
 
 type View = "bookings" | "history"
@@ -31,9 +32,9 @@ const MangeBooking = () => {
 
     const setUtil = useSetRecoilState(utilsAtom)
 
-    const [isCancelled, setIsCancelled] = useState(false) //TODO: comment this.
+    // const [isCancelled, setIsCancelled] = useState(false) //TODO: comment this.
 
-    const bookingsDemo = [...new Array(2).keys()] //TODO: comment this
+    // const bookingsDemo = [...new Array(2).keys()] //TODO: comment this
 
     // const [isLoading, setIsLoading] = useState(false)
 
@@ -46,10 +47,7 @@ const MangeBooking = () => {
 
 
 
-
-    //TODO: use ReactQuery
-
-    useEffect(() => {
+    useIonViewDidEnter(() => {
         setUtil({ showTabs: true })
     }, [])
 
@@ -91,6 +89,29 @@ const MangeBooking = () => {
                 <IonToolbar mode='ios'>
                     <IonTitle>Manage Booking</IonTitle>
                 </IonToolbar>
+                <IonToolbar className='px-3'>
+                    {/* Segment */}
+                    <IonSegment slot='' value={view} mode='ios' id='manage_bookings_segement w-75'>
+                        <IonSegmentButton
+                            className="text-capitalize"
+                            title='bookings'
+                            value='bookings'
+                            onClick={() => setView("bookings")}
+                        >
+                            New Bookings
+                        </IonSegmentButton>
+
+                        <IonSegmentButton
+                            className="text-capitalize"
+                            title='history'
+                            value='history'
+                            onClick={() => setView("history")}
+                        >
+                            Booking History
+                        </IonSegmentButton>
+                    </IonSegment>
+
+                </IonToolbar>
             </IonHeader>
             <IonContent fullscreen className="ion-padding">
 
@@ -98,41 +119,63 @@ const MangeBooking = () => {
                     <IonRefresherContent></IonRefresherContent>
                 </IonRefresher>
 
-                {/* Segment */}
-                <IonSegment slot='' value={view} mode='ios' id='manage_bookings_segement w-75'>
-                    <IonSegmentButton
-                        className="text-capitalize"
-                        title='bookings'
-                        value='bookings'
-                        onClick={() => setView("bookings")}
-                    >
-                        New Bookings
-                    </IonSegmentButton>
-
-                    <IonSegmentButton
-                        className="text-capitalize"
-                        title='history'
-                        value='history'
-                        onClick={() => setView("history")}
-                    >
-                        Booking History
-                    </IonSegmentButton>
-                </IonSegment>
-
                 {
                     isLoading ? (
                         <section>
-                            <SpaceBetween>
-                                <IonSkeletonText animated style={{ width: '50px', height: '50px', borderRadius: '20px' }} />
-                                <div>
-                                    <IonSkeletonText animated style={{ width: '100px', height: '20px' }} />
-                                    <IonSkeletonText animated style={{ width: '85px', height: '20px' }} />
-                                    <IonSkeletonText animated style={{ width: '70px', height: '20px' }} />
+                            <SpaceBetween className='ion-margin-top'>
+                                <IonThumbnail>
+                                    <IonSkeletonText />
+                                </IonThumbnail>
+                                <div className='w-75 ms-3'>
+                                    <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '85%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '70%', height: '20px' }} />
+                                </div>
+                            </SpaceBetween>
+                            <SpaceBetween className='ion-margin-top'>
+                                <IonThumbnail>
+                                    <IonSkeletonText />
+                                </IonThumbnail>
+                                <div className='w-75 ms-3'>
+                                    <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '85%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '70%', height: '20px' }} />
+                                </div>
+                            </SpaceBetween>
+                            <SpaceBetween className='ion-margin-top'>
+                                <IonThumbnail>
+                                    <IonSkeletonText />
+                                </IonThumbnail>
+                                <div className='w-75 ms-3'>
+                                    <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '85%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '70%', height: '20px' }} />
+                                </div>
+                            </SpaceBetween>
+                            <SpaceBetween className='ion-margin-top'>
+                                <IonThumbnail>
+                                    <IonSkeletonText />
+                                </IonThumbnail>
+                                <div className='w-75 ms-3'>
+                                    <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '85%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '70%', height: '20px' }} />
+                                </div>
+                            </SpaceBetween>
+                            <SpaceBetween className='ion-margin-top'>
+                                <IonThumbnail>
+                                    <IonSkeletonText />
+                                </IonThumbnail>
+                                <div className='w-75 ms-3'>
+                                    <IonSkeletonText animated style={{ width: '100%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '85%', height: '20px' }} />
+                                    <IonSkeletonText animated style={{ width: '70%', height: '20px' }} />
                                 </div>
                             </SpaceBetween>
                         </section>
                     ) : (
                         <>
+                            {/* Bookings */}
                             {
                                 view === "bookings" ? (
                                     <>
@@ -149,7 +192,7 @@ const MangeBooking = () => {
                                                                             <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
                                                                             <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
                                                                                 <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
-                                                                                <IonText className='fs-5 block'>₦{booking.expand?.apartment?.price}/night</IonText>
+                                                                                <IonText className='fs-5 block'><Currency currency={user.preferred_currency} />{booking.expand?.apartment?.price}/night</IonText>
                                                                                 <span className='d-flex align-items-center justify-content-between'>
 
                                                                                     <div className='d-flex'>
@@ -184,62 +227,64 @@ const MangeBooking = () => {
                                     </>
                                 ) : null
                             }
+
+                            {/* History */}
+                            {
+                                view === "history" ? (
+                                    <>
+                                        {
+                                            bookings?.items.length! >= 1 ? (
+                                                <section className="mt-1">
+                                                    <IonList lines='none'>
+                                                        {
+                                                            bookings && bookings.items.map((booking, indx) => (
+                                                                // bookingsDemo && bookingsDemo.map((booking, indx) => (
+                                                                <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
+                                                                    <IonLabel>
+                                                                        <section className='d-flex mt-1'>
+                                                                            <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
+                                                                            <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
+                                                                                <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
+                                                                                <IonText className='fs-5 block'><Currency currency={user.preferred_currency} />{booking.expand?.apartment?.price}/night</IonText>
+                                                                                <span className='d-flex align-items-center justify-content-between'>
+
+                                                                                    <div className='d-flex'>
+                                                                                        <IonIcon icon={star} color='warning' /> 4.8  <small className='ms-1'>(234)</small>
+                                                                                    </div>
+
+                                                                                    {
+                                                                                        !booking.is_canceled ? (
+                                                                                            <div className="d-flex align-items-center">
+                                                                                                <IonIcon icon={person} color='warning' className="mr-1" /> {booking.number_of_guests}
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <div className='rounded-5 p-2' style={{ backgroundColor: "var(--light-red)" }}>
+                                                                                                <IonLabel className='text-danger'>Cancelled</IonLabel>
+                                                                                            </div>
+                                                                                        )
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                        </section>
+                                                                    </IonLabel>
+                                                                </IonItem>
+                                                            ))
+                                                        }
+                                                    </IonList>
+                                                </section>
+                                            ) : <NotFound
+                                                heading='No History'
+                                                subheading="...try booking an apartment"
+                                            />
+                                        }
+                                    </>
+                                ) : null
+                            }
                         </>
                     )
                 }
 
 
-                {
-                    view === "history" ? (
-                        <>
-                            {
-                                bookings?.items.length! >= 1 ? (
-                                    <section className="mt-1">
-                                        <IonList lines='none'>
-                                            {
-                                                bookings && bookings.items.map((booking, indx) => (
-                                                    // bookingsDemo && bookingsDemo.map((booking, indx) => (
-                                                    <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
-                                                        <IonLabel>
-                                                            <section className='d-flex mt-1'>
-                                                                <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
-                                                                <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
-                                                                    <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
-                                                                    <IonText className='fs-5 block'>₦{booking.expand?.apartment?.price}/night</IonText>
-                                                                    <span className='d-flex align-items-center justify-content-between'>
-
-                                                                        <div className='d-flex'>
-                                                                            <IonIcon icon={star} color='warning' /> 4.8  <small className='ms-1'>(234)</small>
-                                                                        </div>
-
-                                                                        {
-                                                                            !booking.is_canceled ? (
-                                                                                <div className="d-flex align-items-center">
-                                                                                    <IonIcon icon={person} color='warning' className="mr-1" /> {booking.number_of_guests}
-                                                                                </div>
-                                                                            ) : (
-                                                                                <div className='rounded-5 p-2' style={{ backgroundColor: "var(--light-red)" }}>
-                                                                                    <IonLabel className='text-danger'>Cancelled</IonLabel>
-                                                                                </div>
-                                                                            )
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            </section>
-                                                        </IonLabel>
-                                                    </IonItem>
-                                                ))
-                                            }
-                                        </IonList>
-                                    </section>
-                                ) : <NotFound
-                                    heading='No History'
-                                    subheading="...try booking an apartment"
-                                />
-                            }
-                        </>
-                    ) : null
-                }
             </IonContent>
         </IonPage>
     )
