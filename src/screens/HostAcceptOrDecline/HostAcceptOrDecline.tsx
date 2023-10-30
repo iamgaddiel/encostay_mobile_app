@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router';
 import { createApiCollection, getApiCollectionItem, listApiCollection, updatePatchApiCollectionItem } from '../../helpers/apiHelpers';
-import { BOOKINGS_COLLECTION, TRANSACTIONS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys';
+import { APARTMENTS_COLLECTION, BOOKINGS_COLLECTION, TRANSACTIONS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys';
 import { userAtom } from '../../atoms/appAtom';
 import { useRecoilValue } from 'recoil';
 import { BookingItem } from '../../@types/bookings';
 import { useQuery } from '@tanstack/react-query';
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonToast, IonText, IonIcon, IonInput, IonButton, IonItem, IonList, IonLabel, IonListHeader, IonLoading } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonToast, IonText, IonIcon, IonInput, IonButton, IonItem, IonList, IonLabel, IonListHeader, IonLoading, useIonViewDidEnter, useIonLoading } from '@ionic/react';
 import { star, chevronForward, person, informationCircleOutline } from 'ionicons/icons';
 import SpaceBetween from '../../components/style/SpaceBetween';
-import { getHumanReadableDate } from '../../helpers/utils';
+import { getHumanReadableDate, serverLog } from '../../helpers/utils';
 
 // image
 import Image from "../../assets/images/room-pt.png"
@@ -29,6 +29,7 @@ const HostAcceptOrDecline = () => {
 
     const { token: authToken, record: user } = useRecoilValue(userAtom)
 
+
     const [showToast, setShowToast] = useState<Toast>({
         enabled: false,
         message: "",
@@ -46,32 +47,32 @@ const HostAcceptOrDecline = () => {
         queryFn: getBookingDetails
     })
 
-    const { data: wallet} = useQuery({
+    const { data: wallet } = useQuery({
         queryKey: ['getHostWalletForTransaction'],
         queryFn: getHostWallet
     })
 
-    const [bookingStatus, setBookingStatus] = useState<'pending' | 'approved' | 'declined' > ('pending')
+    const [bookingStatus, setBookingStatus] = useState<'pending' | 'approved' | 'declined'>('pending')
 
     const { day: checkInDay, monthAbbreviation: checkInMonth } = getHumanReadableDate(new Date(booking?.checkin_datetime!))
     const { day: checkOutDay, monthAbbreviation: checkOutMonth } = getHumanReadableDate(new Date(booking?.checkout_datetime!))
 
 
 
-    useEffect(() => {
-        function getBookingStatus(){
+    useIonViewDidEnter(() => {
+        function getBookingStatus() {
             // Pending
-            if (booking?.is_pending && !booking?.is_approved ){
+            if (booking?.is_pending && !booking?.is_approved) {
                 setBookingStatus('pending')
             }
 
             // Approve
-            if (!booking?.is_pending && booking?.is_approved ){
+            if (!booking?.is_pending && booking?.is_approved) {
                 setBookingStatus('approved')
             }
 
             // Declined
-            if (!booking?.is_pending && !booking?.is_approved ){
+            if (!booking?.is_pending && !booking?.is_approved) {
                 setBookingStatus('declined')
             }
         }
@@ -151,7 +152,9 @@ const HostAcceptOrDecline = () => {
 
 
     async function approveBooking() {
-        //TODO; update host cash in wallet
+        /**
+         * Handle all action when host approves booking
+         */
         //FIXME: remove loading when booking is approved
 
         setShowLoading({
@@ -167,9 +170,9 @@ const HostAcceptOrDecline = () => {
 
             updatePatchApiCollectionItem(BOOKINGS_COLLECTION, bookingId, data, authToken)
 
-            createTransaction() // Create EArnings Transaction ---------------------
-            incrementWalletBalance() // Update wallet balance ---------------------
-
+            createTransaction() // Create Earnings Transaction 
+            incrementWalletBalance() // Update wallet balance 
+            updateApartmentAvailability(booking?.apartment!)
             setBookingStatus('approved')
 
         }
@@ -196,7 +199,7 @@ const HostAcceptOrDecline = () => {
     }
 
 
-    async function createTransaction(): Promise< boolean| undefined > {
+    async function createTransaction(): Promise<boolean | undefined> {
         const transactionData: TransactionCreateFields = {
             amount: booking?.price!,
             apartment: booking?.apartment!,
@@ -221,30 +224,55 @@ const HostAcceptOrDecline = () => {
     }
 
 
-    async function getHostWallet(): Promise<WalletItem>{
-        try{
+    async function getHostWallet(): Promise<WalletItem> {
+        try {
             const params = {
                 filter: `host='${user.id}'`
             }
-    
-            const { data } = await listApiCollection(WALLETS_COLLECTION, authToken, params) as { data: WalletList}
-    
+
+            const { data } = await listApiCollection(WALLETS_COLLECTION, authToken, params) as { data: WalletList }
+
             const hostWallet = data?.items[0]
             console.log("🚀 ~ file: HostAcceptOrDecline.tsx:234 ~ getHostWallet ~ hostWallet:", hostWallet)
-            
+
             return hostWallet
         }
-        catch(error: any){
+        catch (error: any) {
+            serverLog({
+                errorMessage: 'Could not get host wallet',
+                file: 'getHostWallet',
+                lineNumber: '237'
+            })
             throw new Error(error)
         }
     }
 
 
-    async function incrementWalletBalance(){
-        const newBalance = wallet!.balance + booking!.price!
+    async function incrementWalletBalance() {
+        const newBalance = (wallet!.balance + booking!.price!).toFixed(2)
         const data = { balance: newBalance }
         console.log("🚀 ~ file: HostAcceptOrDecline.tsx:244 ~ incrementWalletBalance ~ newBalance:", data)
         updatePatchApiCollectionItem(WALLETS_COLLECTION, wallet?.id!, data, authToken)
+    }
+
+
+    async function updateApartmentAvailability(apartmentId: string) {
+        /**
+         * Set Apartment to unavailable when
+         */
+        try {
+            const payload = { is_available: false }
+            const { response } = await updatePatchApiCollectionItem(APARTMENTS_COLLECTION, apartmentId, payload, authToken)
+            console.log("🚀 ~ file: HostAcceptOrDecline.tsx:263 ~ updateApartment ~ response:", response)
+        }
+        catch (error: any) {
+            serverLog({
+                errorMessage: 'Could not update apartment details',
+                file: 'HostAcceptOrDecline',
+                lineNumber: '261'
+            })
+            throw new Error('Could not update apartment details')
+        }
     }
 
 
@@ -294,7 +322,7 @@ const HostAcceptOrDecline = () => {
                     >
                         <big>{booking?.expand?.apartment?.title}</big>
                         <IonText className="fs-3 block">
-                        <Currency currency={user.preferred_currency} />{booking?.expand?.apartment?.price}/night
+                            <Currency currency={user.preferred_currency} />{booking?.expand?.apartment?.price}/night
                         </IonText>
                         <span className="d-flex align-items-center">
                             <div className="fs-5">
@@ -431,12 +459,12 @@ const HostAcceptOrDecline = () => {
                             <IonText className="text-muted">
                                 <Currency currency={user.preferred_currency} /> {booking?.price} x {booking?.duration_of_stay} night
                             </IonText>
-                            <IonText className="fw-bold-sm">${booking?.price! * booking?.duration_of_stay!}</IonText>
+                            <IonText className="fw-bold-sm"><Currency currency={user.preferred_currency} />{(booking?.price! * booking?.duration_of_stay!).toFixed(2)}</IonText>
                         </SpaceBetween>
                         <SpaceBetween className="my-3">
                             <IonText className="text-muted">Services Charges</IonText>
                             <IonText className="fw-bold-sm">
-                            <Currency currency={user.preferred_currency} />{booking?.transaction_charge}
+                                <Currency currency={user.preferred_currency} />{booking?.transaction_charge}
                             </IonText>
                         </SpaceBetween>
                     </div>
@@ -457,7 +485,7 @@ const HostAcceptOrDecline = () => {
                 </section>
 
                 {/* Pending Bookking Request */}
-                { bookingStatus === 'pending' ? (
+                {bookingStatus === 'pending' ? (
 
                     <div className="ion-text-center mt-5 d-flex justify-content-evenly">
                         <IonButton
