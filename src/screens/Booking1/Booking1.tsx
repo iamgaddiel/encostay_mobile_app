@@ -5,8 +5,6 @@ import {
   IonContent,
   IonIcon,
   IonItem,
-  IonLabel,
-  IonList,
   IonPage,
   IonText,
 } from "@ionic/react";
@@ -16,7 +14,6 @@ import BackHeaderNoTitle from "../../components/BackHeaderNoTitle/BackHeaderNoTi
 import "./Booking1.css";
 import {
   cameraReverseOutline,
-  shield,
   shieldOutline,
   warningOutline,
 } from "ionicons/icons";

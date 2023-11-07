@@ -1,4 +1,4 @@
-import { IonContent, IonImg, IonPage, IonProgressBar, IonText, IonTitle } from '@ionic/react'
+import { IonContent, IonImg, IonPage, IonProgressBar, IonText, IonTitle, useIonViewDidEnter } from '@ionic/react'
 
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
@@ -34,10 +34,14 @@ const PaymentProcessing = () => {
 
     const { record: user, token: authToken } = useRecoilValue(userAtom)
 
+    const setBookingDetail = useSetRecoilState(bookingAtom)
+
+    useIonViewDidEnter(() => {
+        processBooking()
+    }, [])
 
     useEffect(() => {
         setUtility({ showTabs: false })
-        processBooking()
     }, [])
 
     useEffect(() => {
@@ -51,7 +55,7 @@ const PaymentProcessing = () => {
 
         // Crate Booking
         const { isCreated, error, response } = await createApiCollection(BOOKINGS_COLLECTION, bookingDetail, userToken)
-        const { apartment } = response as BookingItem
+        const { apartment, id: bookingId } = response as BookingItem
 
         if (!isCreated) {
             console.log(error)
@@ -59,27 +63,38 @@ const PaymentProcessing = () => {
             return
         }
 
-        createPendingUserReview(apartment) // Create user pending review
+        createPendingUserReview(apartment) // Create pending review for to fill out later
 
         if (user.preferred_currency === 'NGN') {
-
-            const payload = {
-                booking: response.id
-            }
-
+            const payload = { booking: bookingId }
             await updatePatchApiCollectionItem(
                 FLUTTERWAVE_COLLECTION,
                 flutterwaveTransaction.collectionId,
                 payload,
                 authToken
             )
-
-            // reset recoil state
-            setFlutterwaveTransaction({ collectionId: '', transactionId: 0 })
+            setFlutterwaveTransaction({ collectionId: '', transactionId: 0 }) // reset flutterwave recoil state
 
             console.log("updated")
         }
 
+        // reset booking atom state
+        setBookingDetail({
+            apartment: "",
+            guest: "",
+            checkin_datetime: "",
+            aditional_info: "",
+            is_paid: false,
+            is_canceled: false,
+            checkout_datetime: "",
+            host: "",
+            price: 0,
+            number_of_guests: 0,
+            transaction_charge: 0,
+            duration_of_stay: 0,
+            guest_phone: '',
+            is_pending: true
+        })
     }
 
     async function createPendingUserReview(apartmentId: string) {

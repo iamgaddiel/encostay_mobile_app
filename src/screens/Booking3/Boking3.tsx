@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonImg, IonInput, IonLabel, IonPage, IonText, IonToast } from '@ionic/react'
+import { IonButton, IonContent, IonImg, IonInput, IonLabel, IonPage, IonText, IonToast, useIonRouter } from '@ionic/react'
 import { useEffect, useState } from 'react'
 
 import "../Booking1/Booking1.css"
@@ -37,7 +37,7 @@ const Booking1 = () => {
 
     const { DEBUG } = Settings()
 
-    const history = useHistory()
+    const router = useIonRouter()
 
     const { record: user, token: authToken } = useRecoilValue(userAtom)
 
@@ -187,7 +187,7 @@ const Booking1 = () => {
                                 transactionId: response.transaction_id,
                                 collectionId: fluTrx?.id!
                             })
-                            history.push('/payment_prcessing')
+                            router.push('/payment_processing')
                         }
                     },
                     onClose: () => {

@@ -56,7 +56,6 @@ import { apartmentAtom } from "../../atoms/apartmentAtom";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { BANKS_COLLECTION, REVIEWS_COLLECTION, USER } from "../../helpers/keys";
 import { StoredUser, UserCollectionType } from "../../@types/users";
-import { get } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { BankList } from "../../@types/bank";
@@ -126,6 +125,7 @@ const HomeDetail = () => {
     try {
       const payload = {
         filter: `apartment='${apartmentId}'`,
+        expand: 'user'
       }
       const { data } = await listApiCollection(REVIEWS_COLLECTION, authToken, payload) as { data: ReviewList }
       return data
@@ -598,43 +598,40 @@ const HomeDetail = () => {
         <section className="mt-4 p-4">
           <big>
             <IonText>Reviews</IonText> <br />
-            {/* todo: dynamicall update comments */}
             <small className="text-muted">{reviews?.totalItems} cements</small>
           </big>
 
           {
             loadingReviews ? (
-              <>
-                <IonGrid>
-                  <IonRow className="ion-align-items-center">
-                    <IonCol size="5">
-                      <IonAvatar>
-                        <IonSkeletonText />
-                      </IonAvatar>
-                    </IonCol>
-                    <IonCol size="auto">
-                      <IonSkeletonText animated className="w-100 rounded-3 p-2" />
-                    </IonCol>
-                  </IonRow>
-                  <IonRow className="ion-align-items-center">
-                    <IonCol size="5">
-                      <IonAvatar>
-                        <IonSkeletonText />
-                      </IonAvatar>
-                    </IonCol>
-                    <IonCol size="auto">
-                      <IonSkeletonText animated className="w-100 rounded-3 p-2" />
-                    </IonCol>
-                  </IonRow>
-                </IonGrid>
-              </>
+              <IonGrid>
+                <IonRow className="ion-align-items-center">
+                  <IonCol size="5">
+                    <IonAvatar>
+                      <IonSkeletonText />
+                    </IonAvatar>
+                  </IonCol>
+                  <IonCol size="auto">
+                    <IonSkeletonText animated className="w-100 rounded-3 p-2" />
+                  </IonCol>
+                </IonRow>
+                <IonRow className="ion-align-items-center">
+                  <IonCol size="5">
+                    <IonAvatar>
+                      <IonSkeletonText />
+                    </IonAvatar>
+                  </IonCol>
+                  <IonCol size="auto">
+                    <IonSkeletonText animated className="w-100 rounded-3 p-2" />
+                  </IonCol>
+                </IonRow>
+              </IonGrid>
             ) : (
               <div className="mt-3 text-muted">
                 <IonList lines="none">
                   {
                     reviews?.items.length! >= 1 ? reviews?.items.map((review, index) => (
                       <IonItem>
-                        <ProfileImage slot='start' width={50} height={50} />
+                        <ProfileImage slot='start' width={50} height={50} name={review.expand?.user?.name}  />
                         <IonLabel>
                           <IonTitle>{review.expand?.user?.name}</IonTitle>
                           <p>{review.comment}</p>
