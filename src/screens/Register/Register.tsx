@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 
 import "./Register.css"
-import { IonButton, IonContent, IonDatetime, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonSelect, IonSelectOption } from '@ionic/react'
+import { IonButton, IonContent, IonDatetime, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonSelect, IonSelectOption, useIonRouter } from '@ionic/react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { useHistory } from 'react-router'
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -19,7 +19,7 @@ const Register = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm<RegistrationInputs>();
 
   //hooks
-  const history = useHistory()
+  const router = useIonRouter()
   const [regFormData, setRegFormData] = useRecoilState(registrationAtom)
 
   // states
@@ -45,7 +45,7 @@ const Register = () => {
       name: `${data.first_name} ${data.last_name}`
     }
     setRegFormData(formData)
-    history.push('/passwords')
+    router.push('/passwords')
   }
 
 

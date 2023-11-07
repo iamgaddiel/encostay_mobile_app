@@ -2,6 +2,7 @@ import { HttpResponse } from "@capacitor/core";
 import { _delete, _get, _patch, _post, _put } from "./api";
 import Settings from "./settings";
 import { recording } from "ionicons/icons";
+import { USERS_COLLECTION } from "./keys";
 
 const { pb, DEBUG } = Settings()
 
@@ -79,10 +80,31 @@ export async function updateApiCollectionItem(collection: string, id: string, fo
         response: data?.data
     }
 }
-// Update Collection
+
+
 export async function updatePatchApiCollectionItem(collection: string, id: string, formData: {}, userToken: string): Promise<{ isUpdated: boolean, error: unknown | null, response: unknown | null }> {
     const URL = `${pb.baseUrl}/collections/${collection}/records/${id}`
     const headers: any = parseHeader(userToken)
+
+    const { data }: HttpResponse = await _patch(URL, formData, headers)
+    if (data?.code !== 200) {
+        return {
+            isUpdated: false,
+            response: null,
+            error: data?.data
+        }
+    }
+    return {
+        isUpdated: true,
+        error: null,
+        response: data?.data
+    }
+}
+
+
+export async function updatePatchApiCollectionItemNoAuth(collection: string, id: string, formData: {}): Promise<{ isUpdated: boolean, error: unknown | null, response: unknown | null }> {
+    const URL = `${pb.baseUrl}/collections/${collection}/records/${id}`
+    const headers: any = parseHeader()
 
     const { data }: HttpResponse = await _patch(URL, formData, headers)
     if (data?.code !== 200) {
@@ -127,6 +149,35 @@ export async function listApiCollection(collection: string, authToken: string, p
     try {
         const data = await _get(URL, HEADERS, params)
         if (data !== null) return data;
+        return data
+    }
+    catch (err: unknown) {
+        return { data: err }
+    }
+}
+
+// List Collection
+export async function listApiCollectionNoAuth(collection: string, params?: {}): Promise<{ data: unknown }> {
+    const URL = `${pb.baseUrl}/collections/${collection}/records`
+    const HEADERS = {}
+    try {
+        const data = await _get(URL, HEADERS, params)
+        if (data !== null) return data;
+        return data
+    }
+    catch (err: unknown) {
+        return { data: err }
+    }
+}
+
+
+export async function sendPasswordResetToken(email: string){
+    const URL = `${pb.baseUrl}/collections/${USERS_COLLECTION}/request-password-reset`
+    const payload = {email}
+    try {
+        const data = await _post(URL, payload)
+        if (data !== null) return data;
+        console.log("🚀 ~ file: apiHelpers.ts:145 ~ sendApiOtp ~ data:", data)
         return data
     }
     catch (err: unknown) {

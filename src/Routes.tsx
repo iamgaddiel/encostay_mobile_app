@@ -55,6 +55,12 @@ import AddApartmentItems from './screens/AddApartmentItems';
 import AddApartmentDetails from './screens/AddApartmentDetails';
 import AddApartmentLocation from './screens/AddApartmentLocation';
 import ApartmentSearchFilterResult from './screens/ApartmentSearchFilterResult';
+import GuestPendingReviews from './screens/GuestPendingReviews';
+import GuestAddReview from './screens/GuestAddReview';
+import RequestForgetPassword from './screens/RequestForgetPassword';
+import ForgetPasswordOtp from './screens/ForgetPasswordOtp';
+import ResetPassword from './screens/ResetPassword/ResetPassword';
+import RequestPasswordConfirm from './screens/RequestPasswordConfirm';
 
 
 
@@ -63,7 +69,6 @@ import ApartmentSearchFilterResult from './screens/ApartmentSearchFilterResult';
 const Routes = () => {
     const { showTabs } = useRecoilValue(utilsAtom)
     const [networkNotFound, setNetworkNotFound] = useRecoilState(networkErrorAtom)
-    //FIXME: correct apartment spelling
 
 
     useEffect(() => {
@@ -98,7 +103,7 @@ const Routes = () => {
             <Route exact path="/booking_step_2" render={() => <Booking2 />} />
             <Route exact path="/booking_step_3" render={() => <Booking3 />} />
             <Route exact path="/booking_step_4" render={() => <Booking4 />} />
-            <Route exact path="/payment_prcessing" render={() => <PaymentProcessing />} />
+            <Route exact path="/payment_processing" render={() => <PaymentProcessing />} />
             <Route exact path="/payment_confirm" render={() => <PaymentConfirmed />} />
             <Route exact path="/manage_bookings" render={() => <MangeBooking />} />
             <Route exact path="/manage_booking_preview/:bookingId" render={() => <MangeBookingPreivew />} />
@@ -132,11 +137,23 @@ const Routes = () => {
             <Route exact path="/add_apartment_details" render={() => <AddApartmentDetails />} />
             <Route exact path="/add_apartment_location" render={() => <AddApartmentLocation />} />
             <Route exact path="/apartment_search_filter_result" render={() => <ApartmentSearchFilterResult />} />
+            <Route exact path="/pending_reviews" render={() => <GuestPendingReviews />} />
+            <Route exact path="/add_review/:apartmentId" render={() => <GuestAddReview />} />
+            <Route exact path="/reset_password_request" render={() => <RequestForgetPassword />} />
+            {/* <Route exact path="/reset_password_otp" render={() => <ForgetPasswordOtp />} /> */}
+            {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}
+            <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
+                            {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}
+                            {/* <Route exact path="/reset_password_otp" render={() => <ForgetPasswordOtp />} /> */}
+                            <Route exact path="/forget_password" render={() => <RequestForgetPassword />} />
+                            <Route exact path="/add_review/:apartmentId" render={() => <GuestAddReview />} />
+                            <Route exact path="/pending_reviews" render={() => <GuestPendingReviews />} />
                             <Route exact path="/apartment_search_filter_result" render={() => <ApartmentSearchFilterResult />} />
                             <Route exact path="/add_apartment_images" render={() => <AddApartmentImages />} />
                             <Route exact path="/add_apartment_extras" render={() => <AddApartmentExtras />} />
@@ -168,7 +185,7 @@ const Routes = () => {
                             <Route exact path="/manage_booking_preview/:bookingId" render={() => <MangeBookingPreivew />} />
                             <Route exact path="/manage_bookings" render={() => <MangeBooking />} />
                             <Route exact path="/payment_confirm" render={() => <PaymentConfirmed />} />
-                            <Route exact path="/payment_prcessing" render={() => <PaymentProcessing />} />
+                            <Route exact path="/payment_processing" render={() => <PaymentProcessing />} />
                             <Route exact path="/booking_step_4" render={() => <Booking4 />} />
                             <Route exact path="/booking_step_3" render={() => <Booking3 />} />
                             <Route exact path="/booking_step_2" render={() => <Booking2 />} />
@@ -185,7 +202,6 @@ const Routes = () => {
                             <Route exact path="/onboarding" render={() => <OnBoardidng />} />
                             <Route exact path="/passwords" render={() => <Passwords />} />
                             {/* <Redirect from='/add_apartment' to={'/add_apartment_location'} exact /> */}
-
                         </IonRouterOutlet>
 
                         <IonTabBar slot="bottom" className='ion-padding-vertical'>

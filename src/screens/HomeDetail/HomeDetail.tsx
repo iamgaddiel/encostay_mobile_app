@@ -2,20 +2,26 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonAlert,
+  IonAvatar,
   IonButton,
   IonCard,
   IonCardContent,
+  IonCol,
   IonContent,
   IonFab,
   IonFabButton,
+  IonGrid,
   IonIcon,
   IonImg,
   IonItem,
   IonLabel,
   IonList,
   IonPage,
+  IonRow,
+  IonSkeletonText,
   IonText,
   IonThumbnail,
+  IonTitle,
 } from "@ionic/react";
 import {
   arrowBack,
@@ -44,17 +50,20 @@ import { useHistory, useParams } from "react-router";
 import { ApartementItem, Apartment } from "../../@types/apartments";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
-import { getApartmentDetail } from "../../helpers/utils";
+import { getApartmentDetail, serverLog } from "../../helpers/utils";
 import { bookingAtom, selectedApartmentIdAtom } from "../../atoms/bookingAtom";
 import { apartmentAtom } from "../../atoms/apartmentAtom";
 import { getSaveData } from "../../helpers/storageSDKs";
-import { BANKS_COLLECTION, USER } from "../../helpers/keys";
+import { BANKS_COLLECTION, REVIEWS_COLLECTION, USER } from "../../helpers/keys";
 import { StoredUser, UserCollectionType } from "../../@types/users";
 import { get } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { BankList } from "../../@types/bank";
 import Currency from "../../components/Currency";
+import { ReviewList } from "../../@types/reviews";
+import NotFound from "../../components/NotFound";
+import ProfileImage from "../../components/ProfileImage";
 
 
 
@@ -97,7 +106,7 @@ const HomeDetail = () => {
 
 
   const { data: bankList } = useQuery({
-    queryKey: ['apartmentDetaiBankCheck',],
+    queryKey: ['apartmentDetailBankCheck',],
     queryFn: fetchUserBankDetails
   })
 
@@ -106,7 +115,32 @@ const HomeDetail = () => {
     queryFn: () => getApartment(user)
   })
 
+  const { data: reviews, isLoading: loadingReviews } = useQuery({
+    queryKey: ['apartmentReviews', user],
+    queryFn: () => getApartmentReviews(apartmentId)
+  })
 
+
+
+  async function getApartmentReviews(apartmentId: string) {
+    try {
+      const payload = {
+        filter: `apartment='${apartmentId}'`,
+      }
+      const { data } = await listApiCollection(REVIEWS_COLLECTION, authToken, payload) as { data: ReviewList }
+      return data
+    }
+    catch (error: any) {
+      const message = 'Could not fetch reviews for this apartment'
+      serverLog({
+        errorMessage: message,
+        file: 'HomeDetail.tsx',
+        lineNumber: '130',
+        user: user.id
+      })
+      throw new Error(message)
+    }
+  }
 
   async function getApartment(user: UserCollectionType) {
     try {
@@ -565,29 +599,54 @@ const HomeDetail = () => {
           <big>
             <IonText>Reviews</IonText> <br />
             {/* todo: dynamicall update comments */}
-            <small className="text-muted">98 coments</small>
+            <small className="text-muted">{reviews?.totalItems} cements</small>
           </big>
 
-          <div className="mt-3 text-muted">
-            <IonList lines="none">
-              <IonItem>
-                <SpaceBetween>
-                  <div className="review-avater">
-                    <IonText className="fw-bold" color={"light"}>
-                      A
-                    </IonText>
-                  </div>
-                  <div className="comments">
-                    <strong>Alicia</strong> <br />
-                    <IonText className="text-muted">
-                      Lorem sdfsdf sdf sdfs ipsum dolor sit amet consectetur
-                      adipisicing elit. Perspiciatis, quaerat?
-                    </IonText>
-                  </div>
-                </SpaceBetween>
-              </IonItem>
-            </IonList>
-          </div>
+          {
+            loadingReviews ? (
+              <>
+                <IonGrid>
+                  <IonRow className="ion-align-items-center">
+                    <IonCol size="5">
+                      <IonAvatar>
+                        <IonSkeletonText />
+                      </IonAvatar>
+                    </IonCol>
+                    <IonCol size="auto">
+                      <IonSkeletonText animated className="w-100 rounded-3 p-2" />
+                    </IonCol>
+                  </IonRow>
+                  <IonRow className="ion-align-items-center">
+                    <IonCol size="5">
+                      <IonAvatar>
+                        <IonSkeletonText />
+                      </IonAvatar>
+                    </IonCol>
+                    <IonCol size="auto">
+                      <IonSkeletonText animated className="w-100 rounded-3 p-2" />
+                    </IonCol>
+                  </IonRow>
+                </IonGrid>
+              </>
+            ) : (
+              <div className="mt-3 text-muted">
+                <IonList lines="none">
+                  {
+                    reviews?.items.length! >= 1 ? reviews?.items.map((review, index) => (
+                      <IonItem>
+                        <ProfileImage slot='start' width={50} height={50} />
+                        <IonLabel>
+                          <IonTitle>{review.expand?.user?.name}</IonTitle>
+                          <p>{review.comment}</p>
+                        </IonLabel>
+                      </IonItem>
+                    )) : <NotFound heading="No Reviews" subheading="be the first to give a review" />
+                  }
+                </IonList>
+              </div>
+            )
+          }
+
         </section>
       </IonContent>
     </IonPage>

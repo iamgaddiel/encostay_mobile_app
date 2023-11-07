@@ -9,7 +9,7 @@ import Plane from "../../assets/images/plane.svg"
 import "./PaymentProcessing.css"
 
 import { createApiCollection, updateApiCollectionItem, updatePatchApiCollectionItem } from '../../helpers/apiHelpers'
-import { BOOKINGS_COLLECTION, FLUTTERWAVE_COLLECTION } from '../../helpers/keys'
+import { BOOKINGS_COLLECTION, FLUTTERWAVE_COLLECTION, REVIEWS_COLLECTION } from '../../helpers/keys'
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
@@ -17,6 +17,7 @@ import { bookingAtom } from '../../atoms/bookingAtom'
 import { userAtom } from '../../atoms/appAtom'
 import { utilsAtom } from '../../atoms/utilityAtom'
 import { flutterwaveTransactionIDAtom } from '../../atoms/transactionAtoms'
+import { BookingItem } from '../../@types/bookings'
 
 
 
@@ -48,13 +49,17 @@ const PaymentProcessing = () => {
 
     async function processBooking() {
 
+        // Crate Booking
         const { isCreated, error, response } = await createApiCollection(BOOKINGS_COLLECTION, bookingDetail, userToken)
+        const { apartment } = response as BookingItem
 
         if (!isCreated) {
             console.log(error)
             //TODO: show a toast message of the error
             return
         }
+
+        createPendingUserReview(apartment) // Create user pending review
 
         if (user.preferred_currency === 'NGN') {
 
@@ -73,6 +78,21 @@ const PaymentProcessing = () => {
             setFlutterwaveTransaction({ collectionId: '', transactionId: 0 })
 
             console.log("updated")
+        }
+
+    }
+
+    async function createPendingUserReview(apartmentId: string) {
+        const payload = {
+            user: user.id,
+            apartment: apartmentId,
+        }
+        const { isCreated, error, response } = await createApiCollection(REVIEWS_COLLECTION, payload, userToken)
+
+        if (!isCreated) {
+            console.log(error)
+            //TODO: show a toast message of the error
+            return
         }
 
     }

@@ -6,7 +6,7 @@ import { createApiCollection } from '../../helpers/apiHelpers'
 import { useHistory } from 'react-router'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
-import { USRS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
+import { USERS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { eyeOffOutline, eyeOutline } from 'ionicons/icons'
 
@@ -30,8 +30,8 @@ const Passwords = () => {
     const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
         setLoading(true)
 
-        const formData = { ...regFormData, ...data }
-        const { isCreated, response, error } = await createApiCollection(USRS_COLLECTION, formData)
+        const formData = { ...regFormData, ...data, emailVisibility: true }
+        const { isCreated, response, error } = await createApiCollection(USERS_COLLECTION, formData)
 
 
         if (error?.email) {
@@ -67,6 +67,7 @@ const Passwords = () => {
             return;
         }
 
+        // Create Wallet For Host Users
         if (regFormData.account_type === 'host') {
             const walletDetails = { host: response?.id! }
             const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletDetails)

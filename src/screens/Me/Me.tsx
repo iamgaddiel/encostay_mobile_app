@@ -7,7 +7,7 @@ import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
 import Person from "../../assets/images/man.png"
 
 import "./Me.css"
-import { buildOutline, call, card, ellipse, heart, heartOutline, lockClosed, lockOpenOutline, logOut, logOutOutline, person, personOutline, save } from 'ionicons/icons'
+import { buildOutline, call, card, chatbubble, chatbubbleEllipsesOutline, ellipse, heart, heartOutline, lockClosed, lockOpenOutline, logOut, logOutOutline, person, personOutline, save } from 'ionicons/icons'
 import { clearData } from '../../helpers/storageSDKs'
 import { APP_CONFIG, IMAGEKIT_CONFIG, SELECTED_BOOKING_FOR_CANCELATION, USER } from '../../helpers/keys'
 import { useHistory } from 'react-router'
@@ -46,7 +46,7 @@ const Me = () => {
         {/* Profile Preview */}
         <section className="ion-text-center mt-3">
           {/* <div className="me_thumbnail" style={{ backgroundImage: `url(${Person})` }}></div> */}
-          <ProfileImage className="me_thumbnail"  />
+          <ProfileImage className="me_thumbnail" />
 
           <IonTitle className='mt-3 fs-2'>{user.name}</IonTitle>
           <small className="text-center text-muted">{user.email}</small>
@@ -66,6 +66,16 @@ const Me = () => {
                 <IonText className='ml-5'>Favorites</IonText>
               </div>
             </IonItem>
+            {
+              user.account_type === 'guest' && (
+                <IonItem className="ion-no-margin" mode='ios' routerDirection='forward' routerLink='/pending_reviews'>
+                  <div className="d-flex align-items-center">
+                    <IonIcon icon={chatbubble} color='warning' size='large' />
+                    <IonText className='ml-5'>Pending Reviews</IonText>
+                  </div>
+                </IonItem>
+              )
+            }
             <IonItem className="ion-no-margin" mode="ios" routerDirection='forward' routerLink='/change_password'>
               <div className="d-flex align-items-center">
                 <IonIcon icon={lockClosed} color='warning' size='large' />
