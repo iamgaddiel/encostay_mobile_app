@@ -217,7 +217,7 @@ const BookingPreview = () => {
 
 
   function calculateTotalAndTransactionCost(subTotal: number, transactionCharge: number) {
-    let totalPrice = transactionCharge + subTotal;
+    let totalPrice = (transactionCharge + subTotal).toFixed(2);
 
     setState({
       type: SET_TOTAL,
