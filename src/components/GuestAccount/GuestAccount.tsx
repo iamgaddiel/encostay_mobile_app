@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText, IonChip, IonText } from "@ionic/react";
+import { IonPage, IonContent, IonAvatar, IonImg, IonButton, IonRouterLink, IonCard, IonIcon, IonCardContent, IonSkeletonText, IonChip, IonText, useIonViewDidEnter, IonHeader, IonToolbar, IonGrid, IonRow, IonCol, IonTitle } from "@ionic/react";
 import { heart, bedOutline, wifiOutline, chevronForwardOutline, chevronBack, chevronForward } from "ionicons/icons";
 import Slider from "react-slick";
 import { demoRoomsAtom } from "../../atoms/demoAtoms";
@@ -9,7 +9,7 @@ import { utilsAtom } from "../../atoms/utilityAtom";
 import { userAtom } from "../../atoms/appAtom";
 import { useQuery } from "@tanstack/react-query";
 import { listApartments } from "../../helpers/utils";
-import { ApartementItem } from "../../@types/apartments";
+import { ApartementItem, Apartment, ApartmentSearchOptions } from "../../@types/apartments";
 import HomeListCard from "../HomeListCard/HomeListCard";
 import RoomLnd from "../../assets/images/room-ld.png";
 import NotFound from "../NotFound";
@@ -18,15 +18,8 @@ import ProfileImage from "../ProfileImage";
 
 
 
-interface Props {
-    userImage: string
-}
 
-const GuestsAccount: React.FC<Props> = ({
-    userImage
-}) => {
-
-
+const GuestsAccount = () => {
     // ----------------- Couresel Settings -----------------------
     const homeCategoryCarouselSettings = {
         className: "slider variable-width",
@@ -64,19 +57,25 @@ const GuestsAccount: React.FC<Props> = ({
 
     // ----------------- State -------------------------
     const { token: authToken, record: user } = useRecoilValue(userAtom);
+
     const rooms = useRecoilValue(demoRoomsAtom)
-    const [loading, setLoading] = useState(false)
+
     const updateShowTabs = useSetRecoilState(utilsAtom)
+
     const [pageNumber, setPageNumber] = useState(1)
 
+    const [apartmentType, setApartmentType] = useState<Apartment | ''>('')
+
+
+    // ----------------- Queries -------------------------
     // const { data } = useQuery({
     //     queryKey: ['guestAccountFeaturedHome'],
     //     queryFn: featuredApartments
     // })
 
     const { data: apartmentList, isLoading, isError, error } = useQuery({
-        queryKey: ['favoriteApartments', pageNumber],
-        queryFn: () => fetchAllApartments(pageNumber)
+        queryKey: ['favoriteApartments', pageNumber, apartmentType],
+        queryFn: () => fetchAllApartments(pageNumber, apartmentType)
     })
 
     useEffect(() => {
@@ -87,12 +86,10 @@ const GuestsAccount: React.FC<Props> = ({
 
 
     // ----------------- functions -----------------------
-    async function fetchAllApartments(page: number) {
+    async function fetchAllApartments(page: number, type: Apartment | '') {
         try {
-            const options = {
-                perPage: 5,
-                page
-            }
+            let options: ApartmentSearchOptions = { perPage: 5, page }
+            if (type !== '') options = { perPage: 5, page, filter: `type="${type}"` };
             return await listApartments(authToken, options);
         } catch (error: any) {
             throw new Error('error getting favorite apartments')
@@ -150,30 +147,42 @@ const GuestsAccount: React.FC<Props> = ({
 
     return (
         <IonPage>
+            <IonHeader className="ion-no-border">
+                <IonToolbar>
+                    <IonGrid>
+                        <IonRow className="ion-align-items-center">
+                            <IonCol size="10">
+                                <p className='text-muted fs-5 my-0 py-0'>Hey {user.name}!</p>
+                                <small className="mt-1" style={{ display: "block" }}>Let's find your best residence!</small>
+                            </IonCol>
+                            <IonCol size="auto">
+                                <ProfileImage width={50} height={50} />
+                            </IonCol>
+                        </IonRow>
+                    </IonGrid>
+                </IonToolbar>
+            </IonHeader>
             <IonContent className='ion-padding page_wrapper'>
-                <section className="hero mt-3">
-                    <SpaceBetween>
-                        <div>
-                            <h4 className='text-muted'>Hey {user.name}!</h4>
-                            <span className="mt-4" style={{ display: "block" }}>Let's find your best residence!</span>
-                        </div>
-                        <ProfileImage width={50} height={50} slot={'end'} />
-                    </SpaceBetween>
-                </section>
-
 
                 {/* apartment category */}
                 {/* TODO: use this as a search to display apartments based on apartment type */}
                 <section className="apartment_types mt-3">
                     <Slider {...homeCategoryCarouselSettings}>
+                        {/* TODO: add info (i) to each apartment type explaing what theya are */}
                         {/* <OwlCarousel options={options}> */}
-                        <IonChip outline color={'warning'} className='brown_fill'>All</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>Apartment</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>Loft</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>Condo</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>House</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>Studio</IonChip>
-                        <IonChip outline color={'warning'} className='brown_fill_outline'>Duplex</IonChip>
+                        <IonChip onClick={e => setApartmentType('')} outline color={'warning'} className='brown_fill'>All</IonChip>
+                        <IonChip onClick={e => setApartmentType('co-op')} outline color={'warning'} className='brown_fill_outline'>Co-op</IonChip>
+                        <IonChip onClick={e => setApartmentType('loft')} outline color={'warning'} className='brown_fill_outline'>Loft</IonChip>
+                        <IonChip onClick={e => setApartmentType('condo')} outline color={'warning'} className='brown_fill_outline'>Condo</IonChip>
+                        <IonChip onClick={e => setApartmentType('duplex')} outline color={'warning'} className='brown_fill_outline'>Duplex</IonChip>
+                        <IonChip onClick={e => setApartmentType('garden')} outline color={'warning'} className='brown_fill_outline'>Garden</IonChip>
+                        <IonChip onClick={e => setApartmentType('high-rise')} outline color={'warning'} className='brown_fill_outline'>High-rise</IonChip>
+                        <IonChip onClick={e => setApartmentType('low-rise')} outline color={'warning'} className='brown_fill_outline'>Low-rise</IonChip>
+                        <IonChip onClick={e => setApartmentType('micro')} outline color={'warning'} className='brown_fill_outline'>Micro</IonChip>
+                        <IonChip onClick={e => setApartmentType('railroad')} outline color={'warning'} className='brown_fill_outline'>Railroad</IonChip>
+                        <IonChip onClick={e => setApartmentType('single-family')} outline color={'warning'} className='brown_fill_outline'>Single Family</IonChip>
+                        <IonChip onClick={e => setApartmentType('triplex')} outline color={'warning'} className='brown_fill_outline'>Triplex</IonChip>
+                        <IonChip onClick={e => setApartmentType('walk-up')} outline color={'warning'} className='brown_fill_outline'>Walk up</IonChip>
                     </Slider>
                 </section>
 
@@ -193,30 +202,34 @@ const GuestsAccount: React.FC<Props> = ({
                         }
                     </SpaceBetween>
 
-                    <div className="mt-4">
-                        {apartmentList &&
-                            apartmentList?.totalItems >= 1 ?
-                            apartmentList.items.map((home: ApartementItem) =>
-                            (
-                                <HomeListCard
-                                    has_wifi={home.has_wifi}
-                                    location={{
-                                        country: home.country,
-                                        state: home.state_location,
-                                    }}
-                                    imageUri={RoomLnd}
-                                    numberOfBedrooms={home.bedrooms}
-                                    price={home.price}
-                                    ratings={4}
-                                    showRatings={true}
-                                    title={home.title}
-                                    homeId={home.id!}
-                                    key={home?.id!}
-                                />
-                            )
-                            ) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
-                        }
-                    </div>
+                    <IonGrid className="mt-4">
+                        <IonRow>
+                            {apartmentList &&
+                                apartmentList?.totalItems >= 1 ?
+                                apartmentList.items.map((home: ApartementItem) =>
+                                (
+                                    <IonCol size="12" sizeSm="6" sizeLg="4" sizeXl="3">
+                                        <HomeListCard
+                                            has_wifi={home.has_wifi}
+                                            location={{
+                                                country: home.country,
+                                                state: home.state_location,
+                                            }}
+                                            imageUri={RoomLnd}
+                                            numberOfBedrooms={home.bedrooms}
+                                            price={home.price}
+                                            ratings={4}
+                                            showRatings={true}
+                                            title={home.title}
+                                            homeId={home.id!}
+                                            key={home?.id!}
+                                        />
+                                    </IonCol>
+                                )
+                                ) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
+                            }
+                        </IonRow>
+                    </IonGrid>
                 </section>
 
 
@@ -268,7 +281,7 @@ const GuestsAccount: React.FC<Props> = ({
             -----------------------------------------------------------
             */}
 
-                <section className="home_list_wrapper mt-4">
+                {/* <section className="home_list_wrapper mt-4">
                     <SpaceBetween>
                         <span>Featured Places</span>
                         <IonRouterLink className="ion-warning">All</IonRouterLink>
@@ -315,9 +328,7 @@ const GuestsAccount: React.FC<Props> = ({
 
                         </Slider>
                     </section>
-                </section>
-
-
+                </section> */}
 
                 {/* 
             -----------------------------------------------------------

@@ -7,10 +7,9 @@ import ProfileImage from '../ProfileImage'
 
 
 interface Props {
-    userImage: string
     user: UserCollectionType
 }
-const SideMenu: React.FC<Props> = ({ userImage, user }) => {
+const SideMenu: React.FC<Props> = ({ user }) => {
 
     const history = useHistory()
 

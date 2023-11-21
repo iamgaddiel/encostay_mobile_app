@@ -13,6 +13,7 @@ import {
   IonRouterLink,
   IonTitle,
   IonToolbar,
+  useIonRouter,
   useIonViewDidEnter,
 } from "@ionic/react";
 import {
@@ -40,18 +41,15 @@ import { userAtom } from "../../atoms/appAtom";
 import { ApartementList } from "../../@types/apartments";
 import { listApiCollection } from "../../helpers/apiHelpers";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
-import { useHistory } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import ProfileImage from "../ProfileImage";
 
 
 
-interface Props {
-  userImage: string;
-}
 
-const HostAccount: React.FC<Props> = ({ userImage }) => {
-  const history = useHistory()
+
+const HostAccount = () => {
+  const router = useIonRouter()
 
   // ----------------- Couresel Settings -----------------------
   const cardCarouselSettings = {
@@ -60,13 +58,12 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
     centerMode: false,
     slidesToShow: 1,
     slidesToScroll: 1,
-    // dots: true,
+    slidesPerView: 1.5,
     speed: 2000,
     rtl: false,
     autoplay: false,
   };
 
-  const rooms = useRecoilValue(demoRoomsAtom);
   const setShowTabs = useSetRecoilState(utilsAtom);
   const { record: user, token } = useRecoilValue<StoredUser>(userAtom);
 
@@ -99,7 +96,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
   return (
     <>
       {/* Side Menu */}
-      <SideMenu userImage={userImage} user={user} />
+      <SideMenu user={user} />
 
       {/* Man Page */}
       <IonPage id="main-content">
@@ -140,7 +137,7 @@ const HostAccount: React.FC<Props> = ({ userImage }) => {
           <section
             className="my-5 shadow rounded-4 view_earnings ion-padding"
             style={{ backgroundImage: `url(${Card})` }}
-            onClick={() => history.push('/transactions')}
+            onClick={() => router.push('/transactions')}
           ></section>
 
           {/* Add New Listing */}
