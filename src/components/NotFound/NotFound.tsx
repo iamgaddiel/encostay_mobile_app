@@ -1,16 +1,20 @@
-import { IonIcon } from "@ionic/react"
-import { balloonOutline } from "ionicons/icons"
+import { IonCol, IonGrid, IonIcon, IonRow } from "@ionic/react"
+import { balloonOutline, refreshOutline } from "ionicons/icons"
 
-const NotFound: React.FC<{heading: string, subheading: string }> = ({ heading, subheading }) => {
+const NotFound: React.FC<{ heading: string, subheading: string }> = ({ heading, subheading }) => {
     return (
         <div className='d-flex justify-content-center align-items-center' style={{ height: '50vh' }}>
-            <div className='ion-text-center'>
-                <h3 className='text-center text-muted display-1'>
-                    <IonIcon icon={balloonOutline} size="large" />
-                </h3>
-                <h1>{heading}</h1>
-                <small className="lead text-muted fs-small">{subheading}</small>
-            </div>
+            <IonGrid>
+                <IonRow className="ion-justify-content-center ion-text-center">
+                    <IonCol size="12" className="text-muted">
+                        <IonIcon icon={refreshOutline} size="large" className="fs-1" />
+                    </IonCol>
+                    <IonCol size="12">
+                        <h1>{heading}</h1>
+                        <small className="lead text-muted fs-small">{subheading}</small>
+                    </IonCol>
+                </IonRow>
+            </IonGrid>
         </div>
     )
 }

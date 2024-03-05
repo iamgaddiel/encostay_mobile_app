@@ -3,7 +3,7 @@ export const APP_CONFIG_RECORD_ID = '19uu141soz92izn'
 
 
 // Collections
-export const USRS_COLLECTION = "users"
+export const USERS_COLLECTION = "users"
 export const IMAGEKIT_COLLECTION = "imagekit"
 export const APARTMENTS_COLLECTION = 'apartments'
 export const BOOKINGS_COLLECTION = 'bookings'
@@ -12,6 +12,7 @@ export const APP_CONFIG_COLLECTION = 'app_config'
 export const WALLETS_COLLECTION = 'wallets'
 export const BANKS_COLLECTION = 'banks'
 export const FLUTTERWAVE_COLLECTION = 'flutterwave_transactions'
+export const REVIEWS_COLLECTION = 'reviews'
 
 
 // DB

@@ -21,7 +21,7 @@ import { userAtom } from "../../atoms/appAtom";
 import { Action } from "../../@types/action";
 import { set } from "react-hook-form";
 import { updateApiCollectionItem } from "../../helpers/apiHelpers";
-import { USRS_COLLECTION } from "../../helpers/keys";
+import { USERS_COLLECTION } from "../../helpers/keys";
 import ProfileImage from "../../components/ProfileImage";
 
 // types
@@ -87,7 +87,7 @@ const EditProfile = () => {
       account_type: user.account_type
     }
     
-    const { isUpdated, response } = await updateApiCollectionItem(USRS_COLLECTION, user.id, formData, token)
+    const { isUpdated, response } = await updateApiCollectionItem(USERS_COLLECTION, user.id, formData, token)
     console.log("🚀 ~ file: EditProfile.tsx:83 ~ EditProfile ~ response:", response)
 
     if (!isUpdated) {

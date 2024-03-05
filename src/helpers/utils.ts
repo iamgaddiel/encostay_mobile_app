@@ -13,6 +13,50 @@ import { getSaveData } from "./storageSDKs";
 
 
 
+
+
+
+export function getBase64Details(base64Data: string): { filetype: string, mimeType: string, base64Data: string } {
+  const base64Extract = base64Data.match(/^data:(.*);base64,/)!;
+  const mimeType = base64Extract[1]
+  const filetype = base64Extract[1].split('/')[1];
+  return { filetype, mimeType, base64Data }
+}
+
+
+export async function base64ToFile(base64: string, filename: string, mimeType: string): Promise<File> {
+  const response = await fetch(base64);
+  const blob = await response.blob();
+
+  // Create a File from Blob
+  const file: File = new File([blob], filename, { type: mimeType });
+  return file
+}
+
+export async function base64ToUint8Array(base64: string): Promise<Uint8Array> {
+  const response = await fetch(base64);
+  const blob = await response.blob();
+  const arrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as ArrayBuffer);
+      reader.readAsArrayBuffer(blob);
+  });
+
+  return new Uint8Array(arrayBuffer);
+}
+
+
+export function uint8ArrayToFile(uint8Array: Uint8Array, fileName: string, mimeType: string): File {
+  // Create a Blob from the Uint8Array
+  const blob = new Blob([uint8Array], { type: mimeType });
+
+  // Use the Blob to create a File object
+  const file = new File([blob], fileName, { type: mimeType });
+  return file;
+}
+
+
+
 export function getHumanReadableDate(date: Date): HumanReadableDate {
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -47,6 +91,18 @@ export function getRandomString(length: number) {
   return Math.random().toString(36).substring(2, 2 + length);
 }
 
+export function generateRandomNumbers(length: number) {
+  let result = '';
+  const characters = '0123456789'; // All possible numeric characters
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
+}
+
 
 export function formatDate(date: string) {
   const formatedDated = format(new Date(date), 'LLL dd') // Month 01
@@ -69,10 +125,10 @@ export async function serverLog(payload: ServerLogPayload): Promise<void> {
   const { serverBaseUrl } = Settings()
   const user = await getSaveData(USER)
 
-  const newPayload = {user: user, ...payload}
+  const newPayload = { user: user, ...payload }
 
   const url = `${serverBaseUrl}/util/logger`
-  const headers = {'Content-Type': 'application/json'}
+  const headers = { 'Content-Type': 'application/json' }
   await _post(url, newPayload, headers)
 }
 

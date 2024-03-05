@@ -1,13 +1,12 @@
 import { useIonToast } from '@ionic/react'
-import { warningOutline } from 'ionicons/icons'
-import React from 'react'
+import { checkboxOutline, warningOutline } from 'ionicons/icons'
 
 const useCustomToast = () => {
     const [present, _] = useIonToast()
 
     /**
      * @param message 
-     * @description - Display a toast at the top of the screen of type danger for duration of 3 seconds
+     * @description Display a toast at the top of the screen of type danger for duration of 3 seconds
      */
     function presentToastDanger(message: string): void {
         present({
@@ -21,8 +20,25 @@ const useCustomToast = () => {
     }
 
 
+    /**
+     * @param message 
+     * @description Display a toast at the top of the screen of type success for duration of 3 seconds
+     */
+    function presentToastSuccess(message: string): void {
+        present({
+            message,
+            icon: checkboxOutline,
+            color: 'success',
+            position: 'top',
+            duration: 3000,
+            mode: 'ios'
+        })
+    }
+
+
     return {
-        presentToastDanger
+        presentToastDanger,
+        presentToastSuccess
     }
 }
 

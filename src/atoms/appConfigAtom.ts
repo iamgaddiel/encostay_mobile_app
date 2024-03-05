@@ -29,5 +29,6 @@ export const appConfigAtom = atom<AppConfig>({
         imgkit_pk: '',
         imgkit_sk: '',
         imgkit_url: '',
+        // profile_image_url: ''
     }
 })

@@ -187,7 +187,7 @@ const Booking1 = () => {
           </IonAccordionGroup>
         </section>
 
-        {/* Revies */}
+        {/* Reviews */}
         <section className="mt-4 ion-padding">
           <div className="ion-padding shadow rounded-5">
             <SpaceBetween>

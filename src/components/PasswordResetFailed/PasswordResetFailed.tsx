@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil'
 const PasswordResetFailed = () => {
     const [_, setForgetPassword] = useRecoilState(forgetPasswordAtom)
 
-    const handleReset = () =>  setForgetPassword("none")
 
     return (
         <>
@@ -30,7 +29,6 @@ const PasswordResetFailed = () => {
                     shape='round'
                     className='nm_btn yellow_fill w-100'
                     mode='ios'
-                    onClick={handleReset}
                 >
                     Reset Password
                 </IonButton>

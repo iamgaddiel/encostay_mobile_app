@@ -1,3 +1,5 @@
+import { ApartementItem } from "./apartments"
+import { UserCollectionType } from "./users"
 
 
 export type ReviewItem = {
@@ -10,6 +12,10 @@ export type ReviewItem = {
     stars: 1 | 2 | 3 | 4 | 5
     comment: StripeIssuingCardCopyButtonElement
     apartment: string
+    expand?: {
+      apartment?: ApartementItem
+      user?: UserCollectionType
+    }
   }
 
 export interface ReviewList{

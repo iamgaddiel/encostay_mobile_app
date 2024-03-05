@@ -84,7 +84,7 @@ const Booking1 = () => {
 
 
     useEffect(() => {
-        processPhoneNumber()
+        handlePhoneNumberUpdate()
         loadFlutterwaveConfig()
     }, [phone])
 
@@ -135,7 +135,7 @@ const Booking1 = () => {
     }
 
 
-    function processPhoneNumber() {
+    function handlePhoneNumberUpdate() {
         setBookingDetail({
             ...bookingDetail,
             is_pending: true,
@@ -162,7 +162,6 @@ const Booking1 = () => {
             if (handleFlutterwavePayment !== null) {
                 handleFlutterwavePayment({
                     callback: async (response) => {
-                        console.log(response);
                         closePaymentModal() // this will close the modal programmatically
                         setLoading(() => false)
 
@@ -180,7 +179,7 @@ const Booking1 = () => {
                             transactionPayload,
                             authToken
                         )
-                        console.log("🚀 ~ file: Boking3.tsx:164 ~ callback: ~ fluTrx:", fluTrx)
+
                         if (isCreated) {
                             // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
                             setFlutterwaveTransactionId({

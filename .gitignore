@@ -268,3 +268,7 @@ pocketbase_bin
 .env 2
 
 android/
+error.html
+/android
+/ios
+.idea

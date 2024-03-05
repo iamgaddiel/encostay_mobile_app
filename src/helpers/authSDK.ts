@@ -1,6 +1,6 @@
 import {  StoredUser } from "../@types/users"
 import { _post } from "./api"
-import { USRS_COLLECTION, USER } from "./keys"
+import { USERS_COLLECTION, USER } from "./keys"
 import Settings from "./settings"
 import { getSaveData } from "./storageSDKs"
 
@@ -62,7 +62,7 @@ export async function authenticate(email: string, password: string): Promise<Aut
 //TODO: give "data" params a type of CreateUser *FYI this type does not exist
 export async function createUser(data: any) {
     try {
-        const user = await pb.collection(USRS_COLLECTION).create(data)
+        const user = await pb.collection(USERS_COLLECTION).create(data)
         return user
     }
     catch (err: any) {

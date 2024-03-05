@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // images
 import Man from "../../assets/images/man.png";
@@ -19,7 +19,7 @@ import {
 } from "../../helpers/keys";
 import { StoredUser, UserCollectionType } from "../../@types/users";
 import { listApiCollection } from "../../helpers/apiHelpers";
-import ImageKit from "imagekit";
+// import ImageKit from "imagekit";
 import { ImageKitType } from "../../@types/imagekit";
 import { imageKitAtom } from "../../atoms/imagekitAtom";
 import { useHistory } from "react-router";
@@ -28,14 +28,14 @@ import { appConfigAtom } from "../../atoms/appConfigAtom";
 import Settings from "../../helpers/settings";
 import { _post } from "../../helpers/api";
 import { serverLog } from "../../helpers/utils";
-import { ServerLogPayload } from "../../@types/utils";
+import { useIonViewDidEnter } from "@ionic/react";
 
 const Home = () => {
   const history = useHistory()
   const { serverBaseUrl } = Settings()
   // ----------------- States -----------------------
 
-  // TODO: add palceholder while fetching user images
+  // TODO: add placeholder while fetching user images
 
   const [userRecord, setUesrRecrod] = useState<UserCollectionType | null>(null);
   const setAppUserObject = useSetRecoilState(userAtom);
@@ -43,7 +43,7 @@ const Home = () => {
   const setAppConfig = useSetRecoilState(appConfigAtom)
 
 
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     getUserDetails();
   }, []);
 
@@ -94,16 +94,23 @@ const Home = () => {
     //   return;
     // }
 
-    saveData(IMAGEKIT_CONFIG, imageKitConfig); // save imagekit config to Application's database
-    const imageKit: ImageKit = new ImageKit(imageKitConfig) // init ImageKit
-    setImageKitAtomConfig(imageKit) // set imageKit object globally
+    // saveData(IMAGEKIT_CONFIG, imageKitConfig); // save imagekit config to Application's database
+    // const imageKit: ImageKit = new ImageKit(imageKitConfig) // init ImageKit
+    // setImageKitAtomConfig(imageKit) // set imageKit object globally
   }
 
   if (userRecord?.account_type === "host") {
-    return <HostAccount userImage={Man} />;
+    return <HostAccount />;
   }
 
-  return <GuestsAccount userImage={Man} />;
+  return <GuestsAccount />;
+
+  // return (
+  //   <>
+  //     {/* {userRecord?.account_type === 'guest' ? <GuestsAccount /> : <HostAccount />} */}
+  //     {/* { userRecord?.account_type === 'host' && <HostAccount />} */}
+  //   </>
+  // )
 };
 
 export default Home;

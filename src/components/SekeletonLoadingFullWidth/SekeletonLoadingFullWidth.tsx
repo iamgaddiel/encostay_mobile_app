@@ -27,7 +27,7 @@ const SekeletonLoadingFullWidth: React.FC<Props> = ({ height, width, count }) =>
                     <IonSkeletonText
                         animated
                         className="w-100 rounded-4"
-                        style={{ height: `${height}`, width: `${width}vw` }}
+                        style={{ height: `${height}px`, width: `${width}vw` }}
                         key={key}
                     />
                 ))

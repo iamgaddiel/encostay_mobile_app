@@ -16,12 +16,13 @@ type Props = {
     width?: number
     slot?: 'start' | 'end'
     className?: string
+    name?: string
 }
-const ProfileImage: React.FC<Props> = ({ height, width, slot, className }) => {
+const ProfileImage: React.FC<Props> = ({ height, width, slot, className, name }) => {
     const { record: user } = useRecoilValue(userAtom)
 
     // create avatar
-    const avatar = createAvatar(thumbs, { seed: user.name })
+    const avatar = createAvatar(thumbs, { seed: name ?? user.name })
 
     const [image, setImage] = useState('')
 

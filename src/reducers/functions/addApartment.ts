@@ -1,7 +1,7 @@
 import { Action } from "../../@types/action";
 import { FormInputs } from "../../@types/apartments";
 import { getTimeOrDateFromDateTimeString } from "../../helpers/utils";
-import { SET_NUMBER_OF_BEDS, SET_NUMBER_OF_GUESTS, SET_NUMBER_OF_CHILDREN, SET_NUMBER_OF_PETS, SET_NUMBER_OF_ROOMS, SET_NUMBER_OF_BATHROOMS, SET_MIN_MAx_NIGHTS, SET_APARTMENT_TITLE, SET_APARTMENT_ADDRESS, SET_APARTMENT_CITY_LOCATION, SET_APARTMENT_COUNTRY_LOCATITION, SET_APARTMENT_DESCRIPTION, SET_APARTMENT_HAS_GYM, SET_APARTMENT_HAS_LAUNDARY, SET_APARTMENT_HAS_SECURITY, SET_APARTMENT_HAS_TV_CABLE, SET_APARTMENT_HAS_WIFI, SET_APARTMENT_STATE_LOCATITION, SET_CHILDREN_ALLOWED, SET_PARTY_ALLOWED, SET_PETS_ALLOWED, SET_SMOKING_ALLOWED, SET_APARTMENT_TYPE, SET_CHECIN_TIME, SET_CHECKOUT_TIME, SET_APARTMENT_IMAGE_1, SET_APARTMENT_IMAGE_2, SET_APARTMENT_IMAGE_3, SET_ALL_APARTMENT_DETAILS } from "../actions/addApartmentsActions";
+import { SET_NUMBER_OF_BEDS, SET_NUMBER_OF_GUESTS, SET_NUMBER_OF_CHILDREN, SET_NUMBER_OF_PETS, SET_NUMBER_OF_ROOMS, SET_NUMBER_OF_BATHROOMS, SET_MIN_MAx_NIGHTS, SET_APARTMENT_TITLE, SET_APARTMENT_ADDRESS, SET_APARTMENT_CITY_LOCATION, SET_APARTMENT_COUNTRY_LOCATION, SET_APARTMENT_DESCRIPTION, SET_APARTMENT_HAS_GYM, SET_APARTMENT_HAS_LAUNDRY, SET_APARTMENT_HAS_SECURITY, SET_APARTMENT_HAS_TV_CABLE, SET_APARTMENT_HAS_WIFI, SET_APARTMENT_STATE_LOCATION, SET_CHILDREN_ALLOWED, SET_PARTY_ALLOWED, SET_PETS_ALLOWED, SET_SMOKING_ALLOWED, SET_APARTMENT_TYPE, SET_CHECKOUT_TIME, SET_APARTMENT_IMAGE_1, SET_APARTMENT_IMAGE_2, SET_APARTMENT_IMAGE_3, SET_ALL_APARTMENT_DETAILS, SET_CHECK_IN_TIME } from "../actions/addApartmentsActions";
 
 
 
@@ -58,11 +58,11 @@ export function addApartmentReducer(state: FormInputs, { type, payload }: Action
             tempState.title = payload
             break;
 
-        case SET_APARTMENT_STATE_LOCATITION:
+        case SET_APARTMENT_STATE_LOCATION:
             tempState.state_location = payload
             break;
 
-        case SET_APARTMENT_COUNTRY_LOCATITION:
+        case SET_APARTMENT_COUNTRY_LOCATION:
             tempState.country = payload
             break;
 
@@ -82,31 +82,31 @@ export function addApartmentReducer(state: FormInputs, { type, payload }: Action
             tempState.has_gym = payload
             break;
 
-        case SET_APARTMENT_HAS_LAUNDARY:
+        case SET_APARTMENT_HAS_LAUNDRY:
             tempState.has_laundry = payload
             break;
 
         case SET_SMOKING_ALLOWED:
-            tempState.has_laundry = payload
+            tempState.smoking_allowed = payload
             break;
 
         case SET_PETS_ALLOWED:
-            tempState.has_laundry = payload
+            tempState.pets_allowed = payload
             break;
 
         case SET_CHILDREN_ALLOWED:
-            tempState.has_laundry = payload
+            tempState.children_allowed = payload
             break;
 
         case SET_PARTY_ALLOWED:
-            tempState.has_laundry = payload
+            tempState.party_allowed = payload
             break;
 
         case SET_APARTMENT_TYPE:
             tempState.type = payload
             break;
 
-        case SET_CHECIN_TIME:
+        case SET_CHECK_IN_TIME:
             const checkinTime = getTimeOrDateFromDateTimeString(payload)
             tempState.checkin = checkinTime
             break;

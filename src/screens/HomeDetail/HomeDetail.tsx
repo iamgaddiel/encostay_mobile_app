@@ -148,6 +148,7 @@ const HomeDetail = () => {
 
       setSelectedApartment(selectedApartment)
 
+      // Set Booking Details Atom for booking process
       setBookingDetail({
         ...bookingDetail,
         apartment: selectedApartment?.id!,
@@ -587,6 +588,7 @@ const HomeDetail = () => {
                 size="large"
                 shape="round"
                 onClick={() => checkForBankDetails()}
+                disabled={!apartment?.is_available}
               >
                 Reserve
               </IonButton>

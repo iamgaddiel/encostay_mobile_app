@@ -18,9 +18,18 @@ export interface UserCollectionType {
     report_count: number
     preferred_currency: 'NGN' | 'USD'
     phone: string
+    profile_image_url: string
 }
 
 interface StoredUser {
     record: UserCollectionType
     token: string
+}
+
+export interface UsersList{
+    page: number
+    perPage: number
+    totalPages: number
+    totalItems: number
+    items: UserCollectionType[]
 }

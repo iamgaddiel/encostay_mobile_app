@@ -13,10 +13,13 @@ import { userAtom } from '../../atoms/appAtom'
 import { appartmnetBookingAtom } from '../../atoms/bookingAtom'
 import { saveData } from '../../helpers/storageSDKs'
 import { SELECTED_BOOKING_FOR_CANCELATION } from '../../helpers/keys'
+import Currency from '../../components/Currency'
 
 
 const MangeBookingPreivew = () => {
     const { bookingId } = useParams<{ bookingId: string }>()
+
+    const {record: user} = useRecoilValue(userAtom)
 
     // recoil
     const { token } = useRecoilValue(userAtom)
@@ -64,7 +67,7 @@ const MangeBookingPreivew = () => {
                     <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
                     <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
                         <big>{ }</big>
-                        <IonText className='fs-3 block'>₦{booking?.expand?.apartment?.price}/night</IonText>
+                        <IonText className='fs-3 block'><Currency currency={user.preferred_currency} />{booking?.expand?.apartment?.price}/night</IonText>
                         <span className='d-flex align-items-center justify-content-between'>
 
                             <div className='fs-5 d-flex'>
@@ -122,8 +125,8 @@ const MangeBookingPreivew = () => {
 
                 <SpaceBetween className='mt-4'>
                     <IonText className='text-muted'>Total price</IonText>
-                    <div className="shadow-sm p-2 bg-light rounded-3 text-center" style={{ width: "80px", fontSize: '1.2rem' }}>
-                        <IonText>${booking?.price}</IonText>
+                    <div className="shadow-sm p-2 bg-light rounded-3 text-end" style={{ width: "200px", fontSize: '1.2rem' }}>
+                        <IonText><Currency currency={user.preferred_currency} />{booking?.price}</IonText>
                     </div>
                 </SpaceBetween>
 

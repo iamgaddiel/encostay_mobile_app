@@ -239,7 +239,7 @@ const MangeBooking = () => {
                                                         {
                                                             bookings && bookings.items.map((booking, indx) => (
                                                                 // bookingsDemo && bookingsDemo.map((booking, indx) => (
-                                                                <IonItem key={indx} routerDirection='forward' routerLink='/manage_booking_preview'>
+                                                                <IonItem key={indx}>
                                                                     <IonLabel>
                                                                         <section className='d-flex mt-1'>
                                                                             <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>

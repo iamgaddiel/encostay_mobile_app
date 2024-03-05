@@ -24,8 +24,8 @@ import {
   SET_APARTMENT_DESCRIPTION,
   SET_APARTMENT_ADDRESS,
   SET_APARTMENT_CITY_LOCATION,
-  SET_APARTMENT_STATE_LOCATITION,
-  SET_APARTMENT_COUNTRY_LOCATITION,
+  SET_APARTMENT_STATE_LOCATION,
+  SET_APARTMENT_COUNTRY_LOCATION,
   SET_NUMBER_OF_BEDS,
   SET_NUMBER_OF_ROOMS,
   SET_NUMBER_OF_BATHROOMS,
@@ -34,7 +34,7 @@ import {
   SET_APARTMENT_HAS_TV_CABLE,
   SET_APARTMENT_HAS_SECURITY,
   SET_APARTMENT_HAS_GYM,
-  SET_APARTMENT_HAS_LAUNDARY,
+  SET_APARTMENT_HAS_LAUNDRY,
   SET_SMOKING_ALLOWED,
   SET_PETS_ALLOWED,
   SET_CHILDREN_ALLOWED,
@@ -43,7 +43,7 @@ import {
   SET_NUMBER_OF_CHILDREN,
   SET_NUMBER_OF_PETS,
   SET_MIN_MAx_NIGHTS,
-  SET_CHECIN_TIME,
+  SET_CHECK_IN_TIME,
   SET_CHECKOUT_TIME,
   SET_APARTMENT_IMAGE_1,
   SET_APARTMENT_IMAGE_2,
@@ -540,7 +540,7 @@ async function getApartmentDetail(): Promise<void> {
                 onIonChange={(e) =>
                   setState({
                     payload: e.detail.value,
-                    type: SET_APARTMENT_STATE_LOCATITION,
+                    type: SET_APARTMENT_STATE_LOCATION,
                   })
                 }
               />
@@ -559,7 +559,7 @@ async function getApartmentDetail(): Promise<void> {
                 onIonChange={(e) =>
                   setState({
                     payload: e.detail.value,
-                    type: SET_APARTMENT_COUNTRY_LOCATITION,
+                    type: SET_APARTMENT_COUNTRY_LOCATION,
                   })
                 }
               />
@@ -816,7 +816,7 @@ async function getApartmentDetail(): Promise<void> {
                 onIonChange={(e) =>
                   setState({
                     payload: e.detail.checked,
-                    type: SET_APARTMENT_HAS_LAUNDARY,
+                    type: SET_APARTMENT_HAS_LAUNDRY,
                   })
                 }
               />
@@ -1036,7 +1036,7 @@ async function getApartmentDetail(): Promise<void> {
                   onIonChange={(e) =>
                     setState({
                       payload: e.detail.value as string,
-                      type: SET_CHECIN_TIME,
+                      type: SET_CHECK_IN_TIME,
                     })
                   }
                 />

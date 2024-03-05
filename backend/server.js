@@ -33,6 +33,8 @@ const port = 3000 || process.env.port;
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use('/stripe', stripePaymentsRoutes)
 app.use('/flw', flutterPaymentsRoutes) // Flutterwave Payment Routes

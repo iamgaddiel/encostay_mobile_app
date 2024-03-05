@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonList, IonPage, IonRadio, IonRadioGroup, IonText } from '@ionic/react'
+import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonList, IonPage, IonRadio, IonRadioGroup, IonSkeletonText, IonText } from '@ionic/react'
 import { useState } from 'react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 
@@ -26,7 +26,7 @@ const BankAccount = () => {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     
     
-    const { data: bankAccountFound } = useQuery({
+    const { data: bankAccountFound, isLoading } = useQuery({
         queryKey: ['getUserBankDetails'],
         queryFn: getUserBankDetails
     })
@@ -41,6 +41,16 @@ const BankAccount = () => {
         return userBank
     }
 
+    if (isLoading){
+        return (
+            <>
+                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
+                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
+                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
+            </>
+        )
+    }
+
     return (
         <IonPage>
             <BackHeader backLink='/me' title='Bank Account' />
@@ -51,7 +61,7 @@ const BankAccount = () => {
                         bankAccountFound?.length! >= 1 ? bankAccountFound?.map((bank) => (
                             <IonRadioGroup value={surveyReason}>
                                 <IonItem className='ion-no-padding'>
-                                    <IonCard className="rounded-3 mt-2 ion-margin-vertical ion-padding-horizontal w-100" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
+                                    <IonCard className="mt-2 ion-margin-vertical ion-padding-horizontal w-100" style={{ backgroundColor: "var(--white-4)" }} mode='ios'>
                                         <IonCardContent className='d-flex align-items-center px-1 py-4'>
                                             <IonImg src={MC} />
 
@@ -61,7 +71,7 @@ const BankAccount = () => {
                                                 <small>Bank: <span className="text-muted">{bank.bank_name}</span></small>
                                             </IonText>
 
-                                            <IonRadio slot="end" value={() => setSurveyReason("Helo")} />
+                                            <IonRadio name='is_favoirte' slot="end" value={() => setSurveyReason("Helo")} />
                                         </IonCardContent>
                                     </IonCard>
                                 </IonItem>

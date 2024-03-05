@@ -1,9 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.Encostay',
+  appId: 'com.encostay.thisrupt',
   appName: 'Encostay',
-  webDir: 'build',
+  webDir: 'dist',
   server: {
     androidScheme: 'https',
   }

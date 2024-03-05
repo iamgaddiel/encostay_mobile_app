@@ -8,7 +8,6 @@ import {
   IonPage,
   IonRow,
   IonSearchbar,
-  IonSkeletonText,
   IonText,
   IonTitle,
   IonToolbar,
@@ -17,7 +16,6 @@ import {
 } from "@ionic/react";
 import { chevronBack, chevronForward, optionsOutline } from "ionicons/icons";
 import { useState } from "react";
-import SpaceBetween from "../../components/style/SpaceBetween";
 import HomeListCard from "../../components/HomeListCard/HomeListCard";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
@@ -26,10 +24,11 @@ import RoomLnd from "../../assets/images/room-ld.png";
 import { useQuery } from "@tanstack/react-query";
 import NotFound from "../../components/NotFound";
 import SekeletonLoadingFullWidth from "../../components/SekeletonLoadingFullWidth";
+import { ApartmentSearchOptions } from "../../@types/apartments";
 
 
 
-interface ApartmentSearchOptions { perPage: number, page: number, filter?: string }
+
 
 const AppartmentSearch = () => {
   const { token: authToken } = useRecoilValue(userAtom);
@@ -57,7 +56,6 @@ const AppartmentSearch = () => {
     try {
       let options: ApartmentSearchOptions = { perPage: 5, page }
       if (title !== '') options = { perPage: 5, page, filter: `title="${title}"` };
-      console.log(options)
       return await listApartments(authToken, options);
     }
     catch (err: any) {
@@ -84,7 +82,7 @@ const AppartmentSearch = () => {
               <IonSearchbar className="ion-no-border home_search_bar" mode="ios" onKeyUp={(e) => setApartmentTitle(e.currentTarget.value as string)} />
             </IonCol>
             <IonCol size="auto" >
-              <IonIcon color="warning" icon={optionsOutline} size="large" onClick={() => router.push('/apartment_search/filter')} />
+              <IonIcon color="warning" icon={optionsOutline} size="large" onClick={() => router.push('/apartment_search_filter/')} />
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -97,29 +95,35 @@ const AppartmentSearch = () => {
 
           {
             isLoading ? (
-              <SekeletonLoadingFullWidth count={4} height={20} width={100} />
+              <SekeletonLoadingFullWidth count={4} height={120} width={100} />
             ) : (
               <div className="mt-4">
-                {apartmentList &&
-                  apartmentList?.totalItems >= 1 ?
-                  apartmentList.items.map((home) => (
-                    <HomeListCard
-                      has_wifi={home.has_wifi}
-                      location={{
-                        country: home.country,
-                        state: home.state_location,
-                      }}
-                      imageUri={RoomLnd}
-                      numberOfBedrooms={home.bedrooms}
-                      price={home.price}
-                      ratings={4}
-                      showRatings={true}
-                      title={home.title}
-                      homeId={home.id!}
-                      key={home?.id!}
-                    />
-                  )) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
-                }
+                <IonGrid>
+                  <IonRow>
+                    {apartmentList &&
+                      apartmentList?.totalItems >= 1 ?
+                      apartmentList.items.map((home) => (
+                        <IonCol size="12" sizeSm="6" sizeLg="4" sizeXl="3">
+                          <HomeListCard
+                            has_wifi={home.has_wifi}
+                            location={{
+                              country: home.country,
+                              state: home.state_location,
+                            }}
+                            imageUri={RoomLnd}
+                            numberOfBedrooms={home.bedrooms}
+                            price={home.price}
+                            ratings={4}
+                            showRatings={true}
+                            title={home.title}
+                            homeId={home.id!}
+                            key={home?.id!}
+                          />
+                        </IonCol>
+                      )) : <NotFound heading="No Apartments" subheading="There isn't any apartment listing" />
+                    }
+                  </IonRow>
+                </IonGrid>
               </div>
             )
           }

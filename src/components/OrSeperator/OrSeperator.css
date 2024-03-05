@@ -1,6 +1,7 @@
 .or_seperator_wrpper{
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 

@@ -1,4 +1,4 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
 
 const Flutterwave = require("flutterwave-node-v3");
@@ -12,17 +12,16 @@ const pocketbaseUrl =
     ? "http://127.0.0.1:8090/api/"
     : "https://encostay-app.pockethost.io/api";
 
-const FLW_PUBLIC_KEY = DEBUG === "true" ? process.env.FLW_TEST_PK : process.env.FLW_LIVE_PK;
-const FLW_SECRET_KEY = DEBUG === "true" ? process.env.FLW_TEST_SK : process.env.FLW_LIVE_SK;
+const FLW_PUBLIC_KEY =
+  DEBUG === "true" ? process.env.FLW_TEST_PK : process.env.FLW_LIVE_PK;
+const FLW_SECRET_KEY =
+  DEBUG === "true" ? process.env.FLW_TEST_SK : process.env.FLW_LIVE_SK;
 const FLW_ENCRYPTION_KEY =
   DEBUG === "true" ? process.env.FLW_TEST_EK : process.env.FLW_LIVE_EK;
 
 const flw = new Flutterwave(FLW_PUBLIC_KEY, FLW_SECRET_KEY);
 
-
-
-
-router.post('/payment', async (req, res) => {
+router.post("/card_payment", async (req, res) => {
   const {
     card_number,
     cvv,
@@ -37,8 +36,7 @@ router.post('/payment', async (req, res) => {
     otp,
   } = req.body;
 
-
-    console.log("🚀 ~ file: flutterPayment.js:32 ~ chargeDebitCard ~ pin:", pin)
+  console.log("🚀 ~ file: flutterPayment.js:32 ~ chargeDebitCard ~ pin:", pin);
 
   // Initiating the transaction
   const payload = {
@@ -88,10 +86,41 @@ router.post('/payment', async (req, res) => {
 
     console.log(response);
   } catch (error) {
-    console.log(error, '-------------');
+    console.log(error, "-------------");
     return res.json({ data: JSON.stringify(error) }).status(500);
   }
-})
+});
+
+router.get("/bank_payment", async (req, res) => {
+  const { account_number, amount } = req.body;
+  const paymentPayload = {
+    account_number,
+    amount,
+    currency: "NGN",
+    reference,
+    narration,
+    debit_currency: "NGN",
+    // use if sending to a DOM account
+    // meta: [
+    //   {
+    //     sender: "Encostay App",
+    //     first_name: '',
+    //     email: 'encostayapp@proton.me',
+    //     beneficiary_country: 'NG',
+    //     beneficiary_name: '',
+    //     mobile_number: '+2347050595335', // change this number
+    //     merchant_name: 'Encostay App'
+    //   }
+    // ]
+  };
+  try {
+    const response = await flw.Transfer.initiate(paymentPayload);
+    if (response.status === "success") return res.json(response);
+    return res.json({ status: "failed" });
+  } catch (error) {
+    console.log(error, "<---- error paying money");
+  }
+});
 
 // async function chargeDebitCard(req, res) {
 //   const {
@@ -107,7 +136,6 @@ router.post('/payment', async (req, res) => {
 //     pin,
 //     otp,
 //   } = req.body;
-
 
 //     console.log("🚀 ~ file: flutterPayment.js:32 ~ chargeDebitCard ~ pin:", pin)
 
@@ -164,8 +192,7 @@ router.post('/payment', async (req, res) => {
 //   }
 // }
 
-
-router.post('/payment_callback', async (req, res) => {
+router.post("/payment_callback", async (req, res) => {
   if (req.query.status === "successful") {
     const transactionDetails = await Transaction.find({
       ref: req.query.tx_ref,
@@ -179,37 +206,11 @@ router.post('/payment_callback', async (req, res) => {
       response.data.currency === "NGN"
     ) {
       // Success! Confirm the customer's payment
-      console.log(response, '<------');
+      console.log(response, "<------");
     } else {
       // Inform the customer their payment was unsuccessful
     }
   }
-})
+});
 
-// async function paymentCallback(req, res) {
-//   if (req.query.status === "successful") {
-//     const transactionDetails = await Transaction.find({
-//       ref: req.query.tx_ref,
-//     });
-//     const response = await flw.Transaction.verify({
-//       id: req.query.transaction_id,
-//     });
-//     if (
-//       response.data.status === "successful" &&
-//       response.data.amount === transactionDetails.amount &&
-//       response.data.currency === "NGN"
-//     ) {
-//       // Success! Confirm the customer's payment
-//       console.log(response, '<------');
-//     } else {
-//       // Inform the customer their payment was unsuccessful
-//     }
-//   }
-// }
-
-// module.exports = {
-//   chargeDebitCard,
-//   paymentCallback,
-// };
-
-module.exports = router
+module.exports = router;

@@ -1,7 +1,7 @@
 import { ApartementItem } from "./apartments"
 import { UserCollectionType } from "./users"
 
-export interface BookingItem {
+export type BookingItem = {
     id: string
     collectionId: string
     collectionName: string

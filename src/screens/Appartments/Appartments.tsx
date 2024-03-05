@@ -38,17 +38,14 @@ const Appartments = () => {
 
 
   async function getHostApartments(hostId: string, authToken: string) { //
-    const params = {
-      filter: `(host="${hostId}")`,
-    };
+    const params = { filter: `(host="${hostId}")`};
     const { data } = await listApiCollection(
       APARTMENTS_COLLECTION,
       authToken,
       params
     );
     const aprtments = data as ApartementList;
-    console.log("🚀 ~ file: Appartments.tsx:47 ~ getHostApartments ~ data:", data)
-    console.log("🚀 ~ file: Appartments.tsx:47 ~ getHostApartments ~ aprtments:", aprtments)
+
     return aprtments
   }
 

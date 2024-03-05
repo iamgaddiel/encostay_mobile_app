@@ -11,6 +11,7 @@ import { star, person } from 'ionicons/icons'
 import Currency from '../../components/Currency'
 import NotFound from '../../components/NotFound'
 import BackHeader from '../../components/BackHeader'
+import Image from "../../assets/images/room-pt.png"
 
 const GuestPendingReviews = () => {
     const { record: user, token: authToken } = useRecoilValue(userAtom)
@@ -43,16 +44,12 @@ const GuestPendingReviews = () => {
 
     return (
         <IonPage>
-            <IonHeader className='ion-no-border'>
-                <IonToolbar>
-                    <BackHeader backLink='/me' title='Pending Reviews' />
-                </IonToolbar>
-            </IonHeader>
+            <BackHeader backLink='/me' title='Pending Reviews' />
             <IonContent className='ion-padding'>
                 <IonList>
                     {
                         pendingReviews?.items.length! >= 1 ? pendingReviews?.items.map((review, indx) => (
-                            <IonItem key={indx}>
+                            <IonItem key={indx} routerDirection='forward' routerLink={`/add_reviews/${review.expand?.apartment?.id}`}>
                                 <IonLabel>
                                     <section className='d-flex mt-1'>
                                         <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>

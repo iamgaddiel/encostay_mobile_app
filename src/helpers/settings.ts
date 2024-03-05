@@ -10,26 +10,33 @@ import PocketBase from 'pocketbase'
  */
 const appName = "Encostay"
 
-const DEBUG = false
+const DEBUG = true
 
-const LOCALHOST = "http://127.0.0.1:8090/api"
 
-const REMOTE_URL = 'https://encostay-mobile.pockethost.io/api'
+// POCKETBASE SERVER CONFIG
+const PB_LOCALHOST = "http://127.0.0.1:8090/api"
+
+const PB_REMOTE_URL = 'https://encostay-mobile.pockethost.io/api'
+
+const pocketbaseUrl = DEBUG ? PB_LOCALHOST : PB_REMOTE_URL
+
+const pb = new PocketBase(pocketbaseUrl)
+
+
+
+// BACKEND SERVER CONFIG 
+const LOCAL_SERVER_URL = 'http://localhost:3000'
 
 const REMOTE_SERVER_URL = 'https://encostay-saver.onrender.com'
-
-const LOCAL_SERVER_URL = 'http://localhost:3000'
 
 // const serverBaseUrl = LOCAL_SERVER_URL
 
 const serverBaseUrl = DEBUG ? LOCAL_SERVER_URL : REMOTE_SERVER_URL
 
-const pocketbaseUrl = DEBUG ? LOCALHOST : REMOTE_URL
-
-const pb = new PocketBase(pocketbaseUrl)
 
 
-// store data locally to db, indexDB or localstorage
+
+// store data locally to db, indexDB or localstoragee
 const storage = new Storage({
     name: `__${appName}`,
     driverOrder: [CordovaSQLiteDriver._driver, Drivers.IndexedDB, Drivers.LocalStorage]

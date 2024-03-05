@@ -90,7 +90,8 @@ ion-button.brown_fill_outline {
     --border-color: var(var(--secondary));
 }
 ion-button.yellow_fill,
-ion-button.yellow_fill:hover  {
+ion-button.yellow_fill:hover,
+ion-button.yellow_fill:focus{
     --background: var(--tertiary);
     --color: var(--primary);
     font-size: 18px;

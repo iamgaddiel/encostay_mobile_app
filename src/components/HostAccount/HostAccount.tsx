@@ -56,7 +56,7 @@ const HostAccount = () => {
     dots: true,
     infinite: false,
     centerMode: false,
-    slidesToShow: 1,
+    // slidesToShow: 2,
     slidesToScroll: 1,
     slidesPerView: 1.5,
     speed: 2000,
