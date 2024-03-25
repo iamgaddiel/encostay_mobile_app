@@ -61,6 +61,7 @@ import RequestForgetPassword from './screens/RequestForgetPassword';
 import ForgetPasswordOtp from './screens/ForgetPasswordOtp';
 import ResetPassword from './screens/ResetPassword/ResetPassword';
 import RequestPasswordConfirm from './screens/RequestPasswordConfirm';
+import SelectNairaBanks from './screens/SelectNairaBanks/SelectNairaBanks';
 
 
 
@@ -143,11 +144,13 @@ const Routes = () => {
             {/* <Route exact path="/reset_password_otp" render={() => <ForgetPasswordOtp />} /> */}
             {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}
             <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
+            <Route exact path="/select_bank" render={() => <SelectNairaBanks />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
+                            <Route exact path="/select_bank" render={() => <SelectNairaBanks />} />
                             <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
                             {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}
                             {/* <Route exact path="/reset_password_otp" render={() => <ForgetPasswordOtp />} /> */}

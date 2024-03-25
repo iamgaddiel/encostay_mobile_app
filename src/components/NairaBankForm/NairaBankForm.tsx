@@ -1,6 +1,6 @@
-import { IonPage, IonContent, IonProgressBar, IonToast, IonLabel, IonInput, IonIcon, IonButton } from '@ionic/react'
-import { warning, warningOutline } from 'ionicons/icons'
-import { useState } from 'react'
+import { IonPage, IonContent, IonProgressBar, IonToast, IonLabel, IonInput, IonIcon, IonButton, useIonRouter, IonText } from '@ionic/react'
+import { chevronForward, warning, warningOutline } from 'ionicons/icons'
+import { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useHistory } from 'react-router'
 import { useRecoilValue } from 'recoil'
@@ -12,14 +12,17 @@ import { BANKS_COLLECTION } from '../../helpers/keys'
 import BackHeader from '../BackHeader'
 import SpaceBetween from '../style/SpaceBetween'
 import { serverLog } from '../../helpers/utils'
+import { BankSelectAtom } from '../../atoms/bankAtoms'
 
 const NairaBankForm = () => {
 
     // TODO: add bank listing API
 
-    const history = useHistory()
-
     const { token: authToken, record: user } = useRecoilValue(userAtom)
+
+    const selectedBank = useRecoilValue(BankSelectAtom)
+
+    const router = useIonRouter()
 
     const { register, handleSubmit, formState: { errors } } = useForm<NairaAccountFields>()
 
@@ -33,12 +36,11 @@ const NairaBankForm = () => {
 
 
 
-
     const handleAddBankAccount: SubmitHandler<NairaAccountFields> = async (data) => {
         setIsLoading(true)
 
 
-        const formData = { ...data, user: user.id }
+        const formData = { ...data, user: user.id, bank_name: selectedBank?.name, bank_id: selectedBank?.id }
 
         const { isCreated, response } = await createApiCollection(BANKS_COLLECTION, formData, authToken)
 
@@ -58,7 +60,7 @@ const NairaBankForm = () => {
         }
 
         setIsLoading(false)
-        history.goBack()
+        router.push('/bank_account')
     }
 
 
@@ -106,16 +108,18 @@ const NairaBankForm = () => {
 
                     {/* Bank Name */}
                     <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
-                        <IonLabel>Bank</IonLabel>
-                        <div className="rounded-5 ion-padding-horizontal mt-2" style={{ backgroundColor: "var(--white-4)" }}>
-                            <IonInput type="text" placeholder='Bank Name' {...register('bank_name', {
-                                required: {
-                                    value: true,
-                                    message: 'Bank name is required'
-                                }
-                            })} />
+                        <div className="d-flex justify-content-between align-items-center" onClick={() => router.push('/select_bank')}>
+                            <IonLabel>Bank</IonLabel>
+
+                            <IonText className='d-flex align-items-center'>
+                                view all
+                                <IonIcon icon={chevronForward} />
+                            </IonText>
                         </div>
-                        {errors.bank_name && <small className='text-danger'>{errors.bank_name.message}</small>}
+                        <div className=" mt-2">
+                            <IonLabel>{selectedBank?.name === "" ? 'Bank Name' : selectedBank?.name }</IonLabel>
+                        </div>
+                        {/* {errors.bank_name && <small className='text-danger'>{errors.bank_name.message}</small>} */}
                     </div>
 
                     {/* Account Number */}

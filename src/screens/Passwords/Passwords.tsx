@@ -66,11 +66,12 @@ const Passwords = () => {
             displayMessage(error?.password?.message)
             return;
         }
+        console.log("🚀 ~ constonSubmitForm:SubmitHandler<RegistrationInputs>= ~ response?.id!:", response?.id!)
 
         // Create Wallet For Host Users
         if (regFormData.account_type === 'host') {
-            const walletDetails = { host: response?.id! }
-            const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletDetails)
+            const walletCreationPayload = { host: response?.id! }
+            const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletCreationPayload)
             if (!walletIsCreated) {
                 // TODO: check if wallet is not created
                 console.log(error)

@@ -38,7 +38,7 @@ export async function createApiCollection(collection: string, formData: any, use
             }
         }
         return {
-            response: data?.data,
+            response: data,
             isCreated: true
         }
     }

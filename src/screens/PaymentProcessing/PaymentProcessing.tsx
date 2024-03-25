@@ -36,47 +36,43 @@ const PaymentProcessing = () => {
 
     const setBookingDetail = useSetRecoilState(bookingAtom)
 
-    useIonViewDidEnter(() => {
+
+
+
+    useEffect(() => {
         processBooking()
-    }, [])
-
-    useEffect(() => {
         setUtility({ showTabs: false })
-    }, [])
-
-    useEffect(() => {
         setTimeout(() => {
             history.push("/payment_confirm")
         }, 10000)
     }, [])
 
 
+
     async function processBooking() {
 
-        // Crate Booking
-        const { isCreated, error, response } = await createApiCollection(BOOKINGS_COLLECTION, bookingDetail, userToken)
-        const { apartment, id: bookingId } = response as BookingItem
+        // Create Booking
+        const { response, isCreated, error } = await createApiCollection(BOOKINGS_COLLECTION, bookingDetail, userToken)
+        console.log("🚀 ~ processBooking ~ response:", response)
+        const { expand, id: bookingId } = response as BookingItem
 
         if (!isCreated) {
-            console.log(error)
+            console.log(error, '<---- Errrrorrr')
             //TODO: show a toast message of the error
             return
         }
 
-        createPendingUserReview(apartment) // Create pending review for to fill out later
+        createPendingUserReview(expand?.apartment?.id!) // Create pending review for to fill out later
 
-        if (user.preferred_currency === 'NGN') {
-            const payload = { booking: bookingId }
-            await updatePatchApiCollectionItem(
-                FLUTTERWAVE_COLLECTION,
-                flutterwaveTransaction.collectionId,
-                payload,
-                authToken
-            )
-            setFlutterwaveTransaction({ collectionId: '', transactionId: 0 }) // reset flutterwave recoil state
-
-            console.log("updated")
-        }
+        // updated flutterwave transactions with current booking details
+        const flutteTransactionUpldatePayload = { booking: bookingId }
+        await updatePatchApiCollectionItem(
+            FLUTTERWAVE_COLLECTION,
+            flutterwaveTransaction.collectionId,
+            flutteTransactionUpldatePayload,
+            authToken
+        )
+        setFlutterwaveTransaction({ collectionId: '', transactionId: 0 }) // reset flutterwave recoil state
 
         // reset booking atom state
         setBookingDetail({
@@ -97,6 +93,8 @@ const PaymentProcessing = () => {
         })
     }
 
+
+
     async function createPendingUserReview(apartmentId: string) {
         const payload = {
             user: user.id,
@@ -105,7 +103,7 @@ const PaymentProcessing = () => {
         const { isCreated, error, response } = await createApiCollection(REVIEWS_COLLECTION, payload, userToken)
 
         if (!isCreated) {
-            console.log(error)
+            console.log(error, '<---- Review Collection not created')
             //TODO: show a toast message of the error
             return
         }

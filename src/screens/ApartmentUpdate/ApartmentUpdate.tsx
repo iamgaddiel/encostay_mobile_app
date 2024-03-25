@@ -51,10 +51,10 @@ import {
   SET_ALL_APARTMENT_DETAILS,
 } from "../../reducers/actions/addApartmentsActions";
 import { useHistory, useParams } from "react-router";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Toast } from "../../@types/toast";
 import { StoredUser } from "../../@types/users";
-import { userAtom } from "../../atoms/appAtom";
+import { appStateTrigger, userAtom } from "../../atoms/appAtom";
 import { imageKitAtom } from "../../atoms/imagekitAtom";
 import { addApartmentReducer } from "../../reducers/functions/addApartment";
 import ImagePlaceholder from "../../assets/images/insert-picture-icon.png";
@@ -70,6 +70,11 @@ import { ApartementItem } from "../../@types/apartments";
 import { getApartmentDetail } from "../../helpers/utils";
 
 
+
+
+
+//FIXME: corect the reducer function to accept form values and submit update
+//FIXME: type FormInput does not exit.
 
 
 const ApartmentUpdate = () => {
@@ -118,13 +123,13 @@ const ApartmentUpdate = () => {
 
   const [apartmentDetail, setApartmentDetail] = useState<ApartementItem>()
 
-
-
   const [toastParam, setToastParam] = useState<Toast>({
     enabled: false,
     message: "",
     type: "warning",
   });
+
+  const setAppStateTrigger = useSetRecoilState(appStateTrigger)
 
 
 
@@ -154,9 +159,9 @@ async function getApartmentDetail(): Promise<void> {
     setApartmentDetail(response as ApartementItem)
   }
 
-  async function submnitForm(
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> {
+
+
+  async function submnitForm(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setLoading(() => true);
 
@@ -248,12 +253,15 @@ async function getApartmentDetail(): Promise<void> {
         return;
       }
 
+      setAppStateTrigger((prevState) => !prevState)
       setShowAlert(true);
       setLoading(() => false);
     } catch (err: unknown) {
       setLoading(() => false);
     }
   }
+
+
 
   // FIXME: make function a uitl function
   async function uploadImageToImageKit(images: string[]) {
@@ -283,6 +291,8 @@ async function getApartmentDetail(): Promise<void> {
     return imageKitResponseStrigs;
   }
 
+
+
   function displayToastMessage(message: string, isVisible: boolean): void {
     if (message === "") return;
     setToastParam({
@@ -291,6 +301,8 @@ async function getApartmentDetail(): Promise<void> {
       type: "warning",
     });
   }
+
+
 
   async function selectImages(imageIndex: number) {
     const image = await Camera.getPhoto({
@@ -343,7 +355,7 @@ async function getApartmentDetail(): Promise<void> {
           title="Sucess"
           header="Sucess"
           mode="ios"
-          subHeader="Your apartment has been added successfuly"
+          subHeader="Your apartment has been updated successfully"
           buttons={[
             {
               text: "Okay",

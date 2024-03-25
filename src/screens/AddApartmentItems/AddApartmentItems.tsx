@@ -4,7 +4,7 @@ import SpaceBetween from '../../components/style/SpaceBetween'
 import BackHeader from '../../components/BackHeader'
 import { AddApartmentItemsType } from '../../@types/apartments'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { addApartmentAtom } from '../../atoms/apartmentAtom'
 import { chevronForward } from 'ionicons/icons'
 import AddApartmentFormPagination from '../../components/AddApartmentFormPagination'
@@ -12,7 +12,7 @@ import AddApartmentFormPagination from '../../components/AddApartmentFormPaginat
 const AddApartmentItems = () => {
     const router = useIonRouter()
 
-    const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+    const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
 
     // const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<AddApartmentItemsType>()
 
@@ -28,7 +28,7 @@ const AddApartmentItems = () => {
 
     const handleFormSubmit: SubmitHandler<AddApartmentItemsType> = (data) => {
         console.log("🚀 ~ file: AddApartmentDetails.tsx:35 ~ AddApartmentDetails ~ data:", data)
-        setAddApartmentState({ ...data })
+        setAddApartmentState({ ...apartmentState, ...data })
         router.push('/add_apartment_rules')
     }
 

@@ -73,6 +73,9 @@ export interface ApartementItem {
     image_1?: string
     image_2?: string
     image_3?: string
+    image_1_thumbnail_url?: string,
+    image_2_thumbnail_url?: string,
+    image_3_thumbnail_url: string,
     max_number_of_children_allowed: number
     max_number_of_pets_allowed: number,
 }

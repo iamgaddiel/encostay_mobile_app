@@ -1,13 +1,35 @@
-import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonPage, IonRow, useIonLoading, useIonRouter, useIonToast } from '@ionic/react'
-import React, { useRef } from 'react'
+import { IonButton, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonLabel, IonPage, IonRow, useIonLoading, useIonRouter, useIonToast, useIonViewWillEnter } from '@ionic/react'
+import React, { useRef, useState } from 'react'
 import BackHeader from '../../components/BackHeader'
 import { Camera, CameraResultType } from '@capacitor/camera'
-import { warningOutline, chevronForward } from 'ionicons/icons'
+import { warningOutline, chevronForward, checkmark } from 'ionicons/icons'
 import AddApartmentFormPagination from '../../components/AddApartmentFormPagination'
 
 import ImagePlaceholder from "../../assets/images/insert-picture-icon.png";
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { addApartmentAtom } from '../../atoms/apartmentAtom'
+import Settings from '../../helpers/settings'
+import { _post } from '../../helpers/api'
+
+import { IKUpload } from 'imagekitio-react';
+
+
+
+
+type ImageCollection = {
+    image1?: {
+        url: string,
+        thumbnail: string
+    },
+    image2?: {
+        url: string,
+        thumbnail: string
+    },
+    image3?: {
+        url: string,
+        thumbnail: string
+    },
+}
 
 
 
@@ -16,61 +38,96 @@ const AddApartmentImages = () => {
 
     const router = useIonRouter()
 
-    const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+    const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
 
     const [presentLoading, dismissLoading] = useIonLoading()
 
 
-    const apartmentImageOne = useRef<HTMLIonImgElement | null>(null);
-    const apartmentImageTwo = useRef<HTMLIonImgElement | null>(null);
-    const apartmentImageThree = useRef<HTMLIonImgElement | null>(null);
+    const [imageUrls, setImageUrls] = useState<ImageCollection>()
 
 
 
 
-    // function generateBase64String(value: string): string{
-    //     console.log("🚀 ~ file: AddApartmentImages.tsx:32 ~ generateBase64String ~ value:", value)
-    //     const base64String = `data:image/png;base64,${value}`
-    //     return base64String
-    // }
 
-    async function handleImageSelection(): Promise<string | undefined> {
-        try {
-            const image = await Camera.getPhoto({
-                quality: 90,
-                allowEditing: false,
-                // resultType: CameraResultType.DataUrl,
-                resultType: CameraResultType.DataUrl,
-                // presentationStyle: 'popover'
-            });
 
-            // BEC - learn
 
-            // let imageUrl = image.webPath!;
-            // const imageUrl = image.path;
-            // const imageBase64 = image.base64String
 
-            const imageUrl = image.dataUrl!;
+    // ImageKit Upload state handlers
+    async function onImageUploadError(err: any) {
+        console.log("Error", err);
+        await dismissLoading()
+        presentToast({
+            message: 'Image uploaded failed. Try again',
+            duration: 3000,
+            icon: warningOutline,
+            color: 'danger',
+            position: 'top'
+        })
+    };
 
-            return imageUrl
+
+    async function onImageUploadSuccess(res: any, imageIndex: number) {
+        console.log("Success", res);
+        await dismissLoading()
+
+        if (imageIndex === 1) {
+            setImageUrls({
+                ...imageUrls,
+                image1: {
+                    thumbnail: res?.thumbnailUrl,
+                    url: res?.url
+                }
+            })
         }
-        catch (error: any) {
-            console.log("🚀 ~ file: AddApartmentImages.tsx:62 ~ handleImageSelection ~ error:", error)
+        if (imageIndex === 2) {
+            setImageUrls({
+                ...imageUrls,
+                image2: {
+                    thumbnail: res?.thumbnailUrl,
+                    url: res?.url
+                }
+            })
+        } 
+        if (imageIndex === 3) {
+            setImageUrls({
+                ...imageUrls,
+                image3: {
+                    thumbnail: res?.thumbnailUrl,
+                    url: res?.url
+                }
+            })
         }
+
+
+        presentToast({
+            message: 'Image uploaded successfully',
+            duration: 3000,
+            icon: checkmark,
+            color: 'success',
+            position: 'top',
+        })
+    };
+
+
+    async function onImageUploadLoading(res: any) {
+        await presentLoading({
+            message: 'Uploading image',
+            spinner: 'dots'
+        })
     }
-
 
 
     async function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
 
         await presentLoading({
-            message: 'Processing image(s)',
+            message: 'Loading...',
             spinner: 'dots'
         })
+        
 
         // check if current image is same as the placeholder image or undefined
-        if ((apartmentImageOne.current!.src === ImagePlaceholder) || (!apartmentImageOne.current!.src)) {
+        if (typeof imageUrls?.image1?.url === 'undefined') {
             await dismissLoading()
             presentToast({
                 message: 'Image One empty : select an image',
@@ -81,7 +138,7 @@ const AddApartmentImages = () => {
             })
             return
         }
-        if ((apartmentImageTwo.current!.src === ImagePlaceholder) || (!apartmentImageThree.current!.src)) {
+        if (typeof imageUrls?.image2?.url === 'undefined') {
             await dismissLoading()
             presentToast({
                 message: 'Image Two empty : select an image',
@@ -92,7 +149,7 @@ const AddApartmentImages = () => {
             })
             return
         }
-        if ((apartmentImageThree.current!.src === ImagePlaceholder) || (!apartmentImageThree.current!.src)) {
+        if (typeof imageUrls?.image3?.url === 'undefined' ) {
             await dismissLoading()
             presentToast({
                 message: 'Image Three empty : select an image',
@@ -106,15 +163,19 @@ const AddApartmentImages = () => {
 
         // Save files to state
         setAddApartmentState({
-            image_1: apartmentImageOne.current!.src!,
-            image_2: apartmentImageTwo.current!.src!,
-            image_3: apartmentImageThree.current!.src!
+            ...apartmentState,
+            image_1: imageUrls?.image1?.url,
+            image_1_thumbnail_url: imageUrls?.image1?.thumbnail,
+            image_2: imageUrls?.image2?.url,
+            image_2_thumbnail_url: imageUrls?.image2?.thumbnail,
+            image_3: imageUrls?.image3?.url,
+            image_3_thumbnail_url: imageUrls?.image3?.thumbnail
         })
 
         await dismissLoading()
         router.push('/add_apartment_extras')
-
     }
+
 
 
     return (
@@ -132,87 +193,44 @@ const AddApartmentImages = () => {
                         {/* <input type='file' onChange={e =>  console.log(e.target!.files![0])} /> */}
                         <IonGrid>
                             <IonRow className='ion-justify-content-center'>
-                                {/* Image 1 */}
 
-                                <IonCol size='6' sizeXs='10' sizeSm='6' sizeMd='4' className=''>
-                                    <input
-                                        className="ion-text-center"
-                                        onClick={async () => {
-                                            const imageUrl = await handleImageSelection()
-                                            apartmentImageOne.current!.src = imageUrl
-                                        }}
-                                        type='file'
-                                        accept="image/*"
-                                        multiple={false}
+                                {/* Image 1 */}
+                                <IonCol size='12' sizeXs='12' sizeSm='6' sizeMd='4' className='mb-3'>
+                                    <IKUpload
+                                        onError={onImageUploadError}
+                                        onSuccess={(event) => onImageUploadSuccess(event, 1)}
+                                        onUploadStart={onImageUploadLoading}
                                     />
-                                    <div className="ion-text-center">
-                                        {/* TODO: add helper text 'i' to describe the kind of image to use  */}
-                                        <small className="text-muted">Image One</small>
-                                    </div>
+
+                                    <IonLabel className='text-muted'>
+                                        <small>Image One</small>
+                                    </IonLabel>
                                 </IonCol>
 
-                                {/* <IonCol size='6' sizeXs='10' sizeSm='6' sizeMd='4' className=''>
-                                    <button
-                                        className="ion-text-center"
-                                        onClick={async () => {
-                                            const imageUrl = await handleImageSelection()
-                                            apartmentImageOne.current!.src = imageUrl
-                                        }}
-                                        type='button'
-                                    >
-                                        <IonImg
-                                            src={ImagePlaceholder}
-                                            ref={apartmentImageOne}
-                                            aria-required
-                                            alt="image placeholder"
-                                        />
-                                    </button>
-                                    <div className="ion-text-center">
-                                        <small className="text-muted">Image One</small>
-                                    </div>
-                                </IonCol> */}
-
                                 {/* Image 2 */}
-                                <IonCol size='6' sizeXs='10' sizeSm='6' sizeMd='4'>
-                                    <button
-                                        className="ion-text-center"
-                                        onClick={async () => {
-                                            const imageUrl = await handleImageSelection()
-                                            apartmentImageTwo.current!.src = imageUrl
-                                        }}
-                                        type='button'
-                                    >
-                                        <IonImg
-                                            src={ImagePlaceholder}
-                                            ref={apartmentImageTwo}
-                                            alt="image placeholder"
-                                        />
-                                    </button>
-                                    <div className="ion-text-center">
-                                        <small className="text-muted">Image Two</small>
-                                    </div>
+                                <IonCol size='12' sizeXs='12' sizeSm='6' sizeMd='4' className='mb-3'>
+                                    <IKUpload
+                                        onError={onImageUploadError}
+                                        onSuccess={(event) => onImageUploadSuccess(event, 2)}
+                                        onUploadStart={onImageUploadLoading}
+                                    />
+                                    <IonLabel className='text-muted'>
+                                        <small>Image Two</small>
+                                    </IonLabel>
                                 </IonCol>
 
                                 {/* Image 3 */}
-                                <IonCol size='6' sizeXs='10' sizeSm='6' sizeMd='4'>
-                                    <button
-                                        className="ion-text-center"
-                                        onClick={async () => {
-                                            const imageUrl = await handleImageSelection()
-                                            apartmentImageThree.current!.src = imageUrl
-                                        }}
-                                        type='button'
-                                    >
-                                        <IonImg
-                                            src={ImagePlaceholder}
-                                            ref={apartmentImageThree}
-                                            alt="image placeholder"
-                                        />
-                                    </button>
-                                    <div className="ion-text-center">
-                                        <small className="text-muted">Image Three</small>
-                                    </div>
+                                <IonCol size='12' sizeXs='12' sizeSm='6' sizeMd='4' className='mb-3'>
+                                    <IKUpload
+                                        onError={onImageUploadError}
+                                        onSuccess={(event) => onImageUploadSuccess(event, 3)}
+                                        onUploadStart={onImageUploadLoading}
+                                    />
+                                    <IonLabel className='text-muted'>
+                                        <small>Image Three</small>
+                                    </IonLabel>
                                 </IonCol>
+
                             </IonRow>
                         </IonGrid>
                     </div>

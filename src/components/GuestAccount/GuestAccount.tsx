@@ -206,16 +206,16 @@ const GuestsAccount = () => {
                         <IonRow>
                             {apartmentList &&
                                 apartmentList?.totalItems >= 1 ?
-                                apartmentList.items.map((home: ApartementItem) =>
+                                apartmentList.items.map((home: ApartementItem, index: number) =>
                                 (
-                                    <IonCol size="12" sizeSm="6" sizeLg="4" sizeXl="3">
+                                    <IonCol size="12" sizeSm="6" sizeLg="4" sizeXl="3" key={index}>
                                         <HomeListCard
                                             has_wifi={home.has_wifi}
                                             location={{
                                                 country: home.country,
                                                 state: home.state_location,
                                             }}
-                                            imageUri={RoomLnd}
+                                            imageUri={home?.image_1_thumbnail_url!}
                                             numberOfBedrooms={home.bedrooms}
                                             price={home.price}
                                             ratings={4}

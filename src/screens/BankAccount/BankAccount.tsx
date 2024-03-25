@@ -21,16 +21,16 @@ import NotFound from '../../components/NotFound'
 const BankAccount = () => {
     const { token: authToken, record: user } = useRecoilValue(userAtom)
 
-    
+
     const [surveyReason, setSurveyReason] = useState("")
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
-    
-    
+
+
     const { data: bankAccountFound, isLoading } = useQuery({
         queryKey: ['getUserBankDetails'],
         queryFn: getUserBankDetails
     })
-    
+
 
 
 
@@ -41,12 +41,12 @@ const BankAccount = () => {
         return userBank
     }
 
-    if (isLoading){
+    if (isLoading) {
         return (
             <>
-                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
-                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
-                <IonSkeletonText style={{ width: '100vw', height: '40px'}} animated />
+                <IonSkeletonText style={{ width: '100vw', height: '40px' }} animated />
+                <IonSkeletonText style={{ width: '100vw', height: '40px' }} animated />
+                <IonSkeletonText style={{ width: '100vw', height: '40px' }} animated />
             </>
         )
     }
@@ -66,7 +66,7 @@ const BankAccount = () => {
                                             <IonImg src={MC} />
 
                                             <IonText className='ml-3'>
-                                                <small><span className="text-muted">Name: </span> { bank.account_name }</small> <br />
+                                                <small><span className="text-muted">Name: </span> {bank.account_name}</small> <br />
                                                 <small>Account Number: <span className="text-muted">{bank.account_number}</span></small> <br />
                                                 <small>Bank: <span className="text-muted">{bank.bank_name}</span></small>
                                             </IonText>
@@ -82,29 +82,33 @@ const BankAccount = () => {
 
 
                 {/* Add Payment Method */}
-                <IonCard
-                    className="yellow_fill mt-3"
-                    mode="ios"
-                    style={{ backgroundColor: "var(--white-4)" }}
-                    routerDirection='forward'
-                    routerLink='/add_bank'
+                {
+                    bankAccountFound?.length! < 1 && (
+                        <IonCard
+                            className="yellow_fill mt-3"
+                            mode="ios"
+                            style={{ backgroundColor: "var(--white-4)" }}
+                            routerDirection='forward'
+                            routerLink='/add_bank'
 
-                >
-                    <IonCardContent className='p-3'>
-                        <SpaceBetween>
-                            <div className="rounded-4 d-flex align-items-center justify-content-center ion-padding" style={{ width: "100px", height: "80px", backgroundColor: "var(--text-color2)" }}>
-                                <IonIcon icon={pencil} size='large' color='warning' />
-                            </div>
+                        >
+                            <IonCardContent className='p-3'>
+                                <SpaceBetween>
+                                    <div className="rounded-4 d-flex align-items-center justify-content-center ion-padding" style={{ width: "100px", height: "80px", backgroundColor: "var(--text-color2)" }}>
+                                        <IonIcon icon={pencil} size='large' color='warning' />
+                                    </div>
 
-                            <div className='ml-4'>
-                                <strong>Add a bank account</strong>
-                                <small className='block mt-1 text-muted'>
-                                    A least one bank account must be added in other to withdraw from your wallet
-                                </small>
-                            </div>
-                        </SpaceBetween>
-                    </IonCardContent>
-                </IonCard>
+                                    <div className='ml-4'>
+                                        <strong>Add a bank account</strong>
+                                        <small className='block mt-1 text-muted'>
+                                            A least one bank account must be added in other to withdraw from your wallet
+                                        </small>
+                                    </div>
+                                </SpaceBetween>
+                            </IonCardContent>
+                        </IonCard>
+                    )
+                }
 
             </IonContent>
         </IonPage >

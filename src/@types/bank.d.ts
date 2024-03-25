@@ -13,9 +13,11 @@ export interface BankItem {
     account_number: string
     account_name: string
     bvn: string
-    social_security_number: string
+    // social_security_number: string
+    swift_code: string
     address: string
     routing_number: string
+    bank_id: string
 }
 
 
@@ -30,7 +32,7 @@ export interface BankList {
 
 
 type BaseBankFields = {
-    bank_name: string
+    // bank_name: string
     account_number: string
     account_name: string
 }
@@ -41,9 +43,10 @@ export type NairaAccountFields = Prettify<BaseBankFields & {
 }>
 
 export type DollarAccountFields = Prettify<BaseBankFields & {
-    social_security_number: string
+    // social_security_number: string
     address: string
     routing_number: string
+    swift_code: string
 }>
 
 export type BankFields = NairaAccountFields | DollarAccountFields

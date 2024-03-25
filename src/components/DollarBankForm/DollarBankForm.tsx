@@ -133,7 +133,7 @@ const DollarBankForm = () => {
 
 
                     {/* Social Security Number */}
-                    <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
+                    {/* <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
                         <IonLabel> Social Security Number </IonLabel>
                         <div className="rounded-5 ion-padding-horizontal mt-2" style={{ backgroundColor: "var(--white-4)" }}>
                             <SpaceBetween>
@@ -143,23 +143,39 @@ const DollarBankForm = () => {
                                         message: 'Your social security number is required'
                                     }
                                 })} />
-                                {/* <IonImg src={MC} /> */}
                             </SpaceBetween>
                         </div>
                         {errors.social_security_number && <small className='text-danger'>{errors?.social_security_number?.message!}</small>}
-                    </div>
+                    </div> */}
 
-                    {/* Social Security Number */}
+                    {/* Routing Number */}
                     <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
+                        <IonLabel> Routing Number </IonLabel>
                         <div className="rounded-5 ion-padding-horizontal mt-2" style={{ backgroundColor: "var(--white-4)" }}>
                             <SpaceBetween>
-                                <IonInput type="text" placeholder='1234567890' {...register('routing_number', {
+                                <IonInput type="text" placeholder='0000000002993' {...register('routing_number', {
                                     required: {
                                         value: true,
                                         message: 'Your routing number is required'
                                     }
                                 })} />
                                 {/* <IonImg src={MC} /> */}
+                            </SpaceBetween>
+                        </div>
+                        {errors.routing_number && <small className='text-danger'>{errors.routing_number.message}</small>}
+                    </div>
+
+                    {/* Swift Code */}
+                    <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
+                        <IonLabel> Swift Code </IonLabel>
+                        <div className="rounded-5 ion-padding-horizontal mt-2" style={{ backgroundColor: "var(--white-4)" }}>
+                            <SpaceBetween>
+                                <IonInput type="text" placeholder='ABJG190' {...register('swift_code', {
+                                    required: {
+                                        value: true,
+                                        message: 'Your swift code is required'
+                                    }
+                                })} />
                             </SpaceBetween>
                         </div>
                         {errors.routing_number && <small className='text-danger'>{errors.routing_number.message}</small>}

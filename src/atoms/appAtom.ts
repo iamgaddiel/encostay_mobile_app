@@ -28,3 +28,9 @@ export const userAtom = atom<StoredUser>({
         }
     }
 })
+
+
+export const appStateTrigger = atom({
+    key: 'STATE_CHANGE',
+    default: false
+})

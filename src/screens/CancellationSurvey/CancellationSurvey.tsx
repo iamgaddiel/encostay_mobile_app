@@ -95,7 +95,7 @@ const CancellationSurvey = () => {
 
     return (
         <IonPage>
-            <BackHeader backLink='/manage_booking_preview' title='Cancellation sruvey' />
+            <BackHeader backLink='/manage_booking_preview' title='Cancellation survey' />
             <IonContent className='ion-padding'>
 
                 {/* Modal */}
@@ -104,7 +104,7 @@ const CancellationSurvey = () => {
                     ref={cancelationModal}
                     trigger="open-custom-dialog"
                     isOpen={showConfirmationModal}
-                    onDidDismiss={() => setShowConfirmationModal(false)}
+                    onDidDismiss={() => setShowConfirmationModal(() => false)}
                 >
                     <IonContent className='ion-padding'>
                         <div className="wrapper ">
@@ -165,7 +165,7 @@ const CancellationSurvey = () => {
 
                 {/* Cancellation Notice */}
                 <section className="rounded-4 ion-padding text-danger" style={{ backgroundColor: "var(--light-red)" }}>
-                    <p>Your booking won't be conceled until you answer this survey question.</p>
+                    <p>Your booking won't be canaled until you answer this survey question.</p>
                 </section>
 
                 {/* cancellation reason */}
@@ -189,7 +189,7 @@ const CancellationSurvey = () => {
                                 <IonCard className="w-100" mode='ios'>
                                     <IonCardContent className=''>
                                         <SpaceBetween>
-                                            <IonText className='w-100'>Made booking for the smae dates - canceled the ones I don't need</IonText>
+                                            <IonText className='w-100'>Made booking for the same dates - canceled the ones I don't need</IonText>
                                             <IonRadio slot="end" value={() => setSurveyReason(DUAL_BOOKING)} />
                                         </SpaceBetween>
                                     </IonCardContent>
@@ -199,7 +199,7 @@ const CancellationSurvey = () => {
                                 <IonCard className="w-100" mode='ios'>
                                     <IonCardContent className=''>
                                         <SpaceBetween>
-                                            <IonText className='w-75'>Found a differnet accommodation option</IonText>
+                                            <IonText className='w-75'>Found a different accommodation option</IonText>
                                             <IonRadio slot="end" value={() => setSurveyReason(CHOICE_CHANGED)} />
                                         </SpaceBetween>
                                     </IonCardContent>
@@ -220,7 +220,7 @@ const CancellationSurvey = () => {
                 </section>
 
 
-                {/* Confrimation Moddal */}
+                {/* Confirmation Moddal */}
 
                 <div className='ion-text-center my-4'>
                     <IonButton
@@ -229,7 +229,7 @@ const CancellationSurvey = () => {
                         size='large'
                         style={{ width: "12rem", height: "55px" }}
                         id={"open-custom-dialog"}
-                        onClick={() => setShowConfirmationModal(true)}
+                        onClick={() => setShowConfirmationModal(() => true)}
                     >
                         Continue
                     </IonButton>

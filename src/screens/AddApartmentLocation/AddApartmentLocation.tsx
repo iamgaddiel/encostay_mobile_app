@@ -3,7 +3,7 @@ import React from 'react'
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import { AddApartmentLocationType } from '../../@types/apartments'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { addApartmentAtom } from '../../atoms/apartmentAtom'
 import { chevronForward } from 'ionicons/icons'
 import AddApartmentFormPagination from '../../components/AddApartmentFormPagination'
@@ -13,13 +13,13 @@ const AddApartmentLocation = () => {
 
   const router = useIonRouter()
 
-  const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+  const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
 
   const { register, handleSubmit, formState: { errors } } = useForm<AddApartmentLocationType>()
 
 
   const handleFormSubmit: SubmitHandler<AddApartmentLocationType> = (data) => {
-    setAddApartmentState({ ...data })
+    setAddApartmentState({ ...apartmentState, ...data })
     router.push('/add_apartment_details')
   }
 

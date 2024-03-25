@@ -64,7 +64,7 @@ const BookingPreview = () => {
 
   const apartmentId = useRecoilValue(selectedApartmentIdAtom)
 
-  const {record: user} = useRecoilValue(userAtom)
+  const { record: user } = useRecoilValue(userAtom)
 
   const history = useHistory();
 
@@ -123,12 +123,12 @@ const BookingPreview = () => {
 
 
 
- 
+
   // ==================================== Functions =================================
 
 
 
-  function handleBooking(){
+  function handleBooking() {
     const selectedCheckInDate = new Date(state.checkInDate);
     const selectedCheckOutDate = new Date(state.checkOutDate);
 
@@ -175,7 +175,7 @@ const BookingPreview = () => {
 
     history.push("/booking_step_1");
   }
-  
+
 
   async function getAppServiceChargePercentage() {
     const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig
@@ -325,7 +325,7 @@ const BookingPreview = () => {
         <section className="d-flex mt-3">
           <div
             className="preview_img rounded-4"
-            style={{ backgroundImage: `url(${Image})` }}
+            style={{ backgroundImage: `url(${selectedApartment?.image_1_thumbnail_url})` }}
           ></div>
           <div
             className="ml-5 align-between"
@@ -474,7 +474,7 @@ const BookingPreview = () => {
             <SpaceBetween className="my-3">
               <IonText className="text-muted">Services Charges</IonText>
               <IonText className="fw-bold-sm">
-              <Currency currency={user.preferred_currency} />{state.transaction_charge}
+                <Currency currency={user.preferred_currency} />{state.transaction_charge}
               </IonText>
             </SpaceBetween>
           </div>

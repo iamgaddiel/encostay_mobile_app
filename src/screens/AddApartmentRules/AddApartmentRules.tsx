@@ -5,11 +5,12 @@ import { SET_SMOKING_ALLOWED, SET_PETS_ALLOWED, SET_CHILDREN_ALLOWED, SET_PARTY_
 import BackHeader from '../../components/BackHeader'
 import { AddApartmentItemsType, AddApartmentRuleType } from '../../@types/apartments'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { addApartmentAtom } from '../../atoms/apartmentAtom'
 import { Prettify } from '../../@types/utils'
 import { chevronForward } from 'ionicons/icons'
 import AddApartmentFormPagination from '../../components/AddApartmentFormPagination'
+import { appStateTrigger } from '../../atoms/appAtom'
 
 
 
@@ -17,11 +18,11 @@ type Constraints = Omit<AddApartmentRuleType, 'smoking_allowed' | 'party_allowed
 
 
 const AddApartmentRules = () => {
-    // const { register, handleSubmit, formState: { errors }, control, setValue } = useForm<AddApartmentRuleType>()
 
     const router = useIonRouter()
 
-    const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+    const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
+    const setAppStateTrigger  = useSetRecoilState(appStateTrigger)
 
 
     const { register, handleSubmit, formState: { errors }, setValue, control } = useForm<AddApartmentRuleType>({
@@ -46,7 +47,8 @@ const AddApartmentRules = () => {
 
     const handleFormSubmit: SubmitHandler<AddApartmentRuleType> = (data) => {
         console.log("🚀 ~ file: AddApartmentRules.tsx:45 ~ AddApartmentRules ~ data:", data)
-        setAddApartmentState({ ...data })
+        setAddApartmentState({ ...apartmentState, ...data })
+        setAppStateTrigger((prevValue) => !prevValue)
         router.push('/add_apartment_time_rules')
     }
 

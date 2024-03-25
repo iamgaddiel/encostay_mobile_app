@@ -4,7 +4,7 @@ const multer = require("multer");
 const ImageKit = require("imagekit");
 require("dotenv").config();
 
-const upload = multer();
+const upload = multer({ dest: "images/" });
 
 // ----------------------------------------------------------------------------------------
 
@@ -12,6 +12,16 @@ const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_URL,
   publicKey: process.env.IMAGE_KIT_PK,
   privateKey: process.env.IMAGE_KIT_SK,
+});
+
+// allow cross-origin requests
+router.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
 });
 
 // [Route Handleres] ----------------------------------------------------------------------------------------
@@ -29,53 +39,57 @@ router.get("/auth", function (req, res) {
   res.send(result);
 });
 
-const cpUpload = upload.fields([
-  { name: "image1" },
-  { name: "image2" },
-  { name: "image3" },
-]);
+router.post("/create_metadata", function (req, res) {
+  imagekit.createCustomMetadataField(
+    {
+      name: req.body.name,
+      label: req.body.name,
+      schema: {
+        type: "Text",
+      },
+    },
+    function (error, result) {
+      if (error) {
+        console.log(error);
+        return res.status(400).send({'message': error})
+      } else {
+        console.log(result);
+        return res.status(201).send({ message: result }, 201);
+      }
+    }
+  );
 
-router.post("/upload", upload.single("image"), (req, res, next) => {
-  const files = req.files;
-  const images = req.body;
-
-  console.log("🚀 ~ file: imagekitApp.js:42 ~ router.post ~ files:", files);
-  console.log("🚀 ~ file: imagekitApp.js:40 ~ router.post ~ images:", images);
-
-  let imageStrings = {};
-
-  // images.forEach((image) => {
-  //   imagekit.upload(
-  //     {
-  //       file: image.file, //required
-  //       fileName: image.fileName, //required
-  //       extensions: [
-  //         {
-  //           name: "encostay-auto-tagging",
-  //           maxTags: 5,
-  //           minConfidence: 95,
-  //         },
-  //       ],
-  //     },
-  //     function (error, result) {
-  //       if (error) console.log(error);
-  //       else console.log(result);
-  //     }
-  //   );
-  // });
-
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded." });
+  if (!req.body.name) {
+    return res.status(400).send({ message: "missing value `name`" });
   }
-
-  const filePath = req.file.path;
-  console.log("File uploaded successfully:", filePath);
-
-  // You can perform further processing here, such as saving the file path to a database
-
-  // res.json({ success: true, filePath });
-
-  return res.json({ data: "Upload successful", filePath });
+  // return res.send({'message': 'Metadata created successfully'})
 });
 
+
+// Update Metadata
+router.post("/create_metadata", function (req, res) {
+  imagekit.createCustomMetadataField(
+    {
+      name: req.body.name,
+      label: req.body.name,
+      schema: {
+        type: "Text",
+      },
+    },
+    function (error, result) {
+      if (error) {
+        console.log(error);
+        return res.status(400).send({'message': error})
+      } else {
+        console.log(result);
+        return res.status(201).send({ message: result }, 201);
+      }
+    }
+  );
+
+  if (!req.body.name) {
+    return res.status(400).send({ message: "missing value `name`" });
+  }
+  // return res.send({'message': 'Metadata created successfully'})
+});
 module.exports = router;

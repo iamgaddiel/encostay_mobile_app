@@ -19,9 +19,6 @@ import {
 } from "../../helpers/keys";
 import { StoredUser, UserCollectionType } from "../../@types/users";
 import { listApiCollection } from "../../helpers/apiHelpers";
-// import ImageKit from "imagekit";
-import { ImageKitType } from "../../@types/imagekit";
-import { imageKitAtom } from "../../atoms/imagekitAtom";
 import { useHistory } from "react-router";
 import { AppConfig, AppConfigList } from "../../@types/appConfig";
 import { appConfigAtom } from "../../atoms/appConfigAtom";
@@ -39,7 +36,7 @@ const Home = () => {
 
   const [userRecord, setUesrRecrod] = useState<UserCollectionType | null>(null);
   const setAppUserObject = useSetRecoilState(userAtom);
-  const setImageKitAtomConfig = useSetRecoilState(imageKitAtom)
+  // const setImageKitAtomConfig = useSetRecoilState(imageKitAtom)
   const setAppConfig = useSetRecoilState(appConfigAtom)
 
 
@@ -66,7 +63,6 @@ const Home = () => {
       saveData(APP_CONFIG, appConfig);
       setAppConfig(appConfig)
 
-      initializeImageKitConfig(appConfig)
 
     } catch (error) {
       serverLog({
@@ -78,27 +74,7 @@ const Home = () => {
   }
 
 
-  async function initializeImageKitConfig(appConfig: AppConfig) {
-
-    const { imgkit_pk, imgkit_sk, imgkit_url } = appConfig
-
-    const imageKitConfig: ImageKitType = {
-      publicKey: imgkit_pk,
-      privateKey: imgkit_sk,
-      urlEndpoint: imgkit_url
-    }
-
-    // if (error) {
-    //   //TODO: display a error message to the user if theres an error fetching config
-    //   console.warn("🚀 ~ file: Home.tsx:58 ~ getImageKitConfig ~ error:", error)
-    //   return;
-    // }
-
-    // saveData(IMAGEKIT_CONFIG, imageKitConfig); // save imagekit config to Application's database
-    // const imageKit: ImageKit = new ImageKit(imageKitConfig) // init ImageKit
-    // setImageKitAtomConfig(imageKit) // set imageKit object globally
-  }
-
+ 
   if (userRecord?.account_type === "host") {
     return <HostAccount />;
   }

@@ -16,6 +16,14 @@ import {
   IonList,
   IonButton,
   IonAlert,
+  useIonToast,
+  IonToggle,
+  useIonLoading,
+  ToggleChangeEventDetail,
+  IonRefresher,
+  IonRefresherContent,
+  RefresherEventDetail
+
 } from "@ionic/react";
 import {
   arrowBack,
@@ -33,6 +41,7 @@ import {
   pencil,
   trashBinOutline,
   trashOutline,
+  warningOutline,
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
@@ -43,20 +52,30 @@ import Man from "../../assets/images/man.png";
 import {
   deleteApiCollection,
   getApiCollectionItem,
+  updatePatchApiCollectionItem,
 } from "../../helpers/apiHelpers";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
-import { useRecoilValue } from "recoil";
-import { userAtom } from "../../atoms/appAtom";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { appStateTrigger, userAtom } from "../../atoms/appAtom";
 import { ApartementItem } from "../../@types/apartments";
 import { useQuery } from "@tanstack/react-query";
+import Slider from "react-slick";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+
+
+
+
 
 const HostApartmentDetail = () => {
   const { apartmentId } = useParams<{ apartmentId: string }>();
   const history = useHistory();
   const { token } = useRecoilValue(userAtom);
+  const setAppStateTrigger = useSetRecoilState(appStateTrigger)
 
   // TODO: check if apartment is available
   const [isAvailable, setAvailable] = useState(true);
+
 
   const apartmentDisplayCarouselSetting = {
     dots: true,
@@ -74,8 +93,17 @@ const HostApartmentDetail = () => {
 
   const [showDeleteConfirmDialogue, setShowDeleteConfirmDialogue] = useState(false)
 
-  const {data: apartment, isLoading, isError, error } = useQuery({
-    queryKey: ['hostApartmentDetail', apartmentId],
+  const [appState, setAppState] = useRecoilState(appStateTrigger)
+
+  const [presentLoading, dismissLoading] = useIonLoading()
+
+  const [presentToast, dismissToast] = useIonToast()
+
+
+
+
+  const { data: apartment, isLoading, isError, error } = useQuery({
+    queryKey: ['hostApartmentDetail', apartmentId, appState],
     queryFn: getApartmentDetail
   })
 
@@ -94,10 +122,10 @@ const HostApartmentDetail = () => {
       );
       throw new Error('Error fetching apartment details')
     }
-    
+
     return response as ApartementItem
-    // setApartment();
   }
+
 
   async function deleteApartemnt() {
     const { isDeleted } = await deleteApiCollection(
@@ -105,35 +133,86 @@ const HostApartmentDetail = () => {
       apartmentId,
       token
     );
-    if (isDeleted){
-        history.go(-1)
-        return
+    if (isDeleted) {
+      setAppStateTrigger((pevState) => !pevState)
+      history.go(-1)
+      return
     }
+    await presentToast({
+      message: 'Unable to delete apartment',
+      position: 'top',
+      color: 'danger',
+      header: 'Error'
+    })
   }
+
+
+  async function toggleApartmentReservation(toggleState: any) {
+    await presentLoading({
+      message: 'Toggling apartment reservation...'
+    })
+
+    const { isUpdated } = await updatePatchApiCollectionItem(APARTMENTS_COLLECTION, apartment?.id!, { is_available: toggleState }, token)
+
+    if (!isUpdated) {
+      await dismissLoading()
+      await presentToast({
+        message: 'Failed to toggle on reservation for this apartment',
+        position: 'top',
+        icon: warningOutline,
+        color: 'danger',
+        duration: 3000
+      })
+      return
+    }
+
+    await dismissLoading()
+    await presentToast({
+      message: 'Users can make reservations for this apartment.',
+      position: 'top',
+      icon: checkmarkCircle,
+      duration: 3000
+    })
+    setAppState((prevState) => !prevState )
+  }
+
+
+
+  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+    setTimeout(() => {
+      getApartmentDetail()
+      event.detail.complete();
+    }, 2000);
+  }
+
+
 
   return (
     <IonPage>
       <IonContent fullscreen className="">
+      <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         <IonAlert
-            header="Confirm Delete!"
-            subHeader="You're about to delete this apartment"
-            isOpen={showDeleteConfirmDialogue}
-            onDidDismiss={() => setShowDeleteConfirmDialogue(false)}
-            mode="ios"
-            buttons={
-                [
-                    {
-                        text: 'Cancel',
-                        handler: () => setShowDeleteConfirmDialogue(false),
-                        cssClass: 'text-warning'
-                    },
-                    {
-                        text: 'Confirm',
-                        cssClass: 'bg-danger text-light',
-                        handler: () => deleteApartemnt()
-                    }
-                ]
-            }
+          header="Confirm Delete!"
+          subHeader="You're about to delete this apartment"
+          isOpen={showDeleteConfirmDialogue}
+          onDidDismiss={() => setShowDeleteConfirmDialogue(false)}
+          mode="ios"
+          buttons={
+            [
+              {
+                text: 'Cancel',
+                handler: () => setShowDeleteConfirmDialogue(false),
+                cssClass: 'text-warning'
+              },
+              {
+                text: 'Confirm',
+                cssClass: 'bg-danger text-light',
+                handler: () => deleteApartemnt()
+              }
+            ]
+          }
         />
 
         {/* Floating Buttons */}
@@ -158,19 +237,21 @@ const HostApartmentDetail = () => {
           </IonFabButton>
         </IonFab>
 
-        <section
-          className="home_detail_hero_image"
-          style={{ backgroundImage: `url(${Room})` }}
-        ></section>
-        {/* <Slider {...apartmentDisplayCarouselSetting}>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                </Slider> */}
+        <Swiper spaceBetween={10} slidesPerView={1.4} pagination>
+          {
+            [apartment?.image_1, apartment?.image_2, apartment?.image_3].map((imageUrl) => (
+              <SwiperSlide>
+                <section className="home_detail_hero_image" style={{ backgroundImage: `url(${imageUrl} )` }}></section>
+              </SwiperSlide>
+
+            ))
+          }
+        </Swiper>
+
 
         {/* Apartment is Available */}
 
-        {isAvailable ? (
+        {apartment?.is_available ? (
           <div
             className="ion-padding w-75 my-4 mx-auto rounded-4 ion-text-center"
             style={{ backgroundColor: "var(--very-light-green)" }}
@@ -508,7 +589,19 @@ const HostApartmentDetail = () => {
           </div>
         </section>
 
-        {/* Revies */}
+        {/* Toggle apartment resserv */}
+        <section className="mt-4 ion-padding">
+          <SpaceBetween>
+            <IonText>
+              Toggle reservation
+            </IonText>
+            <IonToggle checked={apartment?.is_available!} mode='ios' color={'warning'} onIonChange={(e) => toggleApartmentReservation(e.detail.checked)} />
+          </SpaceBetween>
+          <p className='text-muted mt-2'><small>Users will not be able to make reservations if this is toggled off</small></p>
+        </section>
+
+
+        {/* Reviews */}
         <section className="mt-4 ion-padding">
           <div className="ion-padding shadow rounded-5">
             <SpaceBetween>

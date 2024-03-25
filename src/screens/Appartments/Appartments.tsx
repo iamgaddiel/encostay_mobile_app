@@ -19,7 +19,7 @@ import {
 } from "ionicons/icons";
 import { useRecoilValue } from "recoil";
 import SpaceBetween from "../../components/style/SpaceBetween";
-import { userAtom } from "../../atoms/appAtom";
+import { appStateTrigger, userAtom } from "../../atoms/appAtom";
 import { useQuery } from "@tanstack/react-query";
 import NotFound from "../../components/NotFound/NotFound";
 import { APARTMENTS_COLLECTION } from "../../helpers/keys";
@@ -29,10 +29,12 @@ import { ApartementList } from "../../@types/apartments";
 const Appartments = () => {
   const { token: authToken, record: user } = useRecoilValue(userAtom);
   const hostId = user?.id!
+  
+  const triggerState = useRecoilValue(appStateTrigger)
 
 
   const { data: apartmentList, isLoading, isError, error } = useQuery({
-    queryKey: ['hostApartmentList', hostId, authToken],
+    queryKey: ['hostApartmentList', hostId, authToken, triggerState],
     queryFn: () => getHostApartments(hostId, authToken)
   })
 
@@ -45,7 +47,6 @@ const Appartments = () => {
       params
     );
     const aprtments = data as ApartementList;
-
     return aprtments
   }
 

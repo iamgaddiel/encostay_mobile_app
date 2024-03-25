@@ -16,7 +16,7 @@ import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { getSaveData } from '../../helpers/storageSDKs'
 import { APP_CONFIG, FLUTTERWAVE_COLLECTION } from '../../helpers/keys'
 import { AppConfig } from '../../@types/appConfig'
-import { flutterwaveConfig } from '../../flutterwave'
+import { flutterwaveNGNConfig, flutterwaveUSDConfig } from '../../flutterwave'
 import Settings from '../../helpers/settings'
 import { userAtom } from '../../atoms/appAtom'
 import { _post } from '../../helpers/api'
@@ -41,7 +41,7 @@ const Booking1 = () => {
 
     const { record: user, token: authToken } = useRecoilValue(userAtom)
 
-    const [flutterwavePaymentConfig, setFlutterwavePaymentConfig] = useState<typeof flutterwaveConfig>({
+    const [flutterwavePaymentConfig, setFlutterwavePaymentConfig] = useState<typeof flutterwaveNGNConfig>({
         public_key: '',
         tx_ref: '0',
         amount: 0,
@@ -59,8 +59,7 @@ const Booking1 = () => {
         },
     })
 
-
-    const handleFlutterwavePayment = user.preferred_currency === 'NGN' ? useFlutterwave(flutterwavePaymentConfig) : null
+    let handleFlutterwavePayment = useFlutterwave(flutterwavePaymentConfig)
 
     const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
 
@@ -74,10 +73,6 @@ const Booking1 = () => {
         enabled: false,
         message: ''
     })
-
-    const [flutterwaveSecret, setFlutterwaveSecret] = useState('')
-
-    const [showStripeCardPayment, setShowStripeCardPayment] = useState(false)
 
 
 
@@ -107,17 +102,15 @@ const Booking1 = () => {
     async function loadFlutterwaveConfig() {
         const { flw_live_pk, flw_live_sk, flw_test_pk, flw_test_sk } = await getSaveData(APP_CONFIG) as AppConfig
 
-        const FLW_SK = DEBUG ? flw_test_sk : flw_live_sk
+        // const FLW_SK = DEBUG ? flw_test_sk : flw_live_sk
         const FLW_PK = DEBUG ? flw_test_pk : flw_live_pk
 
-
-        setFlutterwaveSecret(() => FLW_SK)
 
         const config = {
             public_key: FLW_PK,
             tx_ref: Date.now().toString(),
             amount: bookingDetail.price,
-            currency: 'NGN',
+            currency: user.preferred_currency,
             payment_options: 'card',
             customer: {
                 email: user.email,
@@ -158,49 +151,42 @@ const Booking1 = () => {
         }
 
 
-        if (user.preferred_currency === 'NGN') {
-            if (handleFlutterwavePayment !== null) {
-                handleFlutterwavePayment({
-                    callback: async (response) => {
-                        closePaymentModal() // this will close the modal programmatically
-                        setLoading(() => false)
+        handleFlutterwavePayment({
+            callback: async (response: any) => {
+                console.log("🚀 ~ callback: ~ response:", response)
+                closePaymentModal() // this will close the modal programmatically
+                setLoading(() => false)
 
 
-                        const transactionPayload: FlutterwaveTransactionItem = {
-                            account_type: 'guest',
-                            user: user.id,
-                            transaction_id: response.transaction_id,
-                            ref_id: response.tx_ref,
-                            transaction_type: 'payment',
-                        }
+                const transactionPayload: FlutterwaveTransactionItem = {
+                    account_type: 'guest',
+                    user: user.id,
+                    transaction_id: response.transaction_id,
+                    ref_id: response.tx_ref,
+                    transaction_type: 'payment',
+                }
 
-                        const { isCreated, response: fluTrx } = await createApiCollection(
-                            FLUTTERWAVE_COLLECTION,
-                            transactionPayload,
-                            authToken
-                        )
+                const { isCreated, response: flwTrx } = await createApiCollection(
+                    FLUTTERWAVE_COLLECTION,
+                    transactionPayload,
+                    authToken
+                )
 
-                        if (isCreated) {
-                            // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
-                            setFlutterwaveTransactionId({
-                                transactionId: response.transaction_id,
-                                collectionId: fluTrx?.id!
-                            })
-                            router.push('/payment_processing')
-                        }
-                    },
-                    onClose: () => {
+                if (isCreated) {
+                    // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
+                    setFlutterwaveTransactionId({
+                        transactionId: response.transaction_id,
+                        collectionId: flwTrx?.id!
+                    })
+                    setLoading(() => false)
+                    router.push('/payment_processing')
+                }
+            },
+            onClose: () => {
+                setLoading(() => false)
+            },
+        });
 
-                    },
-                });
-                return
-            }
-        }
-
-        if (user.preferred_currency === 'USD') setShowStripeCardPayment(true)
-
-
-        setLoading(() => false)
     }
 
 
@@ -222,10 +208,10 @@ const Booking1 = () => {
                     color={'danger'}
                 />
 
-                <StripeWrapper
+                {/* <StripeWrapper
                     isOpen={showStripeCardPayment}
                     setCloseModal={setShowStripeCardPayment}
-                />
+                /> */}
 
                 <section className="mt-3 booking_process ion-padding-horizontal">
                     <div className="booking_process_stage">1</div>

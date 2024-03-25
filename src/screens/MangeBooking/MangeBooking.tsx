@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonThumbnail, IonTitle, IonToolbar, RefresherEventDetail, useIonViewDidEnter } from '@ionic/react'
+import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonRefresher, IonRefresherContent, IonSegment, IonSegmentButton, IonSkeletonText, IonText, IonThumbnail, IonTitle, IonToolbar, RefresherEventDetail, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react'
 import { useEffect, useState } from 'react'
 
 // css
@@ -47,7 +47,7 @@ const MangeBooking = () => {
 
 
 
-    useIonViewDidEnter(() => {
+    useEffect(() => {
         setUtil({ showTabs: true })
     }, [])
 
@@ -65,15 +65,7 @@ const MangeBooking = () => {
 
     async function loadBookings(): Promise<BookingList> {
         try {
-            let response: BookingList;
-
-            if (user.account_type === 'guest') {
-                response = await getBookings(user?.id!, authToken, 'guest')
-            }
-            else if (user.account_type === 'host') {
-                response = await getBookings(user?.id!, authToken, 'host')
-            }
-
+            let response: BookingList =  await getBookings(user?.id!, authToken,  user.account_type );
             return response!
         }
         catch (e: any) {
@@ -185,11 +177,10 @@ const MangeBooking = () => {
                                                     <IonList lines='none'>
                                                         {
                                                             bookings && bookings.items.slice(0, 5).map((booking, indx) => (
-                                                                // bookingsDemo && bookingsDemo.map((booking, indx) => (
                                                                 <IonItem key={indx} routerDirection='forward' routerLink={user.account_type === 'host' ? `/host/booking/preview/${booking.id}` : `/manage_booking_preview/${booking.id}`}>
                                                                     <IonLabel>
                                                                         <section className='d-flex mt-1'>
-                                                                            <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
+                                                                            <div className="preview_img rounded-4" style={{ backgroundImage: `url(${booking.expand?.apartment?.image_1_thumbnail_url})` }}></div>
                                                                             <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
                                                                                 <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
                                                                                 <IonText className='fs-5 block'><Currency currency={user.preferred_currency} />{booking.expand?.apartment?.price}/night</IonText>
@@ -242,7 +233,7 @@ const MangeBooking = () => {
                                                                 <IonItem key={indx}>
                                                                     <IonLabel>
                                                                         <section className='d-flex mt-1'>
-                                                                            <div className="preview_img rounded-4" style={{ backgroundImage: `url(${Image})` }}></div>
+                                                                            <div className="preview_img rounded-4" style={{ backgroundImage: `url(${booking?.expand?.apartment?.image_1_thumbnail_url})` }}></div>
                                                                             <div className='ml-5 align-between' style={{ alignItems: "space-between" }}>
                                                                                 <IonLabel>{booking?.expand?.apartment?.title!}</IonLabel>
                                                                                 <IonText className='fs-5 block'><Currency currency={user.preferred_currency} />{booking.expand?.apartment?.price}/night</IonText>

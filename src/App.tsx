@@ -38,10 +38,40 @@ import { RecoilRoot } from "recoil";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { IKContext } from 'imagekitio-react';
+import Settings from "./helpers/settings";
+
 
 
 
 setupIonicReact();
+
+const { serverBaseUrl } = Settings()
+
+// Image Kit Config
+const imageKitUrl = 'https://ik.imagekit.io/encostayapp/'
+
+const imageKitPublicKey = 'public_PgfsRhl7aeYS3xr0YkO5PdwQzI0='
+
+const imageKitAuthenticator = async () => {
+  try {
+    const response = await fetch(`${serverBaseUrl}/image_kit/auth`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    const { signature, expire, token } = data;
+    return { signature, expire, token };
+  } catch (error: any) {
+    throw new Error(`Authentication request failed: ${error?.message}`);
+  }
+};
+
+
+
 
 
 const App: React.FC = () => {
@@ -51,7 +81,11 @@ const App: React.FC = () => {
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
-        <Routes />
+        <IKContext publicKey={imageKitPublicKey}
+          urlEndpoint={imageKitUrl}
+          authenticator={imageKitAuthenticator} >
+          <Routes />
+        </IKContext>
       </QueryClientProvider>
     </RecoilRoot>
   );

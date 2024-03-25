@@ -1806,6 +1806,11 @@
   resolved "https://registry.yarnpkg.com/@types/triple-beam/-/triple-beam-1.3.3.tgz#726ae98a5f6418c8f24f9b0f2a9f81a8664876ae"
   integrity sha512-6tOUG+nVHn0cJbVp25JFayS5UE6+xlbcNF9Lo9mU7U0zk3zeUShZied4YEQZjy1JBF043FSkdXw8YkUJuVtB5g==
 
+"@types/uuid@^9.0.8":
+  version "9.0.8"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-9.0.8.tgz#7545ba4fc3c003d6c756f651f3bf163d8f0f29ba"
+  integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
+
 "@types/yargs-parser@*":
   version "21.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-21.0.0.tgz#0c60e537fa790f5f9472ed2776c2b71ec117351b"
@@ -4525,17 +4530,17 @@ ignore@^5.2.0:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.2.4.tgz#a291c0c6178ff1b960befe47fcdec301674a6324"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
 
-imagekit-javascript@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/imagekit-javascript/-/imagekit-javascript-2.0.0.tgz#5201694825d72972d0e2c09341890975746663ee"
-  integrity sha512-F2p1DYk68Nr2rw0I6X1trki/QdTShSwbq4rf3ju1/71Bodx5smN9mPfEATGHKRx9iQeeGgmDZM8wNLUcg3HeWA==
-
-imagekitio-react@^3.0.0:
+imagekit-javascript@^3.0.0:
   version "3.0.0"
-  resolved "https://registry.yarnpkg.com/imagekitio-react/-/imagekitio-react-3.0.0.tgz#c85e9d4b99e179f304db68a6da00ce28e00defdd"
-  integrity sha512-tAqIgiyKcLdleSzLSvOo8lNODMVzMKlt8yfpdKc9oLmosyeYe16uZZTtbpmmRPhMquSoevfnaDsCisHUOLWTow==
+  resolved "https://registry.yarnpkg.com/imagekit-javascript/-/imagekit-javascript-3.0.0.tgz#e80236cc550e7c7de8eb9879066d202576abfb10"
+  integrity sha512-39Q54v1fwRlCYnVyalfRi9UFuUq4t+vnktWUzqjBHRguOB+wLNnAEuPbNbm0NUBJAUw5He4C1k/0vbNLOvU/4g==
+
+imagekitio-react@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/imagekitio-react/-/imagekitio-react-4.0.0.tgz#724bdfe4d974a7004c57392fff16c14a187b9047"
+  integrity sha512-O7dsPnAb92JCtHsl8RqOAYq8uhJR98VgC+ddHXNStaS6Frj6u4pQ4ftdtISfh8AMnZj/celnsdv0qOuj81RHhw==
   dependencies:
-    imagekit-javascript "^2.0.0"
+    imagekit-javascript "^3.0.0"
     prop-types "^15.7.2"
 
 immediate@~3.0.5:
@@ -7880,6 +7885,11 @@ uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"

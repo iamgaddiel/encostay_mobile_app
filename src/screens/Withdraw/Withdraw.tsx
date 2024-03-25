@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonProgressBar, IonSelect, IonSelectOption, IonToast } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonProgressBar, IonSelect, IonSelectOption, IonToast, useIonLoading } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
 import SpaceBetween from '../../components/style/SpaceBetween'
@@ -10,17 +10,23 @@ import { useRecoilValue } from 'recoil'
 import { WalletItem, WalletList } from '../../@types/wallet'
 import { userAtom } from '../../atoms/appAtom'
 import { createApiCollection, listApiCollection, updatePatchApiCollectionItem } from '../../helpers/apiHelpers'
-import { BANKS_COLLECTION, TRANSACTIONS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
+import { APP_CONFIG, BANKS_COLLECTION, TRANSACTIONS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
 import { useHistory } from 'react-router'
 import { TransactionCreateFields } from '../../@types/transactions'
 import { Toast } from '../../@types/toast'
 import { authenticate } from '../../helpers/authSDK'
 import { BankItem, BankList } from '../../@types/bank'
 import { warning } from 'ionicons/icons'
+import { v4 as uuid4 } from 'uuid'
+import { getSaveData } from '../../helpers/storageSDKs'
+import { AppConfig } from '../../@types/appConfig'
+import Settings from '../../helpers/settings'
+import { _post } from '../../helpers/api'
 
 
 
 
+const { serverBaseUrl } = Settings()
 
 const Withdraw = () => {
     const history = useHistory()
@@ -50,21 +56,24 @@ const Withdraw = () => {
 
 
     const { data: wallet, isLoading: isLoadingWalletBalance } = useQuery({
-        queryKey: ['getHostWalletForTransaction'],
+        queryKey: ['getHostWallet'],
         queryFn: getHostWallet
     })
 
     const { data: bankAccountsFound } = useQuery({
-        queryKey: ['getHostBankDetailsTransaction'],
+        queryKey: ['getHostBankDetails'],
         queryFn: getUserBankDetails
     })
+
+    const [presentLoading, dismissLoading] = useIonLoading()
+
 
 
 
 
 
     useEffect(() => {
-        if (!isLoadingWalletBalance){
+        if (!isLoadingWalletBalance) {
             setWalletBalance(wallet?.balance!)
         }
     }, [wallet?.balance!])
@@ -73,7 +82,7 @@ const Withdraw = () => {
 
 
 
-    
+
     async function getHostWallet(): Promise<WalletItem> {
         try {
             const params = {
@@ -92,19 +101,19 @@ const Withdraw = () => {
     }
 
 
-    async function decreaseWalletBalance() {    
-        const newBalance = wallet!.balance - amount
-        const data = { balance: newBalance }
+    async function decreaseWalletBalance(amount: number) {
+        const data = { balance: amount }
         updatePatchApiCollectionItem(WALLETS_COLLECTION, wallet?.id!, data, authToken)
-        setWalletBalance(newBalance)
+        setWalletBalance(amount)
     }
 
 
-    async function createWithdrawTransaction(): Promise<void> {
+    async function createWithdrawTransaction(reference: string): Promise<void> {
         const transactionData: TransactionCreateFields = {
             amount,
             is_out: true,
             host: user.id,
+            reference
         }
 
         const { isCreated } = await createApiCollection(TRANSACTIONS_COLLECTION, transactionData, authToken)
@@ -128,10 +137,10 @@ const Withdraw = () => {
 
 
     async function getUserBankDetails(): Promise<BankItem[]> {
-        const params = { filter: `host='${user.id}'` }
+        const params = { filter: `user='${user.id}'` }
         const { data } = await listApiCollection(BANKS_COLLECTION, authToken, params) as { data: BankList }
-        const userBank = data?.items
-        return userBank
+        console.log("🚀 ~ getUserBankDetails ~ data:", data, '<------')
+        return data?.items!
     }
 
 
@@ -139,11 +148,11 @@ const Withdraw = () => {
         e.preventDefault()
         setIsLoading(true)
 
-        if (amount < 100) {
+        if (amount < 2000) {
             setIsLoading(false)
             setShowToast({
                 enabled: true,
-                message: 'Minimum amount to withdraw is 100',
+                message: 'Minimum amount to withdraw is 2000',
                 type: 'warning'
             })
             return
@@ -183,22 +192,81 @@ const Withdraw = () => {
             return
         }
 
-        createWithdrawTransaction()
 
+
+        // Get Bank Details
         const userBankAccount = bankAccountsFound![0]
+        const { service_charge } = await getSaveData(APP_CONFIG) as AppConfig
+
+        // Calculate withdrawal money including service charge
+        const withdrawWithChargesAmount = amount + (amount * service_charge) // withdraw amount + service charge
+        const newBalance = wallet!.balance - withdrawWithChargesAmount
+        const uniqueReferenceString = uuid4()
+
+        try {
+
+            const nairaPaymentPayload = {
+                account_number: userBankAccount?.account_number,
+                amount,
+                currency: user?.preferred_currency,
+                reference: String(uniqueReferenceString),
+                narration: 'Wallet withdrawal',
+                debit_currency: user?.preferred_currency,
+                bank_name: userBankAccount?.account_name
+            };
+
+            const usdPaymentPayload = {
+                amount,
+                narration: 'Wallet withdrawal',
+                currency: "USD",
+                beneficiary_name: user?.name,
+                meta: {
+                    account_number: userBankAccount?.account_number,
+                    routing_number: userBankAccount?.routing_number,
+                    swift_code: userBankAccount?.swift_code,
+                    bank_name: userBankAccount?.bank_name,
+                    beneficiary_name: user?.name,
+                    beneficiary_address: userBankAccount?.address,
+                    beneficiary_country: "US"
+                }
+            }
+
+            const paymentPayload = user?.preferred_currency === 'USD' ? usdPaymentPayload : nairaPaymentPayload
+
+
+            const url = `${serverBaseUrl}/flw/bank_payment`
+            const header = { 'Content-Type': 'application/json' }
+
+            const { data } = await _post(url, paymentPayload, header)
+
+            console.log(data, '<---- Payment Data')
+
+
+
+            // decreaseWalletBalance(newBalance)
+            // createWithdrawTransaction(uniqueReferenceString)
+        }
+
+        catch (e) {
+            setIsLoading(false)
+            console.log(e, '<----')
+        }
+
+
+
 
         // TODO: send money to users account using strip or flutter wave depending on preference
 
-        decreaseWalletBalance()
-        
-        
+
+
+
         // Reset State Values
         setBankId('')
         setPassword('')
         setAmount(0)
-        
+
         setIsLoading(false)
-        history.push('/withdraw_receiving')
+        // history.push('/withdraw_receiving')
     }
 
 
@@ -246,9 +314,10 @@ const Withdraw = () => {
                             className='rounded-5 px-4'
                             style={{ background: "var(--primary-3)" }}
                             required
-                            onIonChange={(e) => setAmount(parseInt(e.detail.value as string))}
+                            // onIonChange={(e) => setAmount(() => parseInt(e.detail.value as string))}
+                            onKeyUp={(e) => setAmount(parseInt(e.currentTarget.value as string))}
                         />
-
+                        {/* 
                         {
                             bankAccountsFound?.length! >= 1 ? (
                                 <IonSelect
@@ -266,7 +335,7 @@ const Withdraw = () => {
                                     }
                                 </IonSelect>
                             ) : null
-                        }
+                        } */}
                         <IonInput
                             type="password"
                             placeholder='Enter password'
@@ -275,7 +344,8 @@ const Withdraw = () => {
                             className='rounded-5 px-4 mt-4'
                             style={{ background: "var(--primary-3)" }}
                             required
-                            onIonChange={(e) => setPassword(e.detail.value as string)}
+                            // onIonChange={(e) => setPassword(e.detail.value as string)}
+                            onKeyUp={(e) => setPassword(e.currentTarget.value as string)}
                         />
 
                         <div className="mt-5 ion-text-center">

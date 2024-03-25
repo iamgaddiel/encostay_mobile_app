@@ -4,7 +4,7 @@ import SpaceBetween from '../../components/style/SpaceBetween';
 import { SET_NUMBER_OF_BEDS, SET_NUMBER_OF_ROOMS, SET_NUMBER_OF_BATHROOMS, SET_APARTMENT_TYPE, SET_PRICE_PER_NIGHT } from '../../reducers/actions/addApartmentsActions';
 import { AddApartmentDetailType } from '../../@types/apartments';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { addApartmentAtom } from '../../atoms/apartmentAtom';
 import { Prettify } from '../../@types/utils';
 import { chevronForward } from 'ionicons/icons';
@@ -19,7 +19,7 @@ const AddApartmentDetails = () => {
 
     const router = useIonRouter()
 
-    const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+    const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
 
     const { register, handleSubmit, formState: { errors }, control } = useForm<AddApartmentDetailType>({
         defaultValues: {
@@ -40,7 +40,7 @@ const AddApartmentDetails = () => {
 
     const handleFormSubmit: SubmitHandler<AddApartmentDetailType> = (data) => {
         console.log("🚀 ~ file: AddApartmentDetails.tsx:35 ~ AddApartmentDetails ~ data:", data)
-        setAddApartmentState({ ...data })
+        setAddApartmentState({ ...apartmentState, ...data })
         router.push('/add_apartment_items')
     }
 

@@ -12,6 +12,7 @@ export type TransactionCreateFields = {
     amount: number
     host: string
     booking?: string
+    reference: string
 }
 
 export type TransactionItem = {
@@ -25,6 +26,7 @@ export type TransactionItem = {
     is_out: boolean
     amount: number
     host: string
+    reference: string
     expand?: {
         apartment?: ApartementItem,
         host?: UserCollectionType

@@ -63,6 +63,8 @@ import Currency from "../../components/Currency";
 import { ReviewList } from "../../@types/reviews";
 import NotFound from "../../components/NotFound";
 import ProfileImage from "../../components/ProfileImage";
+import { Swiper, SwiperSlide } from "swiper/react";
+
 
 
 
@@ -226,15 +228,16 @@ const HomeDetail = () => {
           </IonFabButton>
         </IonFab>
 
-        <section
-          className="home_detail_hero_image"
-          style={{ backgroundImage: `url(${Room})` }}
-        ></section>
-        {/* <Slider {...apartmentDisplayCarouselSetting}>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                        <section className="home_detail_hero_image" style={{ backgroundImage: `url(${Room})` }}></section>
-                </Slider> */}
+        <Swiper spaceBetween={10} slidesPerView={1.4} pagination>
+          {
+            [apartment?.image_1, apartment?.image_2, apartment?.image_3].map((imageUrl) => (
+              <SwiperSlide>
+                <section className="home_detail_hero_image" style={{ backgroundImage: `url(${imageUrl} )` }}></section>
+              </SwiperSlide>
+
+            ))
+          }
+        </Swiper>
 
         {/* Apartment is Available */}
 
@@ -633,7 +636,7 @@ const HomeDetail = () => {
                   {
                     reviews?.items.length! >= 1 ? reviews?.items.map((review, index) => (
                       <IonItem>
-                        <ProfileImage slot='start' width={50} height={50} name={review.expand?.user?.name}  />
+                        <ProfileImage slot='start' width={50} height={50} name={review.expand?.user?.name} />
                         <IonLabel>
                           <IonTitle>{review.expand?.user?.name}</IonTitle>
                           <p>{review.comment}</p>

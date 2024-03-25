@@ -91,27 +91,17 @@ router.post("/card_payment", async (req, res) => {
   }
 });
 
-router.get("/bank_payment", async (req, res) => {
-  const { account_number, amount } = req.body;
+router.post("/bank_payment", async (req, res) => {
+  const { account_number, amount, currency, reference, narration, bank_name } =
+    req.body;
   const paymentPayload = {
     account_number,
     amount,
-    currency: "NGN",
+    currency,
     reference,
     narration,
-    debit_currency: "NGN",
-    // use if sending to a DOM account
-    // meta: [
-    //   {
-    //     sender: "Encostay App",
-    //     first_name: '',
-    //     email: 'encostayapp@proton.me',
-    //     beneficiary_country: 'NG',
-    //     beneficiary_name: '',
-    //     mobile_number: '+2347050595335', // change this number
-    //     merchant_name: 'Encostay App'
-    //   }
-    // ]
+    debit_currency: currency,
+    account_bank: bank_name,
   };
   try {
     const response = await flw.Transfer.initiate(paymentPayload);
@@ -119,78 +109,9 @@ router.get("/bank_payment", async (req, res) => {
     return res.json({ status: "failed" });
   } catch (error) {
     console.log(error, "<---- error paying money");
+    return res.status(500).json({ status: "failed" });
   }
 });
-
-// async function chargeDebitCard(req, res) {
-//   const {
-//     card_number,
-//     cvv,
-//     expiry_month,
-//     expiry_year,
-//     fullname,
-//     amount,
-//     phone_number,
-//     email,
-//     tx_ref,
-//     pin,
-//     otp,
-//   } = req.body;
-
-//     console.log("🚀 ~ file: flutterPayment.js:32 ~ chargeDebitCard ~ pin:", pin)
-
-//   // Initiating the transaction
-//   const payload = {
-//     card_number,
-//     cvv,
-//     expiry_month,
-//     expiry_year,
-//     currency: "NGN",
-//     amount,
-//     // redirect_url: "https://www.google.com",
-//     fullname,
-//     email,
-//     phone_number,
-//     enckey: FLW_ENCRYPTION_KEY,
-//     tx_ref,
-//   };
-
-//   try {
-//     const response = await flw.Charge.card(payload);
-//     console.log(response);
-
-//     // Authorizing transactions
-
-//     // For PIN transactions
-//     if (response.meta.authorization.mode === "pin") {
-//       let payload2 = payload;
-//       payload2.authorization = {
-//         mode: "pin",
-//         // fields: ["pin"],
-//         pin: parseInt(pin),
-//       };
-//       const reCallCharge = await flw.Charge.card(payload2);
-
-//       // Add the OTP to authorize the transaction
-//       const callValidate = await flw.Charge.validate({
-//         otp,
-//         flw_ref: reCallCharge.data.flw_ref,
-//       });
-//       console.log(callValidate);
-//     }
-
-//     // For 3DS or VBV transactions, redirect users to their issue to authorize the transaction
-//     // if (response.meta.authorization.mode === "redirect") {
-//     //   var url = response.meta.authorization.redirect;
-//     //   open(url);
-//     // }
-
-//     console.log(response);
-//   } catch (error) {
-//     console.log(error, '-------------');
-//     return res.json({ data: JSON.stringify(error) }).status(500);
-//   }
-// }
 
 router.post("/payment_callback", async (req, res) => {
   if (req.query.status === "successful") {
@@ -210,6 +131,36 @@ router.post("/payment_callback", async (req, res) => {
     } else {
       // Inform the customer their payment was unsuccessful
     }
+  }
+});
+
+router.post("/refund", async (req, res) => {
+  try {
+    const { transaction_id, amount } = req.body;
+    const payload = {
+      id: String(transaction_id), //This is the transaction unique identifier. It is returned in the initiate transaction call as data.id
+      amount,
+    };
+    const response = await flw.Transaction.refund(payload);
+    console.log(response);
+    res.status(200).send(response);
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
+router.get("/get_banks", async (req, res) => {
+  try {
+    const payload = {
+      country: "NG", //Pass either NG, GH, KE, UG, ZA or TZ to get list of banks in Nigeria, Ghana, Kenya, Uganda, South Africa or Tanzania respectively
+    };
+    const response = await flw.Bank.country(payload);
+    console.log(response);
+    res.status(200).json({...response})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({status: 'failed'})
   }
 });
 

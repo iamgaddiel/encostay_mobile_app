@@ -3,7 +3,7 @@ import { useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import BackHeader from '../../components/BackHeader'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { AddApartmentTimeRuleType } from '../../@types/apartments'
 import { addApartmentAtom } from '../../atoms/apartmentAtom'
 import { getTimeOrDateFromDateTimeString } from '../../helpers/utils'
@@ -17,7 +17,7 @@ const AddApartmentTimeRules = () => {
 
     const [displayToast, _] = useIonToast()
 
-    const setAddApartmentState = useSetRecoilState(addApartmentAtom)
+    const [apartmentState, setAddApartmentState] = useRecoilState(addApartmentAtom)
 
     const { handleSubmit, formState: { errors }, control, setValue } = useForm<AddApartmentTimeRuleType>({
         defaultValues: {
@@ -72,7 +72,7 @@ const AddApartmentTimeRules = () => {
             return
         }
 
-        setAddApartmentState({ ...data })
+        setAddApartmentState({ ...apartmentState, ...data })
         router.push('/add_apartment_images')
     }
     /* 
