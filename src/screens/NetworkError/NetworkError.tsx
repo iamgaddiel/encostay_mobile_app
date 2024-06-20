@@ -18,7 +18,6 @@ const NetworkError = () => {
         setIsLoading(true)
         try {
             const URL = `${serverBaseUrl}/`
-            // const URL = `https://www.google.com/`
             const { status } = await _get(URL)
             console.log("🚀 ~ file: NetworkError.tsx:22 ~ networkTest ~ status:", status)
             if (status === 200) {

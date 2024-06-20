@@ -204,16 +204,21 @@ const Withdraw = () => {
         const uniqueReferenceString = uuid4()
 
         try {
+            // filling bank names
+            let account_bank = userBankAccount?.bank_id
+            if (account_bank.length < 2) account_bank = `00${account_bank}`;
+            if (account_bank.length < 3) account_bank = `0${account_bank}`;
 
             const nairaPaymentPayload = {
                 account_number: userBankAccount?.account_number,
+                account_bank,
                 amount,
                 currency: user?.preferred_currency,
                 reference: String(uniqueReferenceString),
                 narration: 'Wallet withdrawal',
                 debit_currency: user?.preferred_currency,
-                bank_name: userBankAccount?.account_name
             };
+
 
             const usdPaymentPayload = {
                 amount,
@@ -233,15 +238,12 @@ const Withdraw = () => {
 
             const paymentPayload = user?.preferred_currency === 'USD' ? usdPaymentPayload : nairaPaymentPayload
 
-
             const url = `${serverBaseUrl}/flw/bank_payment`
             const header = { 'Content-Type': 'application/json' }
 
             const { data } = await _post(url, paymentPayload, header)
 
             console.log(data, '<---- Payment Data')
-
-
 
             // decreaseWalletBalance(newBalance)
             // createWithdrawTransaction(uniqueReferenceString)

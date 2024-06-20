@@ -40,7 +40,12 @@ const NairaBankForm = () => {
         setIsLoading(true)
 
 
-        const formData = { ...data, user: user.id, bank_name: selectedBank?.name, bank_id: selectedBank?.id }
+        let bank_id = selectedBank?.id
+        if (bank_id.length < 2) bank_id = `00${bank_id}`;
+        if (bank_id.length < 3) bank_id = `0${bank_id}`;
+
+
+        const formData = { ...data, user: user.id, bank_name: selectedBank?.name, bank_id }
 
         const { isCreated, response } = await createApiCollection(BANKS_COLLECTION, formData, authToken)
 
@@ -117,7 +122,7 @@ const NairaBankForm = () => {
                             </IonText>
                         </div>
                         <div className=" mt-2">
-                            <IonLabel>{selectedBank?.name === "" ? 'Bank Name' : selectedBank?.name }</IonLabel>
+                            <IonLabel>{selectedBank?.name === "" ? 'Bank Name' : selectedBank?.name}</IonLabel>
                         </div>
                         {/* {errors.bank_name && <small className='text-danger'>{errors.bank_name.message}</small>} */}
                     </div>

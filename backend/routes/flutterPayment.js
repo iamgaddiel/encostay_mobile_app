@@ -92,22 +92,55 @@ router.post("/card_payment", async (req, res) => {
 });
 
 router.post("/bank_payment", async (req, res) => {
-  const { account_number, amount, currency, reference, narration, bank_name } =
-    req.body;
-  const paymentPayload = {
+  const {
     account_number,
     amount,
     currency,
     reference,
     narration,
-    debit_currency: currency,
-    account_bank: bank_name,
-  };
+    bank_name,
+    beneficiary_name,
+    meta,
+    account_bank,
+    debit_currency,
+  } = req.body;
+
+  console.log(req.body, '<------')
+
+  let payload = {};
+  
+  if (currency === "USD") {
+    payload = {
+      amount,
+      narration,
+      currency,
+      beneficiary_name,
+      meta,
+    };
+  }
+
+  if (currency === "NGN") {
+    payload = {
+      account_number,
+      account_bank,
+      amount,
+      currency,
+      reference,
+      narration,
+      debit_currency,
+    };
+  }
+  
+  
   try {
-    const response = await flw.Transfer.initiate(paymentPayload);
+    console.log("🚀 ~ router.post ~ payload:", payload)
+    
+    const response = await flw.Transfer.initiate(payload);
+    console.log("🚀 ~ router.post ~ response:", response)
     if (response.status === "success") return res.json(response);
     return res.json({ status: "failed" });
-  } catch (error) {
+  }
+  catch (error) {
     console.log(error, "<---- error paying money");
     return res.status(500).json({ status: "failed" });
   }
@@ -138,7 +171,7 @@ router.post("/refund", async (req, res) => {
   try {
     const { transaction_id, amount } = req.body;
     const payload = {
-      id: String(transaction_id), //This is the transaction unique identifier. It is returned in the initiate transaction call as data.id
+      id: transaction_id, //This is the transaction unique identifier. It is returned in the initiate transaction call as data.id
       amount,
     };
     const response = await flw.Transaction.refund(payload);
@@ -148,7 +181,8 @@ router.post("/refund", async (req, res) => {
     console.log(error);
     res.status(400).send(error);
   }
-});
+
+ });
 
 router.get("/get_banks", async (req, res) => {
   try {
@@ -157,10 +191,10 @@ router.get("/get_banks", async (req, res) => {
     };
     const response = await flw.Bank.country(payload);
     console.log(response);
-    res.status(200).json({...response})
+    res.status(200).json({ ...response });
   } catch (error) {
     console.log(error);
-    res.status(500).json({status: 'failed'})
+    res.status(500).json({ status: "failed" });
   }
 });
 

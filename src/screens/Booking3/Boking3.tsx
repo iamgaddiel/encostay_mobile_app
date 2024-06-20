@@ -59,7 +59,7 @@ const Booking1 = () => {
         },
     })
 
-    let handleFlutterwavePayment = useFlutterwave(flutterwavePaymentConfig)
+    // let handleFlutterwavePayment = useFlutterwave(flutterwavePaymentConfig)
 
     const [bookingDetail, setBookingDetail] = useRecoilState(bookingAtom)
 
@@ -80,7 +80,7 @@ const Booking1 = () => {
 
     useEffect(() => {
         handlePhoneNumberUpdate()
-        loadFlutterwaveConfig()
+        // loadFlutterwaveConfig()
     }, [phone])
 
 
@@ -150,43 +150,44 @@ const Booking1 = () => {
             return
         }
 
+        // Flutter is currently suspend as payment method for this app
+        // handleFlutterwavePayment({
+        //     callback: async (response: any) => {
+        //         console.log("🚀 ~ callback: ~ response:", response)
+        //         closePaymentModal() // this will close the modal programmatically
+        //         setLoading(() => false)
 
-        handleFlutterwavePayment({
-            callback: async (response: any) => {
-                console.log("🚀 ~ callback: ~ response:", response)
-                closePaymentModal() // this will close the modal programmatically
-                setLoading(() => false)
 
+        //         const transactionPayload: FlutterwaveTransactionItem = {
+        //             account_type: 'guest',
+        //             user: user.id,
+        //             transaction_id: response.transaction_id,
+        //             ref_id: response.tx_ref,
+        //             transaction_type: 'payment',
+        //         }
 
-                const transactionPayload: FlutterwaveTransactionItem = {
-                    account_type: 'guest',
-                    user: user.id,
-                    transaction_id: response.transaction_id,
-                    ref_id: response.tx_ref,
-                    transaction_type: 'payment',
-                }
+        //         const { isCreated, response: flwTrx } = await createApiCollection(
+        //             FLUTTERWAVE_COLLECTION,
+        //             transactionPayload,
+        //             authToken
+        //         )
 
-                const { isCreated, response: flwTrx } = await createApiCollection(
-                    FLUTTERWAVE_COLLECTION,
-                    transactionPayload,
-                    authToken
-                )
-
-                if (isCreated) {
-                    // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
-                    setFlutterwaveTransactionId({
-                        transactionId: response.transaction_id,
-                        collectionId: flwTrx?.id!
-                    })
-                    setLoading(() => false)
-                    router.push('/payment_processing')
-                }
-            },
-            onClose: () => {
-                setLoading(() => false)
-            },
-        });
-
+        //         if (isCreated) {
+        //             // FIXME: collectionId not gotten from creating Flutterwave_transaction Collections
+        //             setFlutterwaveTransactionId({
+        //                 transactionId: response.transaction_id,
+        //                 collectionId: flwTrx?.id!
+        //             })
+        //             setLoading(() => false)
+        //             router.push('/payment_processing')
+        //         }
+        //     },
+        //     onClose: () => {
+        //         setLoading(() => false)
+        //     },
+        // });
+        setLoading(() => false)
+        router.push('/stripe_payment')
     }
 
 

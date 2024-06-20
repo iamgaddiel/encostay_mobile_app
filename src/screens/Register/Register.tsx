@@ -39,9 +39,10 @@ const Register = () => {
 
 
   const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
-    const formData = {
+    const formData: RegistrationInputs = {
       ...regFormData,
       ...data,
+      preferred_currency: "USD",
       name: `${data.first_name} ${data.last_name}`
     }
     setRegFormData(formData)
@@ -195,7 +196,7 @@ const Register = () => {
 
 
             {/* Currency */}
-            <div className='form_inputs my-4 mt-4  mx-0'>
+            {/* <div className='form_inputs my-4 mt-4  mx-0'>
               <IonLabel className="ion-margin-bottom">Preferred Payment</IonLabel>
               <IonSelect placeholder='Select Currency' className='ion-margin-top' {...register('preferred_currency', { required: true })}>
                 <IonSelectOption value={"NGN"}>Naira (NGN)</IonSelectOption>
@@ -206,7 +207,7 @@ const Register = () => {
             <div className='ion-text-center  mt-4'>
               <small className='text-muted'>Notice! your chosen currency will be used for payments, this can only be updated by contacting customer service.</small>
               <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
-            </div>
+            </div> */}
 
 
             <section className="mt-5 ion-text-center text-muted" style={{ padding: ".5rem" }}>
