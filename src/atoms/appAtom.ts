@@ -19,6 +19,7 @@ export const userAtom = atom<StoredUser>({
             emailVisibility: false,
             email: "",
             name: "",
+            profile_image_url: "",
             avatar: "",
             account_type: 'host',
             is_disabled: false,

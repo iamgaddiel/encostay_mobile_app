@@ -12,7 +12,7 @@ export type TransactionCreateFields = {
     amount: number
     host: string
     booking?: string
-    reference: string
+    reference?: string
 }
 
 export type TransactionItem = {

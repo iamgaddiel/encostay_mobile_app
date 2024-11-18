@@ -10,7 +10,7 @@ import PocketBase from 'pocketbase'
  */
 const appName = "Encostay"
 
-const DEBUG = true
+const DEBUG = false
 
 
 // POCKETBASE SERVER CONFIG
@@ -27,7 +27,8 @@ const pb = new PocketBase(pocketbaseUrl)
 // BACKEND SERVER CONFIG 
 const LOCAL_SERVER_URL = 'http://localhost:3000'
 
-const REMOTE_SERVER_URL = 'https://encostay-saver.onrender.com'
+// const REMOTE_SERVER_URL = 'https://encostay-saver.onrender.com'
+const REMOTE_SERVER_URL = 'monkfish-app-334nx.ondigitalocean.app'
 
 // const serverBaseUrl = LOCAL_SERVER_URL
 

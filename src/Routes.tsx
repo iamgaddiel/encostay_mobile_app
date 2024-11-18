@@ -59,10 +59,9 @@ import GuestPendingReviews from './screens/GuestPendingReviews';
 import GuestAddReview from './screens/GuestAddReview';
 import RequestForgetPassword from './screens/RequestForgetPassword';
 import ForgetPasswordOtp from './screens/ForgetPasswordOtp';
-import ResetPassword from './screens/ResetPassword/ResetPassword';
+// import ResetPassword from './screens/ResetPassword/ResetPassword';
 import RequestPasswordConfirm from './screens/RequestPasswordConfirm';
 import SelectNairaBanks from './screens/SelectNairaBanks/SelectNairaBanks';
-import StripePayment from './screens/StripePayment/StripePayment';
 
 
 
@@ -146,13 +145,11 @@ const Routes = () => {
             {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}
             <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
             <Route exact path="/select_bank" render={() => <SelectNairaBanks />} />
-            <Route exact path="/stripe_payment" render={() => <StripePayment />} />
 
             {
                 showTabs ? (
                     <IonTabs>
                         <IonRouterOutlet>
-                            <Route exact path="/stripe_payment" render={() => <StripePayment />} />
                             <Route exact path="/select_bank" render={() => <SelectNairaBanks />} />
                             <Route exact path="/reset_password_sent_confirm" render={() => <RequestPasswordConfirm />} />
                             {/* <Route exact path="/reset_password" render={() => <ResetPassword />} /> */}

@@ -63,7 +63,7 @@ import { StoredUser } from "../../@types/users";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
-import { imageKitAtom } from "../../atoms/imagekitAtom";
+import { imageKitAtom } from "../../atoms/imagekitAtom"; 
 import { APARTMENTS_COLLECTION, IMAGEKIT_CONFIG } from "../../helpers/keys";
 import { ImageKitType } from "../../@types/imagekit";
 

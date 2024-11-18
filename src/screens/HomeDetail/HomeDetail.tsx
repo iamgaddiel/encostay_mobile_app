@@ -230,8 +230,8 @@ const HomeDetail = () => {
 
         <Swiper spaceBetween={10} slidesPerView={1.4} pagination>
           {
-            [apartment?.image_1, apartment?.image_2, apartment?.image_3].map((imageUrl) => (
-              <SwiperSlide>
+            [apartment?.image_1, apartment?.image_2, apartment?.image_3].map((imageUrl, index) => (
+              <SwiperSlide key={index}>
                 <section className="home_detail_hero_image" style={{ backgroundImage: `url(${imageUrl} )` }}></section>
               </SwiperSlide>
 
@@ -606,6 +606,8 @@ const HomeDetail = () => {
             <small className="text-muted">{reviews?.totalItems} cements</small>
           </big>
 
+          {/* TODO: implement reviews */}
+{/* 
           {
             loadingReviews ? (
               <IonGrid>
@@ -635,7 +637,7 @@ const HomeDetail = () => {
                 <IonList lines="none">
                   {
                     reviews?.items.length! >= 1 ? reviews?.items.map((review, index) => (
-                      <IonItem>
+                      <IonItem key={review.id}>
                         <ProfileImage slot='start' width={50} height={50} name={review.expand?.user?.name} />
                         <IonLabel>
                           <IonTitle>{review.expand?.user?.name}</IonTitle>
@@ -647,7 +649,7 @@ const HomeDetail = () => {
                 </IonList>
               </div>
             )
-          }
+          } */}
 
         </section>
       </IonContent>

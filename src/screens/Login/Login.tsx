@@ -35,7 +35,8 @@ import FacebookLogo from "../../assets/images/facebook.png";
 
 // components
 import SpaceBetween from "../../components/style/SpaceBetween";
-import RenderPasswordResetModal from "../../components/RenderPasswordResetModal/RenderPasswordResetModal";
+// TODO: set up forget password for app.
+// import RenderPasswordResetModal from "../../components/RenderPasswordResetModal/RenderPasswordResetModal";
 import { useHistory } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { LoginInputs } from "../../@types/auth";

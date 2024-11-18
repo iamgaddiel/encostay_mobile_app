@@ -20,6 +20,8 @@ const NetworkError = () => {
             const URL = `${serverBaseUrl}/`
             const { status } = await _get(URL)
             console.log("🚀 ~ file: NetworkError.tsx:22 ~ networkTest ~ status:", status)
+
+            
             if (status === 200) {
                 setIsLoading(false)
                 setNetworkNotFound(false)

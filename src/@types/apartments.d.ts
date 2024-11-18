@@ -5,36 +5,36 @@ export type Apartment = "loft" | "micro" | "duplex" | "triplex" | "co-op" | "gar
 export type MinMaxBounds = { lower: number; upper: number };
 
 
-// export interface FormInputs {
-//     children: number;
-//     minMaxNight: MinMaxBounds;
-//     pets: number;
-//     smoking_allowed: boolean;
-//     children_allowed: boolean;
-//     title: string
-//     description: string
-//     address: string
-//     city: string
-//     state_location: string
-//     country: string
-//     guests: number
-//     bedrooms: number
-//     beds: number
-//     bathrooms: number
-//     checkin: string
-//     checkout: string
-//     type: Apartment
-//     has_wifi: boolean
-//     has_tv_cable: boolean
-//     has_laundry: boolean
-//     has_gym: boolean
-//     has_security: boolean
-//     pets_allowed: boolean
-//     party_allowed: boolean
-//     additional_rules: string
-//     price: number
-//     images: ?string[]
-// }
+export interface FormInputs {
+    children: number;
+    minMaxNight: MinMaxBounds;
+    pets: number;
+    smoking_allowed: boolean;
+    children_allowed: boolean;
+    title: string
+    description: string
+    address: string
+    city: string
+    state_location: string
+    country: string
+    guests: number
+    bedrooms: number
+    beds: number
+    bathrooms: number
+    checkin: string
+    checkout: string
+    type: Apartment
+    has_wifi: boolean
+    has_tv_cable: boolean
+    has_laundry: boolean
+    has_gym: boolean
+    has_security: boolean
+    pets_allowed: boolean
+    party_allowed: boolean
+    additional_rules: string
+    price: number
+    images: ?string[]
+}
 
 export interface ApartementItem {
     id?: string
@@ -75,7 +75,7 @@ export interface ApartementItem {
     image_3?: string
     image_1_thumbnail_url?: string,
     image_2_thumbnail_url?: string,
-    image_3_thumbnail_url: string,
+    image_3_thumbnail_url?: string,
     max_number_of_children_allowed: number
     max_number_of_pets_allowed: number,
 }

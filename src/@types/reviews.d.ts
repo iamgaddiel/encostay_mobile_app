@@ -10,7 +10,7 @@ export type ReviewItem = {
     updated: string
     user: string
     stars: 1 | 2 | 3 | 4 | 5
-    comment: StripeIssuingCardCopyButtonElement
+    comment: string
     apartment: string
     expand?: {
       apartment?: ApartementItem

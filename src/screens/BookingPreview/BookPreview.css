@@ -1,7 +1,7 @@
 .preview_img{
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover;
+    background-size: contain;
     width: 40%;
     height: 120px;
     overflow: hidden;

@@ -207,7 +207,7 @@ export async function getBookings(userId: string, authToken: string, accountType
   return bookings
 }
 
-//FIXME: Api Rule: only admin, host, guest reated to a booking can view
+//FIXME: Api Rule: only admin, host, guest related to a booking can view
 export async function getBookingDetail(bookingId: string, authToken: string): Promise<BookingItem | any> {
   //TODO: make this function a method of a class
   const params = {

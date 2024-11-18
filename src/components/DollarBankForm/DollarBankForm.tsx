@@ -104,7 +104,7 @@ const DollarBankForm = () => {
                     </div>
 
                     {/* Bank Name */}
-                    <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
+                    {/* <div className='ion-margin-vertical ion-padding-horizontal mt-4' >
                         <IonLabel>Bank</IonLabel>
                         <div className="rounded-5 ion-padding-horizontal mt-2" style={{ backgroundColor: "var(--white-4)" }}>
                             <IonInput type="text" placeholder='Bank Name' {...register('bank_name', {
@@ -115,7 +115,7 @@ const DollarBankForm = () => {
                             })} />
                         </div>
                         {errors.bank_name && <small className='text-danger'>{errors.bank_name.message}</small>}
-                    </div>
+                    </div> */}
 
                     {/* Account Number */}
                     <div className='ion-margin-vertical ion-padding-horizontal mt-4' >

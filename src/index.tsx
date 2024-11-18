@@ -6,10 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import SettingsProvider from './contexts/SettingsContext';
 import StorageProvider from './contexts/StorageContext';
 import { RecoilRoot } from 'recoil';
-import { loadStripe } from '@stripe/stripe-js';
 import { _get } from './helpers/api';
 import Settings from './helpers/settings';
-import { Elements } from '@stripe/react-stripe-js';
 
 
 
@@ -18,23 +16,13 @@ import { Elements } from '@stripe/react-stripe-js';
 (async () => {
   const { serverBaseUrl } = Settings()
 
-  const { data } = await _get(`${serverBaseUrl}/stripe/config`)
-
-  console.log("🚀 ~ file: index.tsx:23 ~ data:", data)
-
-  const stripePromise = loadStripe(data.stripePublishableKey!);
-  // Make sure to call `loadStripe` outside of a component’s render to avoid
-  // recreating the `Stripe` object on every render.
-
 
   const container = document.getElementById('root');
   const root = createRoot(container!);
   root.render(
-      <Elements stripe={stripePromise}>
-        <SettingsProvider>
-          <App />
-        </SettingsProvider>
-      </Elements>
+    <SettingsProvider>
+      <App />
+    </SettingsProvider>
   );
 
   // If you want your app to work offline and load faster, you can change

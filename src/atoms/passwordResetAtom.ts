@@ -40,3 +40,8 @@ export const forgetPasswordAtom = atom<Partial<PasswordResetFields>>({
     }
 })
 
+export const forgetPasswordResetState = atom<"success" | "failed">({
+    key: "FORGET_PASSWORD_RESET_STATE",
+    default: "success"
+})
+// TODO: use this to check if reset was successful or not

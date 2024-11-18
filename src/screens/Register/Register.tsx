@@ -42,7 +42,7 @@ const Register = () => {
     const formData: RegistrationInputs = {
       ...regFormData,
       ...data,
-      preferred_currency: "USD",
+      preferred_currency: "NGN",
       name: `${data.first_name} ${data.last_name}`
     }
     setRegFormData(formData)
