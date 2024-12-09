@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonImg, IonButton } from '@ionic/react'
+import { IonPage, IonContent, IonImg, IonButton, IonCol, IonGrid, IonRow } from '@ionic/react'
 import { useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -43,7 +43,7 @@ const OnBoardidng = () => {
             heading: "Let's discovery the world",
             subText: "Book hotel for the best travel experience. Enjoy your trip!",
             pagination: P3,
-            btnText: "Get Started",
+            btnText: "Begin",
             slideIndex: 2
         },
     ]
@@ -93,51 +93,52 @@ const OnBoardidng = () => {
                 break
         }
 
-        onBoardingSwipe?.isEnd && setNextBtnText("Get Started")
+        onBoardingSwipe?.isEnd && setNextBtnText("Begin")
 
     }
 
 
     return (
         <IonPage>
-            <IonContent>
-                <Swiper
-                    spaceBetween={50}
-                    slidesPerView={1}
-                    onSlideChange={() => handleSlideChange()}
-                    pagination={true}
-                    allowSlidePrev={false}
-                    onSwiper={swp => setOnBoardingSwip(swp)}
-                >
-                    {
-                        slides.map((slide) => (
-                            <SwiperSlide key={slide.slideIndex}>
-                                <section className="onboarding_images">
-                                    <div className="hero_image" style={{ backgroundImage: `url(${slide.image})` }}>
-                                        {/* <IonImg src={slide.image} /> */}
-                                    </div>
-                                    <div className="hero_heading">
-                                        <h2 className='hero_heading_text'>{slide.heading}</h2>
-                                        <p className="mt-4 text-muted hero_heading_sub_text">{slide.subText}</p>
-                                    </div>
-                                </section>
-                            </SwiperSlide>
-                        ))
-                    }
-                </Swiper>
-
-                <SpaceBetween className='px-4'>
-                    <IonImg src={paginationImage} />
-
-                    <IonButton
-                        shape="round"
-                        className='fill brown_fill nm_btn'
-                        size='large'
-                        onClick={() => handleSlide()}
-                    >
-                        {nextBtnText}
-                    </IonButton>
-                </SpaceBetween>
+            <IonContent className='ion-no-padding'>
+                <IonGrid fixed className='ion-no-padding'>
+                    <IonRow>
+                        <IonCol size='12'>
+                            <Swiper
+                                spaceBetween={50} pagination={true}
+                                allowSlidePrev={false}
+                                onSwiper={swp => setOnBoardingSwip(swp)}
+                            >
+                                {
+                                    slides.map((slide) => (
+                                        <SwiperSlide key={slide.slideIndex}>
+                                            <section className="onboarding_images">
+                                                <div className="hero_image" style={{ backgroundImage: `url(${slide.image})` }}>
+                                                </div>
+                                                <div className="hero_heading ion-padding-horizontal">
+                                                    <h2 className='hero_heading_text'>{slide.heading}</h2>
+                                                    <p className="mt-4 text-muted hero_heading_sub_text">{slide.subText}</p>
+                                                </div>
+                                            </section>
+                                        </SwiperSlide>
+                                    ))
+                                }
+                            </Swiper>
+                        </IonCol>
+                        <IonCol className='ion-padding-horizontal ion-margin-top'>
+                            <IonRow className='ion-align-items-center'>
+                                <IonCol size='2'>
+                                    <IonImg src={paginationImage} />
+                                </IonCol>
+                                <IonCol size='10' className='ion-text-end'>
+                                    <IonButton shape="round" className='fill brown_fill nm_btn' size='small' onClick={() => handleSlide()}>
+                                        {nextBtnText}
+                                    </IonButton>
+                                </IonCol>
+                            </IonRow>
+                        </IonCol>
+                    </IonRow>
+                </IonGrid>
             </IonContent>
         </IonPage>
     )

@@ -5,17 +5,12 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import SettingsProvider from './contexts/SettingsContext';
 import StorageProvider from './contexts/StorageContext';
-import { RecoilRoot } from 'recoil';
-import { _get } from './helpers/api';
-import Settings from './helpers/settings';
 
 
 
 
 
 (async () => {
-  const { serverBaseUrl } = Settings()
-
 
   const container = document.getElementById('root');
   const root = createRoot(container!);

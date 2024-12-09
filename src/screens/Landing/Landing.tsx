@@ -16,7 +16,7 @@ import { utilsAtom } from '../../atoms/utilityAtom'
 import { LAUNCH_STATUS, USER } from '../../helpers/keys'
 import { getSaveData, saveData } from '../../helpers/storageSDKs'
 import { StoredUser } from '../../@types/users'
-
+import {} from '../../helpers/preference'
 
 
 const Landing = () => {
@@ -35,6 +35,7 @@ const Landing = () => {
 
 
   // check if app has been launched before
+  // TODO: use Capacity prefrences not StorageAPI for verifying launch status
   useEffect(() => {
     (async () => {
       const appIsLaunchedStatus = await getSaveData(LAUNCH_STATUS) as string
