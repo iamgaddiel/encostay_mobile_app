@@ -10,7 +10,7 @@ import PocketBase from 'pocketbase'
  */
 const appName = "Encostay"
 
-const DEBUG = false
+const DEBUG = true
 
 
 // POCKETBASE SERVER CONFIG

@@ -9,6 +9,7 @@ export interface RegistrationInputs{
     birthday: string
     phone: string
     preferred_currency: 'NGN' | 'USD'
+    emailVisibility?: boolean
 }
 
 

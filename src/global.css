@@ -54,6 +54,7 @@
     --ion-tab-bar-border-color: transparent;
     --ion-border-color: var(--secondary);
     --ion-toolbar-border-color: var(--secondary);
+
 }
 
 * {
@@ -64,6 +65,9 @@
 ion-toolbar,
 ion-title,
 ion-label ion-item {
+    --color: var(--secondary)
+}
+ion-label{
     --color: var(--secondary)
 }
 

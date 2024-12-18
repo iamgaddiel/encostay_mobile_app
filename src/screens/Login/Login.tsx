@@ -6,6 +6,8 @@ import {
   IonIcon,
   IonImg,
   IonInput,
+  IonInputPasswordToggle,
+  IonItem,
   IonLabel,
   IonModal,
   IonPage,
@@ -46,6 +48,7 @@ import { saveData } from "../../helpers/storageSDKs";
 import {
   USER,
 } from "../../helpers/keys";
+import Loader from "../../components/Loader";
 
 
 
@@ -117,157 +120,124 @@ const Login = () => {
   // if (record?.id) return <Home key={"home"} />;
 
   return (
-    <IonPage>
-      <IonContent className="ion-padding" scrollY={false}>
-        <IonToast
-          icon={warning}
-          position="bottom"
-          message={toast.message}
-          isOpen={toast.isOpen}
-          onDidDismiss={() => setToast({ isOpen: false, message: "" })}
-          color={"danger"}
-          duration={4000}
-        />
+    <>
+      <IonToast
+        icon={warning}
+        position="top"
+        message={toast.message}
+        isOpen={toast.isOpen}
+        onDidDismiss={() => setToast({ isOpen: false, message: "" })}
+        color={"danger"}
+        duration={4000}
+      />
 
-        <section className="login_logo mx-auto mt-5">
-          <IonImg src={Logo} />
-        </section>
+      <Loader isOpen={loading} />
 
-        {/* 
-        ===================================================
-        =====================[ Login/Signup Toggle ] ======
-        ===================================================
-        */}
-        <section className="login_nav_btns w-50 mx-auto  ion-margin-top mt-4">
-          <SpaceBetween>
-            <IonButton className="sm_btn brown_fill" shape="round">
-              Login
-            </IonButton>
-            <IonRouterLink
-              routerDirection="forward"
-              routerLink="/register"
-              className=""
-            >
-              <small>Sign Up</small>
-            </IonRouterLink>
-          </SpaceBetween>
-        </section>
-
-        {/* 
+      {/* 
         ===================================================
         =====================[ Authentication Form ] ======
         ===================================================
         */}
 
-        <section className="mt-2 ion-padding">
-          <form onSubmit={handleSubmit(onSubmitForm)}>
+      <section className="mt-5 ion-padding">
+        <form onSubmit={handleSubmit(onSubmitForm)}>
+          <IonGrid fixed>
             {/* Email */}
-            <div className="form_inputs ion-margin-vertical">
-              <IonLabel>Email</IonLabel>
-              <IonInput
-                type="email"
-                placeholder="Enter your Email"
-                className="mt-2 p-2"
-                {...register("email", { required: true })}
-              />
-              {errors.email && (
-                <small className="text-danger">This field is required</small>
-              )}
-            </div>
-
-            {/* Password */}
-            <div className="form_inputs ion-margin-vertical ">
-              <IonLabel>Password</IonLabel>
-              <IonInput
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                className="mt-2 p-2"
-                {...register("password", { required: true })}
-              />
-              {errors.password && (
-                <small className="text-danger">This field is required</small>
-              )}
-
-              {/* Toggle Password Visibility */}
-              <IonIcon
-                icon={showPassword ? eyeOutline : eyeOffOutline}
-                className="input_icon"
-                size="large"
-                slot="end"
-                onClick={() => setShowPassword(!showPassword)}
-              />
-
-              {/* Forget Password  */}
-              {loading ? (
-                <div className="ion-text-end login_nav_btns">
-                  <small className="ion-text-end pt-3">Forget Password?</small>
-                </div>
-              ) : (
-                <div className="ion-text-end login_nav_btns">
-                  <small
-                    className="ion-text-end pt-3"
-                    onClick={() => router.push('/reset_password_request', 'root')}
-                  >
-                    Forget Password?
-                  </small>
-                </div>
-              )}
-            </div>
-
-            {loading ? (
-              <IonButton
-                expand="block"
-                shape="round"
-                className="nm_btn yellow_fill mt-4 w-100"
-                mode="ios"
-                type="submit"
-                disabled
-              >
-                Processing...
-              </IonButton>
-            ) : (
-              <IonButton
-                expand="block"
-                shape="round"
-                className="nm_btn yellow_fill mt-4 w-100"
-                mode="ios"
-                type="submit"
-              >
-                Login
-              </IonButton>
-            )}
-          </form>
-        </section>
-
-
-        {/* 
-        ===================================================
-        =====================[ Social Media Links] ========
-        ===================================================
-        */}
-        <section className="mt-4">
-          <OrSeperator speratorText="Or login with" className="" />
-
-          <IonGrid fixed className="mt-3">
-            <IonRow>
-              <IonCol size="6">
-                <IonButton shape="round" className="" color={"light"} mode="ios" expand="block">
-                  <IonImg src={GoogleLogo} className="w-25 ion-margin-end" />
-                  Google
-                </IonButton>
+            <IonRow className="ion-justify-content-center">
+              <IonCol size="12" sizeMd="6" sizeLg="6">
+                <IonItem lines="none" className="ion-no-padding">
+                  <IonInput
+                    type="email"
+                    placeholder="Enter your Email"
+                    label="Email"
+                    labelPlacement="floating"
+                    inputMode="email"
+                    {...register("email", { required: true })}
+                    autofocus
+                  />
+                </IonItem>
+                {errors.email && (
+                  <small className="text-danger">This field is required</small>
+                )}
               </IonCol>
-              <IonCol size="6">
-                <IonButton shape="round" className="fb_btn" color={"primary"} mode="ios" expand="block">
-                  <IonImg src={FacebookLogo} className="w-25 ion-margin-end" />
-                  Facebook
-                </IonButton>
+            </IonRow>
+            <IonRow className="ion-justify-content-center">
+              <IonCol size="12" sizeMd="6" sizeLg="6">
+                <hr className="ion-no-padding ion-no-margin" />
+              </IonCol>
+            </IonRow>
+            {/* Password */}
+            <IonRow className="ion-justify-content-center">
+              <IonCol size="12" sizeMd="6" sizeLg="6">
+                <IonItem lines="none" className="ion-no-padding">
+                  <IonInput
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    label="Password"
+                    labelPlacement="floating"
+                    {...register("password", { required: true })}
+                  >
+                    <IonInputPasswordToggle slot="end" color={"warning"} />
+                  </IonInput>
+                </IonItem>
+
+                {errors.password && (
+                  <small className="text-danger">This field is required</small>
+                )}
+              </IonCol>
+            </IonRow>
+            {/* Button */}
+            <IonRow className="ion-justify-content-center">
+              <IonCol size="12" sizeMd="2" sizeLg="3">
+                  <IonButton
+                    expand="block"
+                    shape="round"
+                    className="nm_btn yellow_fill mt-4 w-100"
+                    mode="ios"
+                    type="submit"
+                  >
+                    Login
+                  </IonButton>
               </IonCol>
             </IonRow>
           </IonGrid>
 
-        </section>
-      </IonContent>
-    </IonPage>
+        </form>
+      </section>
+
+
+      {/* 
+        ===================================================
+        =====================[ Social Media Links] ========
+        ===================================================
+        */}
+      <section className="mt-4">
+
+
+        <IonGrid fixed className="mt-3">
+          <IonRow class="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="3">
+              <OrSeperator speratorText="Or login with" className="" />
+            </IonCol>
+          </IonRow>
+          <IonRow class="ion-justify-content-center">
+            <IonCol size="6" sizeMd="3" sizeLg="2">
+              <IonButton shape="round" className="" color={"light"} mode="ios" expand="block">
+                <IonImg src={GoogleLogo} className="w-25 ion-margin-end" />
+                Google
+              </IonButton>
+            </IonCol>
+            <IonCol size="6" sizeMd="3" sizeLg="2">
+              <IonButton shape="round" className="fb_btn" color={"primary"} mode="ios" expand="block">
+                <IonImg src={FacebookLogo} className="w-25 ion-margin-end" />
+                Facebook
+              </IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+
+      </section>
+    </>
   );
 };
 

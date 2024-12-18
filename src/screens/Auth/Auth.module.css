@@ -1,0 +1,9 @@
+ion-segment-button{
+    --color: var(--secondary);
+    --indicator-color: var(--tertiary);
+    --color-checked: var(--tertiary)
+}
+
+ion-label{
+    --color: var(--secondary)
+}

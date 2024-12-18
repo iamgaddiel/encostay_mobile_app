@@ -62,6 +62,7 @@ import ForgetPasswordOtp from './screens/ForgetPasswordOtp';
 // import ResetPassword from './screens/ResetPassword/ResetPassword';
 import RequestPasswordConfirm from './screens/RequestPasswordConfirm';
 import SelectNairaBanks from './screens/SelectNairaBanks/SelectNairaBanks';
+import Auth from './screens/Auth/Auth';
 
 
 
@@ -89,8 +90,9 @@ const Routes = () => {
     return (
         <IonReactRouter>
             <Route exact path="/" render={() => <Landing />} />
-            <Route exact path="/login" render={() => <Login />} />
-            <Route exact path="/register" render={() => <Register />} />
+            <Route exact path="/auth" render={() => <Auth />} />
+            {/* <Route exact path="/login" render={() => <Login />} /> */}
+            {/* <Route exact path="/register" render={() => <Register />} /> */}
             <Route exact path="/dashboard" render={() => <Dashboard />} />
             <Route exact path="/home" render={() => <Home />} />
             <Route exact path="/me" render={() => <Me />} />
@@ -197,8 +199,8 @@ const Routes = () => {
                             <Route exact path="/apartment/:apartmentId" render={() => <HomeDetail />} />
                             <Route exact path="/apartment_search" render={() => <AppartmentSearch />} />
                             <Route exact path="/apartment_search_filter" render={() => <Filter />} />
-                            <Route exact path="/login" render={() => <Login />} />
-                            <Route exact path="/register" render={() => <Register />} />
+                            {/* <Route exact path="/login" render={() => <Login />} /> */}
+                            {/* <Route exact path="/register" render={() => <Register />} /> */}
                             <Route exact path="/dashboard" render={() => <Dashboard />} />
                             <Route exact path="/home" render={() => <Home />} />
                             <Route exact path="/me" render={() => <Me />} />

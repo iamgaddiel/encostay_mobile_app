@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, IonTitle } from '@ionic/react'
+import { IonCard, IonCardContent, IonContent, IonIcon, IonImg, IonItem, IonLabel, IonList, IonPage, IonText, IonThumbnail, IonTitle, useIonRouter } from '@ionic/react'
 import React from 'react'
 import BackHeaderNoTitle from '../../components/BackHeaderNoTitle/BackHeaderNoTitle'
 import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
@@ -20,7 +20,7 @@ import ProfileImage from '../../components/ProfileImage'
 
 
 const Me = () => {
-  const history = useHistory()
+  const router = useIonRouter()
 
   const setShowTabs = useSetRecoilState(utilsAtom)
   const { record: user } = useRecoilValue(userAtom)
@@ -33,7 +33,7 @@ const Me = () => {
     clearData(APP_CONFIG)
     clearData(IMAGEKIT_CONFIG)
     setShowTabs({ showTabs: false })
-    history.push('/login')
+    router.push('/auth', "root")
   }
 
 

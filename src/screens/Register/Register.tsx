@@ -1,261 +1,425 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import "./Register.css"
-import { IonButton, IonContent, IonDatetime, IonInput, IonLabel, IonModal, IonPage, IonRouterLink, IonSelect, IonSelectOption, useIonRouter } from '@ionic/react'
-import SpaceBetween from '../../components/style/SpaceBetween'
-import { useHistory } from 'react-router'
-import { useForm, SubmitHandler } from "react-hook-form";
+import { IonButton, IonCol, IonContent, IonDatetime, IonGrid, IonInput, IonInputPasswordToggle, IonItem, IonModal, IonRow, IonSelect, IonSelectOption, useIonAlert, useIonRouter, useIonToast } from '@ionic/react'
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { RegistrationInputs } from '../../@types/auth'
-import { useRecoilState } from 'recoil'
-import { registrationAtom } from '../../atoms/authAtom'
 import { PRIVACY_POLICY, TERMS_AND_CONDITIONS } from '../../legal_bindings'
+import { createApiCollection } from '../../helpers/apiHelpers'
+import { USERS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys';
+import Loader from '../../components/Loader';
 
 
 
 
 
-const Register = () => {
+type Props = {
+  switchScreen:  React.Dispatch<React.SetStateAction<"login" | "register">>
+}
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegistrationInputs>();
+
+const Register: React.FC<Props> = ({ switchScreen }) => {
+
+  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<RegistrationInputs>(
+    {
+      defaultValues: {
+        birthday: ""
+      }
+    }
+  );
+  const birthdayValue = watch("birthday");
 
   //hooks
   const router = useIonRouter()
-  const [regFormData, setRegFormData] = useRecoilState(registrationAtom)
+  const [presentAlert, dismissAlert] = useIonAlert()
+  const [presentToast] = useIonToast()
+
 
   // states
-  const [selectedBirthday, setSelectedBirthday] = useState("")
   const [openModal, setOpenModal] = useState(false)
   const [showLegalBinding, setShowLegalBinding] = useState({
     enabled: false,
     message: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
 
   // refs
-  const birthdayModal = useRef<null | HTMLIonModalElement>(null)
-  const datepicker = useRef<null | HTMLIonDatetimeElement>(null)
+  const birthdayModalRef = useRef<null | HTMLIonModalElement>(null)
+  const datepickerRef = useRef<null | HTMLIonDatetimeElement>(null)
+
+
+
 
 
 
 
   const onSubmitForm: SubmitHandler<RegistrationInputs> = async (data) => {
+    setLoading(true)
+
     const formData: RegistrationInputs = {
-      ...regFormData,
       ...data,
       preferred_currency: "NGN",
+      emailVisibility: true,
       name: `${data.first_name} ${data.last_name}`
     }
-    setRegFormData(formData)
-    router.push('/passwords')
+
+
+    const { isCreated, response, error } = await createApiCollection(USERS_COLLECTION, formData)
+
+    // Check if any field is has errors.
+    if (error?.email) {
+      displayMessage(error?.email?.message)
+      return;
+    }
+    if (error?.first_name) {
+      displayMessage(error?.first_name?.message)
+      return;
+    }
+    if (error?.last_name) {
+      displayMessage(error?.last_name?.message)
+      return;
+    }
+    if (error?.phone) {
+      displayMessage(error?.phone?.message)
+      return;
+    }
+    if (error?.birthday) {
+      displayMessage(error?.birthday?.message)
+      return;
+    }
+    if (error?.account_type) {
+      displayMessage(error?.account_type?.message)
+      return;
+    }
+    if (error?.password) {
+      displayMessage(error?.password?.message)
+      return;
+    }
+    if (!isCreated && error?.passwordConfirm) {
+      displayMessage(error?.passwordConfirm?.message)
+      return;
+    }
+    console.log("🚀 ~ constonSubmitForm:SubmitHandler<RegistrationInputs>= ~ response?.id!:", response?.id!)
+
+    // Create Wallet For Host Users
+    if (data.account_type === 'host') {
+      const walletCreationPayload = { host: response?.id! }
+      const { isCreated: walletIsCreated, response: walletCreateResponse, error: walletCreatedError } = await createApiCollection(WALLETS_COLLECTION, walletCreationPayload)
+      if (!walletIsCreated) {
+        // TODO: check if wallet is not created
+        console.log(error)
+        return
+      }
+    }
+
+    setLoading(false)
+    presentAlert(
+      "Account created successfully",
+      [
+        {
+          text: 'Okay',
+          role: 'Continue',
+          cssClass: 'ion-text-lowercase',
+          handler: () => switchScreen("login")
+        }
+      ]
+    )
   }
 
 
-  function processDate(dataTime: string) {
-    // const time = dataTime.split('T')[1]
-    const date = dataTime.split('T')[0]
-    setSelectedBirthday(date)
+
+  function displayMessage(errorMessage: string) {
+    displayToast(errorMessage, "danger")
+    setLoading(false)
+    return
   }
 
+
+
+  const processDate = (dateTime: string) => {
+    const selectedDate = dateTime.split('T')[0] // date
+    setValue("birthday", selectedDate);
+    setOpenModal(false);
+  };
+
+
+  function displayToast(message: string, type: "danger" | "error") {
+    presentToast({
+      color: type,
+      message,
+      position: "top",
+      duration: 4000,
+    })
+  }
 
 
   return (
-
-    <IonPage>
-      <IonContent>
-
-        {/* ======================== T&C Modal Start ========================  */}
-        <IonModal isOpen={showLegalBinding.enabled} onDidDismiss={() => setShowLegalBinding({
-          enabled: false,
-          message: ''
-        })} initialBreakpoint={.5} breakpoints={[.5, 7, .9]}>
-          <IonContent className='ion-padding'>
-            <h4 className="text-muted fw-bold mt-4">Terms and Conditions</h4>
-            <div className="text-muted mt-3 text-justify text-wrap" style={{ overflowY: 'auto' }}>
-              {showLegalBinding.message}
-            </div>
-          </IonContent>
-        </IonModal>
-        {/* ======================== T&C Modal Ends ========================  */}
-
-
-
-        <section className="login_nav_btns w-50 mx-auto  ion-margin-top mt-5 mb-3">
-          <SpaceBetween>
-            <IonRouterLink routerDirection='forward' routerLink='/login'>
-              Log in
-            </IonRouterLink>
-            <IonButton className="sm_btn brown_fill" shape='round'>
-              Sign Up
-            </IonButton>
-          </SpaceBetween>
-        </section>
-
-
-        <section className='px-3'>
-
-          <form onSubmit={handleSubmit(onSubmitForm)}>
-
-            {/* First Name */}
-            <div className='form_inputs my-4  mt-4'>
-              <IonLabel>First Name</IonLabel>
-              <IonInput
-                type='text'
-                placeholder='Enter your first name'
-                className='mt-2 p-2 mx-0'
-                {...register("first_name", { required: true })}
-              />
-              {errors.first_name && <small className='text-danger'>This field is required</small>}
-            </div>
-
-            {/* Last Name */}
-            <div className='form_inputs my-4  mt-4'>
-              <IonLabel>Last Name</IonLabel>
-              <IonInput
-                type='text'
-                placeholder='Enter your last name'
-                className='mt-2 p-2 mx-0'
-                {...register("last_name", { required: true })}
-              />
-              {errors.last_name && <small className='text-danger'>This field is required</small>}
-            </div>
-
-            <div className='ion-text-center  mt-4'>
-              <small className='text-muted'>Make sure your name matches your name on bank account</small>
-              <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
-            </div>
-
-            {/* Email */}
-            <div className='form_inputs my-4  mt-4'>
-              <IonLabel>Email</IonLabel>
-              <IonInput
-                type='email'
-                placeholder='Enter your email'
-                className='mt-2 p-2 mx-0'
-                {...register("email", { required: true })}
-              />
-              {errors.email && <small className='text-danger'>This field is required</small>}
-            </div>
-
+    <>
+      <Loader isOpen={loading} />
+      <form onSubmit={handleSubmit(onSubmitForm)}>
+        <IonGrid>
+          {/* First Name */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonInput
+                  type='text'
+                  placeholder='Enter your first name'
+                  label='First Name'
+                  labelPlacement='floating'
+                  {...register("first_name", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    }
+                  })}
+                />
+              </IonItem>
+              {errors.first_name && <small className='text-danger'>{errors.first_name.message}</small>}
+            </IonCol>
+          </IonRow>
+          {/* Last Name */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonInput
+                  type='text'
+                  placeholder='Enter your last name'
+                  className='mt-2 p-2 mx-0'
+                  label='Last Name'
+                  labelPlacement='floating'
+                  {...register("last_name", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    }
+                  })}
+                />
+              </IonItem>
+              {errors.last_name && <small className='text-danger'>{errors.last_name.message}</small>}
+              <div className='ion-text-start  mt-4'>
+                <small className='text-muted'>Make sure your name matches your name on bank account</small>
+                <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
+              </div>
+            </IonCol>
+          </IonRow>
+          {/* Email */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className="ion-no-padding">
+                <IonInput
+                  type='email'
+                  placeholder='Enter your email'
+                  label='Email'
+                  labelPlacement='floating'
+                  inputMode='email'
+                  {...register("email", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    }
+                  })}
+                />
+              </IonItem>
+              {errors.email && <small className='text-danger'>{errors.email.message}</small>}
+            </IonCol>
             {/* Phone */}
-            <div className='form_inputs my-4  mt-4'>
-              <IonLabel>Phone</IonLabel>
-              <IonInput
-                type='tel'
-                placeholder='+2345 656 5678'
-                className='mt-2 p-2 mx-0'
-                {...register("phone", { required: true })}
-              />
-              {errors.phone && <small className='text-danger'>This field is required</small>}
-            </div>
+          </IonRow>
+          {/* Phone */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonInput
+                  type='tel'
+                  placeholder='+2345 656 5678'
+                  label='Phone'
+                  labelPlacement='floating'
+                  inputMode='tel'
+                  {...register("phone", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    }
+                  })}
+                />
+              </IonItem>
+              {errors.phone && <small className='text-danger'>{errors.phone.message}</small>}
+            </IonCol>
+          </IonRow>
+          {/* Birthday */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <Controller
+                  name="birthday"
+                  control={control}
+                  rules={{
+                    required: { value: true, message: "This field is required" },
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <IonInput
+                        {...field}
+                        readonly
+                        type="text"
+                        placeholder="Select your birthday"
+                        label="Birthday"
+                        labelPlacement="floating"
+                        onClick={() => setOpenModal(true)}
+                        value={birthdayValue || ""}
+                      />
+                      <IonModal
+                        ref={birthdayModalRef}
+                        isOpen={openModal}
+                        onDidDismiss={() => setOpenModal(false)}
+                        className="birthday_modal"
+                      >
+                        <IonContent>
+                          <IonDatetime
+                            ref={datepickerRef}
+                            presentation="date"
+                            onIonChange={(e) => processDate(e.detail.value as string)}
+                            showDefaultButtons
+                            color={"warning"}
+                          />
+                        </IonContent>
+                      </IonModal>
+                    </>
+                  )}
+                />
+              </IonItem>
+              {errors.birthday && <small className='text-danger'>{errors.birthday?.message}</small>}
 
-            {/* Birthday */}
-            <div className='form_inputs my-4  mt-4'>
-              <IonLabel>Birthday</IonLabel>
-              <IonInput
-                type='date'
-                placeholder='Enter your first name'
-                className='mt-2 p-2 mx-0'
-                onClick={() => setOpenModal(true)}
-                value={selectedBirthday as string}
-                {...register("birthday", { required: true })}
-                readonly
-              />
-              {errors.email && <small className='text-danger'>This field is required</small>}
-
-              {/* Birthday Modal */}
-              <IonModal
-                ref={birthdayModal}
-                className='birthday_modal'
-                isOpen={openModal}
-                onDidDismiss={() => setOpenModal(false)}
-              >
-                <IonContent>
-                  <IonDatetime
-                    // onIonChange={e => setSelectedBirthday(e.detail?.value as string)}
-                    onIonChange={e => processDate(e.detail?.value as string)}
-                    color={"warning"}
-                    presentation='date'
-                    ref={datepicker}
-                    showDefaultButtons
-                  >
-                  </IonDatetime>
-                </IonContent>
-              </IonModal>
-            </div>
-
-
-            {/* Type */}
-            <div className='form_inputs my-4 mt-4  mx-0'>
-              <IonLabel className="ion-margin-bottom">Account type</IonLabel>
-              <IonSelect placeholder='I am guest' className='ion-margin-top' {...register("account_type", { required: true })}>
-                <IonSelectOption value={"guest"}>Guest</IonSelectOption>
-                <IonSelectOption value={"host"}>Host</IonSelectOption>
-              </IonSelect>
-              {errors.account_type && <small className='text-danger'>This field is required</small>}
-            </div>
-
-
-            {/* Currency */}
-            {/* <div className='form_inputs my-4 mt-4  mx-0'>
-              <IonLabel className="ion-margin-bottom">Preferred Payment</IonLabel>
-              <IonSelect placeholder='Select Currency' className='ion-margin-top' {...register('preferred_currency', { required: true })}>
-                <IonSelectOption value={"NGN"}>Naira (NGN)</IonSelectOption>
-                <IonSelectOption value={"USD"}>Dollar (USD)</IonSelectOption>
-              </IonSelect>
-              {errors.preferred_currency && <small className='text-danger'>This field is required</small>}
-            </div>
-            <div className='ion-text-center  mt-4'>
-              <small className='text-muted'>Notice! your chosen currency will be used for payments, this can only be updated by contacting customer service.</small>
-              <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
-            </div> */}
-
-
-            <section className="mt-5 ion-text-center text-muted" style={{ padding: ".5rem" }}>
-              <small>To use sign up, you need be at least 18. Other people who use Encostay won't see your birthday.</small>
-            </section>
-
-            <section className="mt-4 ion-text-center text-muted" style={{ padding: ".5rem" }}>
-              <small>
-                By selecting Agree and continue below, I agree to Encostay's
-                <span className='text-warning ms-2' onClick={() => setShowLegalBinding({
-                  enabled: true,
-                  message: TERMS_AND_CONDITIONS
-                })}>Terms of Service</span>, Payments Terms of Service, <span className="text-warning ms-2" onClick={() => setShowLegalBinding({
-                  enabled: true,
-                  message: PRIVACY_POLICY
-                })}>Privacy Policy</span>,
-                and Non discrimination Policy.
-              </small>
-            </section>
-            {/* 
-            {
-              loading ?
-                <IonButton expand='block' className='fill mt-5' shape='round' size="large" type='submit'>
-                  <div className='spinner-border'>
-                  </div>
+              <section className="ion-text-start text-muted">
+                <small>To use sign up, you need be at least 18. Other people who use Encostay won't see your birthday.</small>
+                <span className="border w-100 mt-2 border-warning fw-100 mt-3" style={{ display: "block" }}></span>
+              </section>
+            </IonCol>
+          </IonRow>
+          {/* Account Type */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                {/* Type */}
+                <IonSelect
+                  placeholder='I am guest'
+                  label='Account Type'
+                  labelPlacement='floating'
+                  color={"warning"}
+                  {...register("account_type", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    }
+                  })}
+                >
+                  <IonSelectOption value={"guest"} className='ion-text-lowercase'>Guest</IonSelectOption>
+                  <IonSelectOption value={"host"} className='ion-text-lowercase'>Host</IonSelectOption>
+                </IonSelect>
+              </IonItem>
+              {errors.account_type && <small className='text-danger'>{errors.account_type?.message}</small>}
+            </IonCol>
+          </IonRow>
+          {/* password */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonInput
+                  type="password"
+                  placeholder='..............'
+                  label='Password'
+                  labelPlacement='floating'
+                  {...register("password", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    },
+                    minLength: {
+                      value: 8,
+                      message: "password must be at least 8 characters"
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "password must be at most 15 characters"
+                    }
+                  })}
+                >
+                  <IonInputPasswordToggle slot='end' color={"warning"} />
+                </IonInput>
+              </IonItem>
+              {errors.password && <small className='text-danger'>{errors.password.message}</small>}
+            </IonCol>
+          </IonRow>
+          {/* Confirm  password */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonInput
+                  type="password"
+                  label='Confirm Password'
+                  labelPlacement='floating'
+                  placeholder='..............'
+                  {...register("passwordConfirm", {
+                    required: {
+                      value: true,
+                      message: "This field is required"
+                    },
+                    minLength: {
+                      value: 8,
+                      message: "password must be at least 8 characters"
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "password must be at most 15 characters"
+                    }
+                  })}
+                >
+                  <IonInputPasswordToggle slot='end' color={"warning"} />
+                </IonInput>
+              </IonItem>
+              {errors.passwordConfirm && <small className='text-danger '>{errors.passwordConfirm.message}</small>}
+            </IonCol>
+          </IonRow>
+          {/* T & C */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="6" sizeLg="6">
+              <section className="mt-4 ion-text-center text-muted" style={{ padding: ".5rem" }}>
+                <small>
+                  By selecting Agree and continue below, I agree to Encostay's
+                  <span className='text-warning ms-2' onClick={() => setShowLegalBinding({
+                    enabled: true,
+                    message: TERMS_AND_CONDITIONS
+                  })}>Terms of Service</span>, Payments Terms of Service, <span className="text-warning ms-2" onClick={() => setShowLegalBinding({
+                    enabled: true,
+                    message: PRIVACY_POLICY
+                  })}>Privacy Policy</span>,
+                  and Non discrimination Policy.
+                </small>
+              </section>
+            </IonCol>
+          </IonRow>
+          {/* Submit button */}
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="2" sizeLg="3">
+              <IonItem lines='none' className='ion-no-padding'>
+                <IonButton
+                  expand='block'
+                  shape='round'
+                  className='nm_btn yellow_fill mt-3 w-100 fw-700'
+                  mode='ios'
+                  type='submit'
+                >
+                  Continue
                 </IonButton>
-                :
-                <IonButton expand='block' className='fill mt-5' shape='round' size="large" type='submit'>
-                  Sign Up
-                </IonButton>
-            } */}
-
-            <IonButton
-              expand='block'
-              shape='round'
-              className='nm_btn yellow_fill mt-5 w-100 fw-700 p-2 my-5'
-              mode='ios'
-              type='submit'
-            >
-              Agree and Continue
-            </IonButton>
-
-          </form>
-
-        </section>
-
-      </IonContent>
-    </IonPage>
+              </IonItem>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </form >
+    </>
   )
 }
 
