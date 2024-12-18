@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonImg, IonButton, IonCol, IonGrid, IonRow } from '@ionic/react'
+import { IonPage, IonContent, IonImg, IonButton, IonCol, IonGrid, IonRow, useIonRouter } from '@ionic/react'
 import { useState } from 'react'
 import SpaceBetween from '../../components/style/SpaceBetween'
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -10,12 +10,7 @@ import "./OnBoarding.css"
 
 
 //images
-import Map from "../../assets/images/map.png"
-import People from "../../assets/images/people.png"
-import View from "../../assets/images/view.png"
-import P1 from "../../assets/images/1.svg"
-import P2 from "../../assets/images/2.svg"
-import P3 from "../../assets/images/3.svg"
+import Images from "../../constants/Images"
 
 
 
@@ -23,39 +18,39 @@ import P3 from "../../assets/images/3.svg"
 const OnBoardidng = () => {
     const slides = [
         {
-            image: Map,
+            image: Images.OnboardingImg1,
             heading: "Tavel with no worry",
             subText: "You can now experince the next level of travel experince for hote bookings",
-            pagination: P1,
+            pagination: Images.OnboardingPaginationImg1,
             btnText: "Next",
             slideIndex: 0
         },
         {
-            image: People,
+            image: Images.OnboardingImg2,
             heading: "Find Hundereds of hotels",
             subText: "Discover hundreds of hotels that spread across the world for you",
-            pagination: P2,
+            pagination: Images.OnboardingPaginationImg2,
             btnText: "Next",
             slideIndex: 1
         },
         {
-            image: View,
+            image: Images.OnboardingImg3,
             heading: "Let's discovery the world",
             subText: "Book hotel for the best travel experience. Enjoy your trip!",
-            pagination: P3,
+            pagination: Images.OnboardingPaginationImg3,
             btnText: "Begin",
             slideIndex: 2
         },
     ]
 
-    const history = useHistory()
+    const router = useIonRouter()
 
 
 
     // states
     const [nextBtnText, setNextBtnText] = useState("Next")
-    const [paginationImage, setPaginationImage] = useState(P1)
-    const [onBoardingSwipe, setOnBoardingSwip] = useState<any | null>(null)
+    const [paginationImage, setPaginationImage] = useState(Images.OnboardingPaginationImg1)
+    const [onBoardingSwipe, setOnBoardingSwipe] = useState<any | null>(null)
 
 
 
@@ -70,26 +65,27 @@ const OnBoardidng = () => {
         if (onBoardingSwipe !== null) {
             if (!onBoardingSwipe?.isEnd) {
                 onBoardingSwipe?.slideNext();
+                handleSlideChange()
                 return
             }
         }
 
-        history.push("/login")
+        router.push("/auth", "root")
     }
 
 
     function handleSlideChange() {
         switch (onBoardingSwipe?.activeIndex) {
             case 0:
-                setPaginationImage(P1)
+                setPaginationImage(Images.OnboardingPaginationImg1)
                 break
 
             case 1:
-                setPaginationImage(P2)
+                setPaginationImage(Images.OnboardingPaginationImg2)
                 break
 
             case 2:
-                setPaginationImage(P3)
+                setPaginationImage(Images.OnboardingPaginationImg3)
                 break
         }
 
@@ -107,7 +103,7 @@ const OnBoardidng = () => {
                             <Swiper
                                 spaceBetween={50} pagination={true}
                                 allowSlidePrev={false}
-                                onSwiper={swp => setOnBoardingSwip(swp)}
+                                onSwiper={swp => setOnBoardingSwipe(swp)}
                             >
                                 {
                                     slides.map((slide) => (
