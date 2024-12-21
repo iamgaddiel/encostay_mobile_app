@@ -92,7 +92,7 @@ const Landing = () => {
                 <IonButton
                   className='fill brown_fill nm_btn mt-5'
                   shape='round'
-                  routerLink='/login'
+                  routerLink='/auth'
                   routerDirection='forward'
                 >
                   Login

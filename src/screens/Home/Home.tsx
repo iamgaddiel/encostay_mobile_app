@@ -36,7 +36,6 @@ const Home = () => {
 
   const [userRecord, setUesrRecrod] = useState<UserCollectionType | null>(null);
   const setAppUserObject = useSetRecoilState(userAtom);
-  // const setImageKitAtomConfig = useSetRecoilState(imageKitAtom)
   const setAppConfig = useSetRecoilState(appConfigAtom)
 
 
@@ -57,7 +56,6 @@ const Home = () => {
   async function getAppConfig(userToken: string) {
     try {
       const { data: configList } = await listApiCollection(APP_CONFIG_COLLECTION, userToken) as { data: AppConfigList }
-      console.log("🚀 ~ file: Home.tsx:58 ~ getAppConfig ~ configList:", configList)
       const appConfig = configList?.items[0]
 
       saveData(APP_CONFIG, appConfig);
@@ -80,13 +78,6 @@ const Home = () => {
   }
 
   return <GuestsAccount />;
-
-  // return (
-  //   <>
-  //     {/* {userRecord?.account_type === 'guest' ? <GuestsAccount /> : <HostAccount />} */}
-  //     {/* { userRecord?.account_type === 'host' && <HostAccount />} */}
-  //   </>
-  // )
 };
 
 export default Home;

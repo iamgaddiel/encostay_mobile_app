@@ -1,11 +1,32 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonRange, IonText, IonTitle, IonToolbar, useIonRouter, useIonToast, useIonViewDidEnter } from '@ionic/react'
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCheckbox, IonChip, IonCol, IonContent, IonGrid, IonHeader, IonItem, IonLabel, IonList, IonPage, IonRange, IonRow, IonText, IonTitle, IonToolbar, useIonRouter, useIonToast, useIonViewDidEnter } from '@ionic/react'
 import { useCallback, useMemo, useState } from 'react'
 // css
 import "./Filter.css"
 import { useSetRecoilState } from 'recoil'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { SearchFilterApartmentType } from '../../@types/apartments'
+import { Apartment, SearchFilterApartmentType } from '../../@types/apartments'
 import { searchFilterAtom } from '../../atoms/apartmentAtom'
+import Slider from 'react-slick'
+
+
+
+const chips: { title: string, value: string }[] = [
+    { title: "All", value: "all" },
+    { title: "Co-op", value: "co-op" },
+    { title: "Loft", value: "loft" },
+    { title: "Condo", value: "condo" },
+    { title: "Duplex", value: "duplex" },
+    { title: "Garden", value: "garden" },
+    { title: "High-rise", value: "high-rise" },
+    { title: "Low-rise", value: "low-rise" },
+    { title: "Micro", value: "micro" },
+    { title: "Railroad", value: "railroad" },
+    { title: "Single Family", value: "single-family" },
+    { title: "Triplex", value: "triplex" },
+    { title: "Walk up", value: "walk-up" },
+]
+
+
 
 const Filter = () => {
     // todo: set min range state
@@ -56,7 +77,7 @@ const Filter = () => {
     const handleFormSubmit: SubmitHandler<SearchFilterApartmentType> = (data) => {
         // console.log("🚀 ~ file: Filter.tsx:54 ~ Filter ~ data:", data)
         setSearchFilterAtom(data)
-        router.push('/apartment_search_filter_result/')
+        router.push('/apartment_search_filter_result/', "forward")
     }
 
 
@@ -74,14 +95,24 @@ const Filter = () => {
 
             <IonContent className='ion-padding' fullscreen>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
-
+                    {/* apartment category */}
+                    {/* TODO: use this as a search to display apartments based on apartment type */}
+                    <IonGrid>
+                        <IonRow>
+                            { chips.map(({title, value}) => (
+                                <IonCol size='3' key={value}>
+                                    <IonChip onClick={e => setValue("type", value as Apartment)} color={'warning'} className='brown_fill'>{title}</IonChip>
+                                </IonCol>
+                            ))}
+                        </IonRow>
+                    </IonGrid>
                     {/* ----------- [ Price Range] ----------------- */}
                     <section className="border rounded-4 p-4">
                         <IonText>Price range</IonText>
 
                         <div className="my-3">
                             <div>₦{price.lower} - ${price.upper}</div>
-                            <span className="text-muted">The average nightly price ₦{averageApartmentPrice}</span>
+                            <span className="text-muted">The average nightly price2 ₦{averageApartmentPrice}</span>
                         </div>
 
                         <Controller

@@ -1,28 +1,24 @@
-import { IonButton, IonButtons, IonCard, IonCardContent, IonContent, IonIcon, IonItem, IonLabel, IonList, IonModal, IonPage, IonRadio, IonRadioGroup, IonText, IonTitle } from '@ionic/react'
-import React, { useEffect, useRef, useState } from 'react'
+import { IonButton, IonCard, IonCardContent, IonContent, IonItem, IonList, IonModal, IonPage, IonRadio, IonRadioGroup, IonText, IonTitle, useIonRouter } from '@ionic/react'
+import { useEffect, useRef, useState } from 'react'
 import BackHeader from '../../components/BackHeader/BackHeader'
 import SpaceBetween from '../../components/style/SpaceBetween'
-import { informationCircleOutline, personCircle } from 'ionicons/icons'
 
 // css
 import "./CancellationSurvey.css"
-import { useHistory, useParams } from 'react-router'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useParams } from 'react-router'
+import { useRecoilValue } from 'recoil'
 import { userAtom } from '../../atoms/appAtom'
 import { BookingItem } from '../../@types/bookings'
-import { getBookingDetail, getBookings } from '../../helpers/utils'
-import { APP_CONFIG, BOOKINGS_COLLECTION, SELECTED_BOOKING_FOR_CANCELATION } from '../../helpers/keys'
+import { SELECTED_BOOKING_FOR_CANCELATION } from '../../helpers/keys'
 import { getSaveData } from '../../helpers/storageSDKs'
-import { AppConfig } from '../../@types/appConfig'
 import { appartmnetBookingAtom } from '../../atoms/bookingAtom'
-import { updateApiCollectionItem } from '../../helpers/apiHelpers'
 
 
 
 const CancellationSurvey = () => {
     //TODO: if survey is canceled refund guest money to account using selected payment method
     const { bookingId } = useParams<{ bookingId: string }>()
-    const history = useHistory()
+    const router = useIonRouter()
 
 
 
@@ -89,7 +85,7 @@ const CancellationSurvey = () => {
         // }
 
         // const nextScreen = '/manage_bookings'
-        // history.push(nextScreen)
+        // router.push(nextScreen, "forward")
     }
 
 

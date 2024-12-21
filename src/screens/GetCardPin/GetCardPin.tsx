@@ -1,19 +1,17 @@
-import { IonButton, IonContent, IonInput, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react'
-import React, { useState } from 'react'
+import { IonButton, IonContent, IonInput, IonPage, IonToast, useIonRouter } from '@ionic/react'
+import { useState } from 'react'
 import BackHeader from '../../components/BackHeader'
-import { BookingPaymentCardDetails } from '../../@types/bookings'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { bookingPaymentCardDetailsAtom, bookingPaymentOtpAtom } from '../../atoms/bookingPaymentAtom'
 import { _post } from '../../helpers/api'
 import { getRandomString } from '../../helpers/utils'
 import { userAtom } from '../../atoms/appAtom'
 import { bookingAtom } from '../../atoms/bookingAtom'
-import { useHistory } from 'react-router'
 import Settings from '../../helpers/settings'
 
 const GetCardPin = () => {
 
-    const history = useHistory()
+    const router = useIonRouter()
 
     const { serverBaseUrl } = Settings()
 
@@ -84,7 +82,7 @@ const GetCardPin = () => {
 
             setIsLoading(() => false)
 
-            history.push('/verify_booking_transaction_otp')
+            router.push('/verify_booking_transaction_otp')
         }
         catch (err: any) {
             setIsLoading(() => false)

@@ -13,6 +13,7 @@ import {
   IonTitle,
   IonToast,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import {
   useEffect,
@@ -24,7 +25,6 @@ import SpaceBetween from "../../components/style/SpaceBetween";
 
 import "./BookPreview.css";
 
-import Image from "../../assets/images/room-pt.png";
 import {
   checkmarkCircleOutline,
   chevronForward,
@@ -50,7 +50,6 @@ import {
   SET_TOTAL,
 } from "../../reducers/actions/bookingPreviewActions";
 import BookingPreviewReducer from "../../reducers/bookingPreviewReducer";
-import { useHistory, useParams } from "react-router";
 import { AppConfig } from "../../@types/appConfig";
 import { getSaveData } from "../../helpers/storageSDKs";
 import { APP_CONFIG } from "../../helpers/keys";
@@ -66,7 +65,7 @@ const BookingPreview = () => {
 
   const { record: user } = useRecoilValue(userAtom)
 
-  const history = useHistory();
+  const router = useIonRouter();
 
   const selectedApartment = useRecoilValue(apartmentAtom);
 
@@ -173,7 +172,7 @@ const BookingPreview = () => {
       host: selectedApartment.host
     });
 
-    history.push("/booking_step_1");
+    router.push("/booking_step_1");
   }
 
 

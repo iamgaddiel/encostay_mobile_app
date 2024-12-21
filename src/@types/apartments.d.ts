@@ -108,5 +108,5 @@ export type AddApartmentImageType = Pick<AddApartmentFormValue, 'image_1' | 'ima
 
 export type AddExtraApartmentRuleType = Pick<AddApartmentFormValue, 'additional_rules'>
 
-export type SearchFilterApartmentType = Prettify<Partial<Pick<AddApartmentFormValue, 'party_allowed' | 'pets_allowed' | 'smoking_allowed' | 'children_allowed' | 'has_gym' | 'has_laundry' | 'has_security' | 'has_tv_cable' | 'has_wifi'  >> & { price_range: { max: number, min: number}}>
+export type SearchFilterApartmentType = Prettify<Partial<Pick<AddApartmentFormValue, 'party_allowed' | 'pets_allowed' | 'smoking_allowed' | 'children_allowed' | 'has_gym' | 'has_laundry' | 'has_security' | 'has_tv_cable' | 'has_wifi' | "type">> & { price_range: { max: number, min: number}}>
 

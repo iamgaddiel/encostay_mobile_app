@@ -14,6 +14,7 @@ import {
   IonToggle,
   IonDatetime,
   IonButton,
+  useIonRouter,
 } from "@ionic/react";
 import { warningOutline } from "ionicons/icons";
 import React, { useEffect, useReducer, useRef, useState } from "react";
@@ -50,7 +51,7 @@ import {
   SET_APARTMENT_IMAGE_3,
   SET_ALL_APARTMENT_DETAILS,
 } from "../../reducers/actions/addApartmentsActions";
-import { useHistory, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Toast } from "../../@types/toast";
 import { StoredUser } from "../../@types/users";
@@ -79,7 +80,7 @@ import { getApartmentDetail } from "../../helpers/utils";
 
 const ApartmentUpdate = () => {
   const { apartmentId } = useParams<{ apartmentId: string }>();
-  const history = useHistory();
+  const router = useIonRouter();
   const { record: user, token } = useRecoilValue(userAtom) as StoredUser;
   const apartmentImageOne = useRef<HTMLIonImgElement | null>(null);
   const apartmentImageTwo = useRef<HTMLIonImgElement | null>(null);
@@ -359,7 +360,7 @@ async function getApartmentDetail(): Promise<void> {
           buttons={[
             {
               text: "Okay",
-              handler: () => history.push("/appartments"),
+              handler: () => router.push("/appartments", "forward"),
             },
           ]}
         />

@@ -14,6 +14,7 @@ import HomeListCard from "../HomeListCard/HomeListCard";
 import RoomLnd from "../../assets/images/room-ld.png";
 import NotFound from "../NotFound";
 import ProfileImage from "../ProfileImage";
+import Loader from "../Loader";
 
 
 
@@ -113,33 +114,7 @@ const GuestsAccount = () => {
 
     if (isLoading) {
         return (
-            <div className="ion-padding">
-                <IonSkeletonText
-                    animated
-                    className="w-100 rounded-4"
-                    style={{ height: "20px" }}
-                />
-                <IonSkeletonText
-                    animated
-                    className="w-100 my-3 rounded-3"
-                    style={{ height: "200px" }}
-                />
-                <IonSkeletonText
-                    animated
-                    className="w-100 my-3 rounded-3"
-                    style={{ height: "200px" }}
-                />
-                <IonSkeletonText
-                    animated
-                    className="w-100 my-3 rounded-3"
-                    style={{ height: "200px" }}
-                />
-                <IonSkeletonText
-                    animated
-                    className="w-100 my-3 rounded-3"
-                    style={{ height: "200px" }}
-                />
-            </div>
+            <Loader isOpen={isLoading} />
         )
     }
 
@@ -152,10 +127,10 @@ const GuestsAccount = () => {
                     <IonGrid>
                         <IonRow className="ion-align-items-center">
                             <IonCol size="10">
-                                <p className='text-muted fs-5 my-0 py-0'>Hey {user.name}!</p>
+                                <small className='text-muted fs-3 my-0 py-0'>Hey {user.name}!</small>
                                 <small className="mt-1" style={{ display: "block" }}>Let's find your best residence!</small>
                             </IonCol>
-                            <IonCol size="auto">
+                            <IonCol size="2">
                                 <ProfileImage width={50} height={50} />
                             </IonCol>
                         </IonRow>
@@ -163,10 +138,9 @@ const GuestsAccount = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className='ion-padding page_wrapper'>
-
                 {/* apartment category */}
                 {/* TODO: use this as a search to display apartments based on apartment type */}
-                <section className="apartment_types mt-3">
+                <section className="apartment_types">
                     <Slider {...homeCategoryCarouselSettings}>
                         {/* TODO: add info (i) to each apartment type explaing what theya are */}
                         {/* <OwlCarousel options={options}> */}
@@ -194,21 +168,21 @@ const GuestsAccount = () => {
             ------------------ [Apartment List] ------------------------
             -----------------------------------------------------------
              */}
-                <section className=" mt-5 s">
-                    <SpaceBetween className='my-3'>
+                <section className=" mt-3">
+                    <SpaceBetween className='my-1'>
                         <span> Trending Apartments</span>
                         {
                             apartmentList.items.length >= 1 && <IonRouterLink className="ion-warning">All</IonRouterLink>
                         }
                     </SpaceBetween>
 
-                    <IonGrid className="mt-4">
+                    <IonGrid className="mt-1">
                         <IonRow>
                             {apartmentList &&
                                 apartmentList?.totalItems >= 1 ?
                                 apartmentList.items.map((home: ApartementItem, index: number) =>
                                 (
-                                    <IonCol size="12" sizeSm="6" sizeLg="4" sizeXl="3" key={index}>
+                                    <IonCol size="12" sizeXs="12" sizeSm="6" sizeLg="4" sizeXl="3" key={index}>
                                         <HomeListCard
                                             has_wifi={home.has_wifi}
                                             location={{

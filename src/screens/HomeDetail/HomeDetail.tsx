@@ -22,6 +22,7 @@ import {
   IonText,
   IonThumbnail,
   IonTitle,
+  useIonRouter,
 } from "@ionic/react";
 import {
   arrowBack,
@@ -46,7 +47,6 @@ import Man from "../../assets/images/man.png";
 import "./HomeDetail.css";
 // import { rooms } from '../../atoms/demoAtoms'
 import SpaceBetween from "../../components/style/SpaceBetween";
-import { useHistory, useParams } from "react-router";
 import { ApartementItem, Apartment } from "../../@types/apartments";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userAtom } from "../../atoms/appAtom";
@@ -97,7 +97,7 @@ const HomeDetail = () => {
 
   const setSelectedApartment = useSetRecoilState(apartmentAtom)
 
-  const history = useHistory();
+  const router = useIonRouter();
 
   const [showAlert, setShowAlert] = useState({
     enabled: false,
@@ -196,7 +196,7 @@ const HomeDetail = () => {
 
   function checkForBankDetails() {
     if (bankList?.items.length === 0) displayError("You haven't added a bank account. Go to Me > Bank > Add Account");
-    history.push(`/apartment_preview/${apartment?.id}`)
+    router.push(`/apartment_preview/${apartment?.id}`)
   }
 
 
@@ -217,7 +217,7 @@ const HomeDetail = () => {
             size="small"
             color={"warning"}
             routerDirection="back"
-            onClick={() => history.go(-1)}
+            onClick={() => router.goBack()}
           >
             <IonIcon icon={arrowBack} color="light" />
           </IonFabButton>

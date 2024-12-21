@@ -1,16 +1,15 @@
-import { IonContent, IonImg, IonPage, IonText } from '@ionic/react'
+import { IonContent, IonImg, IonPage, IonText, useIonRouter } from '@ionic/react'
 import React, { useEffect } from 'react'
 
 import "./WithdrawReceiving.css"
 import CardImg from "../../assets/images/processing.svg"
-import { useHistory } from 'react-router'
 
 const WithdrawReceiving = () => {
-  const history = useHistory()
+  const router = useIonRouter()
 
   useEffect(() => {
     setTimeout(() => {
-      history.push("/withdraw_confirm")
+      router.push("/withdraw_confirm", "forward")
     }, 4000)
   }, [])
   

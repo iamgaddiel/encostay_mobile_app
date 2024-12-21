@@ -1,19 +1,17 @@
-import { IonButton, IonContent, IonImg, IonInput, IonPage, IonText, IonToast } from '@ionic/react'
-import React, { useReducer, useState } from 'react'
-import SpaceBetween from '../../components/style/SpaceBetween'
+import { IonButton, IonContent, IonImg, IonInput, IonPage, IonToast, useIonRouter } from '@ionic/react'
+import { useReducer, useState } from 'react'
 import Card from '../../assets/images/credit-card.png'
 import BackHeader from '../../components/BackHeader'
 import { BookingPaymentCardDetails } from '../../@types/bookings'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { bookingPaymentCardDetailsAtom } from '../../atoms/bookingPaymentAtom'
-import { useHistory } from 'react-router'
 import { userAtom } from '../../atoms/appAtom'
 import { bookingAtom } from '../../atoms/bookingAtom'
 import { getRandomString } from '../../helpers/utils'
 import { Action } from '../../@types/action'
 
 const GetCardDetails = () => {
-    const history = useHistory()
+    const router = useIonRouter()
 
     const { record: user } = useRecoilValue(userAtom)
 
@@ -113,7 +111,7 @@ const GetCardDetails = () => {
             pin: ''
         })
 
-        history.push('/get_card_pin')
+        router.push('/get_card_pin')
     }
 
     return (

@@ -1,4 +1,4 @@
-import { IonCard, IonCardContent, IonIcon } from '@ionic/react'
+import { IonCard, IonCardContent, IonIcon, useIonRouter } from '@ionic/react'
 import { heart, home, bedOutline, wifiOutline, chevronForwardOutline, starOutline, star } from 'ionicons/icons'
 import React, { useEffect, useState } from 'react'
 import SpaceBetween from '../style/SpaceBetween'
@@ -41,7 +41,7 @@ const HomeListCard: React.FC<Props> = ({
     showRatings,
     homeId,
 }) => {
-    const history = useHistory()
+    const router = useIonRouter()
 
     const [ratingsArray, setRatingsArray] = useState<number[]>([])
 
@@ -59,7 +59,7 @@ const HomeListCard: React.FC<Props> = ({
 
     function viewApartment(apartmentId: string) {
         setSelectedApartmentId(apartmentId) // set for app level state
-        history.push(`/apartment/${apartmentId}`)
+        router.push(`/apartment/${apartmentId}`, "forward")
     }
 
 

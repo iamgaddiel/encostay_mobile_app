@@ -23,7 +23,7 @@ const RequestPasswordResetSuccessful: React.FC<Props> = ({ email }) => {
 
   function goBackToLogin(){
     setRequestPasswordAtom({ email: ''})
-    router.push('/login', 'root')
+    router.push('/auth', 'root')
   }
 
 

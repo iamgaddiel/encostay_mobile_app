@@ -1,7 +1,6 @@
-import { IonAlert, IonButton, IonContent, IonHeader, IonIcon, IonInput, IonPage, IonText, IonToast, IonToolbar } from '@ionic/react'
+import { IonAlert, IonButton, IonContent, IonHeader, IonIcon, IonInput, IonPage, IonText, IonToast, IonToolbar, useIonRouter } from '@ionic/react'
 import { closeOutline } from 'ionicons/icons'
 import React, { useState } from 'react'
-import { useHistory } from 'react-router'
 import { useRecoilValue } from 'recoil'
 import { bookingPaymentCardDetailsAtom, bookingPaymentOtpAtom } from '../../atoms/bookingPaymentAtom'
 import { userAtom } from '../../atoms/appAtom'
@@ -11,7 +10,7 @@ import { BookingPaymentCardDetails } from '../../@types/bookings'
 
 
 const BookingPaymentOtp = () => {
-    const history = useHistory()
+    const router = useIonRouter()
 
     const sentOtp = useRecoilValue(bookingPaymentOtpAtom)
 
@@ -143,7 +142,7 @@ const BookingPaymentOtp = () => {
                             },
                             {
                                 text: 'Confirm',
-                                handler: () => history.push('/apartment_search')
+                                handler: () => router.push('/apartment_search')
                             }
                         ]
                     }

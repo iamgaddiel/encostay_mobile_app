@@ -1,10 +1,9 @@
-import { IonAlert, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonLabel, IonLoading, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react'
-import React, { useState } from 'react'
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonLabel, IonLoading, IonPage, IonTitle, IonToast, IonToolbar, useIonRouter } from '@ionic/react'
+import { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { RegistrationInputs } from '../../@types/auth'
 import { createApiCollection } from '../../helpers/apiHelpers'
-import { useHistory } from 'react-router'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { registrationAtom } from '../../atoms/authAtom'
 import { USERS_COLLECTION, WALLETS_COLLECTION } from '../../helpers/keys'
 import SpaceBetween from '../../components/style/SpaceBetween'
@@ -15,7 +14,7 @@ import { eyeOffOutline, eyeOutline } from 'ionicons/icons'
 const Passwords = () => {
     // TODO: change button font to Nunito Sans
 
-    const history = useHistory()
+    const router = useIonRouter()
     const { register, handleSubmit, watch, formState: { errors } } = useForm<RegistrationInputs>();
     const regFormData = useRecoilValue(registrationAtom)
 
@@ -111,7 +110,7 @@ const Passwords = () => {
                         {
                             text: 'Okay',
                             role: 'confirm',
-                            handler: () => history.push('/login')
+                            handler: () => router.push('/auth', "root")
                         }
                     ]}
                 />

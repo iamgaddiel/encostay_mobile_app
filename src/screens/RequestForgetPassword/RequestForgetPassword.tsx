@@ -56,7 +56,7 @@ const RequestForgetPassword = () => {
 
     return (
         <IonPage>
-            <BackHeader title='Forget Password' backLink='/login' />
+            <BackHeader title='Forget Password' backLink='/auth' />
             <IonContent className='ion-padding'>
                 <form onSubmit={handleSubmit(onSubmitForm)}>
                     {/* Rest Email */}

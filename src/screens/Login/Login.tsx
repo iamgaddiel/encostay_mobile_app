@@ -1,29 +1,18 @@
 import {
   IonButton,
   IonCol,
-  IonContent,
   IonGrid,
-  IonIcon,
   IonImg,
   IonInput,
   IonInputPasswordToggle,
   IonItem,
-  IonLabel,
-  IonModal,
-  IonPage,
-  IonRouterLink,
   IonRow,
   IonToast,
   useIonRouter,
 } from "@ionic/react";
 import { useState } from "react";
 import OrSeperator from "../../components/OrSeperator/OrSeperator";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
-  eyeOffOutline,
-  eyeOutline,
-  logoFacebook,
-  logoGoogle,
   warning,
 } from "ionicons/icons";
 
@@ -31,16 +20,12 @@ import {
 import "./Login.css";
 
 // images
-import Logo from "../../assets/images/login_logo.svg";
 import GoogleLogo from "../../assets/images/search.png";
 import FacebookLogo from "../../assets/images/facebook.png";
 
 // components
-import SpaceBetween from "../../components/style/SpaceBetween";
 // TODO: set up forget password for app.
 // import RenderPasswordResetModal from "../../components/RenderPasswordResetModal/RenderPasswordResetModal";
-import { useHistory } from "react-router";
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import { LoginInputs } from "../../@types/auth";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { authenticate } from "../../helpers/authSDK";
@@ -61,7 +46,7 @@ const Login = () => {
   // TODO: change logo to Background not IonImage
 
   // todo: remove this
-  const history = useHistory();
+  const router = useIonRouter();
 
   // 3rd party hooks
   const {
@@ -70,8 +55,6 @@ const Login = () => {
     watch,
     formState: { errors },
   } = useForm<LoginInputs>();
-
-  const router = useIonRouter()
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -108,7 +91,7 @@ const Login = () => {
     // goto home sceen if user is authenticated
     if (is_authenticated) {
       saveData(USER, { token, record });
-      history.push("/home");
+      router.push("/home");
     }
 
     setToast({ message: responseMessage!, isOpen: true });

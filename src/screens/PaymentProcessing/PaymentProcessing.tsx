@@ -1,14 +1,13 @@
-import { IonContent, IonImg, IonPage, IonProgressBar, IonText, IonTitle, useIonViewDidEnter } from '@ionic/react'
+import { IonContent, IonImg, IonPage, IonProgressBar, IonText, useIonRouter } from '@ionic/react'
 
-import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router'
+import { useEffect } from 'react'
 
 import Plane from "../../assets/images/plane.svg"
 
 //css
 import "./PaymentProcessing.css"
 
-import { createApiCollection, updateApiCollectionItem, updatePatchApiCollectionItem } from '../../helpers/apiHelpers'
+import { createApiCollection, updatePatchApiCollectionItem } from '../../helpers/apiHelpers'
 import { BOOKINGS_COLLECTION, FLUTTERWAVE_COLLECTION, REVIEWS_COLLECTION } from '../../helpers/keys'
 
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
@@ -22,7 +21,7 @@ import { BookingItem } from '../../@types/bookings'
 
 
 const PaymentProcessing = () => {
-    const history = useHistory()
+    const router = useIonRouter()
 
     const bookingDetail = useRecoilValue(bookingAtom)
 
@@ -43,7 +42,7 @@ const PaymentProcessing = () => {
         processBooking()
         setUtility({ showTabs: false })
         setTimeout(() => {
-            history.push("/payment_confirm")
+            router.push("/payment_confirm")
         }, 10000)
     }, [])
 

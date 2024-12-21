@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonProgressBar, IonSelect, IonSelectOption, IonToast, useIonLoading } from '@ionic/react'
+import { IonButton, IonContent, IonIcon, IonImg, IonInput, IonLabel, IonLoading, IonPage, IonProgressBar, IonSelect, IonSelectOption, IonToast, useIonLoading, useIonRouter } from '@ionic/react'
 import React, { useEffect, useState } from 'react'
 import HeaderTitle from '../../components/HeaderTitle/HeaderTitle'
 import SpaceBetween from '../../components/style/SpaceBetween'
@@ -29,7 +29,7 @@ import { _post } from '../../helpers/api'
 const { serverBaseUrl } = Settings()
 
 const Withdraw = () => {
-    const history = useHistory()
+    const router = useIonRouter()
 
     const { token: authToken, record: user } = useRecoilValue(userAtom)
 
@@ -268,7 +268,7 @@ const Withdraw = () => {
         setAmount(0)
 
         setIsLoading(false)
-        // history.push('/withdraw_receiving')
+        // router.push('/withdraw_receiving')
     }
 
 
